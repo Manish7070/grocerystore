@@ -1,0 +1,116 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f3f8ef;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #70b32f;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #145c35;
+}
+
+html {
+  box-sizing: border-box;
+}
+
+*, *::before, *::after {
+  box-sizing: inherit;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  background:
+    radial-gradient(circle at top left, rgba(181, 217, 147, 0.35), transparent 32rem),
+    linear-gradient(180deg, #fbfdf9 0%, #f7fbf3 52%, #eef6e8 100%);
+  color: #163a25;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+html.dark body {
+  background:
+    radial-gradient(circle at top left, rgba(83, 145, 65, 0.2), transparent 32rem),
+    linear-gradient(180deg, #0b1510 0%, #101c15 52%, #0d1812 100%);
+  color: #f5f5f4;
+}
+
+html.dark ::-webkit-scrollbar-track { background: #101c15; }
+html.dark ::-webkit-scrollbar-thumb { background: #579928; }
+
+/* Covers legacy utility surfaces so every existing screen participates in dark mode. */
+html.dark [class~="bg-white"],
+html.dark [class~="bg-white/90"],
+html.dark [class~="bg-white/80"] { background-color: #15231a !important; }
+html.dark [class~="bg-stone-50"],
+html.dark [class~="bg-stone-50/70"],
+html.dark [class~="bg-slate-50"],
+html.dark [class~="bg-green-50"] { background-color: #101c15 !important; }
+html.dark [class~="bg-[#fbfdf9]"],
+html.dark [class~="bg-[#f8fbf5]"] { background-color: #0f1b14 !important; }
+html.dark [class~="text-stone-950"],
+html.dark [class~="text-stone-900"],
+html.dark [class~="text-slate-950"],
+html.dark [class~="text-slate-900"],
+html.dark [class~="text-gray-900"] { color: #fafaf9 !important; }
+html.dark [class~="text-stone-800"],
+html.dark [class~="text-stone-700"],
+html.dark [class~="text-slate-800"],
+html.dark [class~="text-slate-700"] { color: #e7e5e4 !important; }
+html.dark [class~="text-stone-600"],
+html.dark [class~="text-stone-500"],
+html.dark [class~="text-slate-600"],
+html.dark [class~="text-slate-500"],
+html.dark [class~="text-gray-600"],
+html.dark [class~="text-gray-500"] { color: #a8a29e !important; }
+html.dark [class~="border-stone-100"],
+html.dark [class~="border-slate-200"],
+html.dark [class~="border-gray-100"] { border-color: rgba(255, 255, 255, 0.1) !important; }
+html.dark input,
+html.dark select,
+html.dark textarea { color: #fafaf9; }
+
+::selection {
+  background: #d2e9bc;
+  color: #145c35;
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-brand-700 hover:bg-brand-800 active:scale-95 transition-all duration-200 shadow-lg hover:shadow-xl;
+  }
+  .card-hover {
+    @apply hover:shadow-2xl hover:scale-[1.02] transition-all duration-300;
+  }
+}
+
+* {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+button, a, input, select, textarea {
+  -webkit-tap-highlight-color: transparent;
+}
+
+:focus-visible {
+  outline: 3px solid rgba(112, 179, 47, 0.5);
+  outline-offset: 3px;
+}
