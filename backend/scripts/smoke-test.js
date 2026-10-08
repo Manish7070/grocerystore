@@ -11,6 +11,7 @@ const testEmail = `greenbasket-smoke-${Date.now()}@example.com`;
 const testPassword = 'GreenBasketTest123!';
 let testUserId;
 let razorpayOrderCreated = false;
+const deliveryAddress = { name: 'Smoke Test', phone: '9999999999', address: 'Test address, do not deliver', city: 'Delhi', pincode: '110001' };
 
 const request = async (pathname, options = {}) => {
   const response = await fetch(`${apiBase}${pathname}`, {
@@ -81,11 +82,12 @@ const run = async () => {
     assert(profile.email === testEmail, 'Authenticated profile does not match the signed-in user');
 
     if (process.env.SMOKE_RAZORPAY === '1') {
+      assert(paymentConfig.mode === 'test', 'Refusing to create a gateway order outside test mode');
       assert(paymentConfig.configured, 'Razorpay smoke test requested but payment is not configured');
       const razorpayResult = await request('/orders', {
         method: 'POST',
         headers: authHeaders,
-        body: JSON.stringify({ items: [{ productId: products[0]._id, quantity: 1 }] }),
+        body: JSON.stringify({ deliveryAddress, items: [{ productId: products[0]._id, quantity: 1 }] }),
       });
       assert(/^order_/.test(razorpayResult.id || ''), 'Razorpay did not return a valid test order id');
       assert(/^rzp_test_/.test(razorpayResult.keyId || ''), 'Refusing to validate a non-test Razorpay key');
@@ -96,11 +98,13 @@ const run = async () => {
     const codResult = await request('/orders/cod', {
       method: 'POST',
       headers: authHeaders,
-      body: JSON.stringify({ items: [{ productId: products[0]._id, quantity: 1 }] }),
+      body: JSON.stringify({ deliveryAddress, items: [{ productId: products[0]._id, quantity: 1 }] }),
     });
     assert(codResult.success && codResult.order?.paymentMethod === 'cod', 'COD order was not created correctly');
+    assert(codResult.order.deliveryAddress?.address === deliveryAddress.address, 'Delivery address was not saved');
     assert(codResult.order?.items?.[0]?.image, 'Order item image was not saved');
     assert(codResult.order?.items?.[0]?.category, 'Order item category artwork metadata was not saved');
+    assert(codResult.order?.items?.[0]?.externalId, 'Order item product artwork identifier was not saved');
 
     const orderHistory = await request('/orders', { headers: authHeaders });
     assert(orderHistory.some((order) => order._id === codResult.order._id), 'Created order is missing from order history');

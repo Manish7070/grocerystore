@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { ArrowRight, Search, Sparkles, Truck } from 'lucide-react';
 import { useLocation, useSearchParams } from 'react-router-dom';
 import ProductCard from '../components/ProductCard';
-import HomeSections from '../components/HomeSections';
+import { catalogPage, pageNumbers } from '../utils/catalog';
 import { productsAPI } from '../utils/api';
 import brandMark from '../assets/greenbasket-mark.png';
 
@@ -26,37 +26,38 @@ const categoryOptions = [
   { name: 'Pet Care', slug: 'pet-care' },
 ];
 
-const getCategorySlug = (categoryName) => categoryOptions.find((category) => category.name === categoryName)?.slug;
-
 const Home = () => {
   const [products, setProducts] = useState([]);
-  const [filteredProducts, setFilteredProducts] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState('All');
-  const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const location = useLocation();
+  const selectedCategory = categoryOptions.find((item) => item.slug === (searchParams.get('category') || ''))?.name || 'All';
+  const search = searchParams.get('search') || '';
+  const pagination = catalogPage(products, { category: selectedCategory, search, page: searchParams.get('page') || 1 });
+
+  const changeFilters = (values, replace = false) => {
+    const next = new URLSearchParams(searchParams);
+    Object.entries(values).forEach(([key, value]) => value ? next.set(key, value) : next.delete(key));
+    if (!Object.hasOwn(values, 'page')) next.delete('page');
+    setSearchParams(next, { replace });
+  };
 
   useEffect(() => {
-    const categorySlug = getCategorySlug(selectedCategory);
-    const request = categorySlug ? productsAPI.getByCategory(categorySlug) : productsAPI.getAll();
+    let active = true;
     setLoading(true);
     setError('');
-    request.then(res => {
+    productsAPI.getAll().then(res => {
+      if (!active) return;
       setProducts(res.data);
-      setFilteredProducts(res.data);
       setLoading(false);
     }).catch(() => {
-      setError('Unable to load products. Please check the backend server.');
+      if (!active) return;
+      setError('Unable to load products. Please refresh and try again.');
       setLoading(false);
     });
-  }, [selectedCategory]);
-
-  useEffect(() => {
-    const query = searchParams.get('search') || '';
-    setSearch(query);
-  }, [searchParams]);
+    return () => { active = false; };
+  }, []);
 
   useEffect(() => {
     if (location.hash === '#shop' && !loading) {
@@ -66,48 +67,26 @@ const Home = () => {
     }
   }, [location.hash, loading]);
 
-  useEffect(() => {
-    let filtered = products;
-    if (search) {
-      const query = search.toLowerCase();
-      filtered = filtered.filter(p =>
-        p.name.toLowerCase().includes(query) ||
-        p.description?.toLowerCase().includes(query) ||
-        p.category.toLowerCase().includes(query) ||
-        p.tags?.some(tag => tag.toLowerCase().includes(query))
-      );
-    }
-    setFilteredProducts(filtered);
-  }, [search, products]);
-
   const handleCategorySelect = (category) => {
-    setSelectedCategory(category);
+    changeFilters({ category: categoryOptions.find((item) => item.name === category)?.slug || '' });
     window.setTimeout(() => {
       document.getElementById('shop')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }, 50);
   };
 
-  const allCategoryGroups = categoryOptions
-    .filter(({ name }) => name !== 'All')
-    .map(({ name }) => {
-      const categoryProducts = filteredProducts.filter((product) => product.category === name);
-
-      return {
-        name,
-        products: categoryProducts.slice(0, 4),
-        total: categoryProducts.length,
-      };
-    })
-    .filter((group) => group.total > 0);
+  const goToPage = (page) => {
+    changeFilters({ page: String(page) });
+    document.getElementById('shop')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
 
   return (
     <div className="px-4 py-6 sm:py-10">
       <div className="mx-auto max-w-7xl">
-        <section className="relative mb-12 overflow-hidden rounded-[2rem] border border-white/70 bg-[#eef6e8] shadow-2xl shadow-emerald-950/10">
+        {pagination.currentPage === 1 && selectedCategory === 'All' && !search && <section className="relative mb-8 overflow-hidden rounded-[2rem] border border-white/70 bg-[#eef6e8] shadow-2xl shadow-emerald-950/10">
           <div className="absolute inset-0 bg-gradient-to-br from-[#0b3520] via-[#275f2a] to-[#a5d36f]" />
           <div className="absolute -right-24 -top-24 h-96 w-96 rounded-full bg-white/10 blur-2xl" />
           <div className="absolute bottom-0 right-0 hidden h-52 w-52 rounded-full bg-orange-300/30 blur-3xl lg:block" />
-          <div className="relative grid min-h-[540px] items-center gap-10 px-5 py-14 sm:px-10 lg:grid-cols-[1.05fr_0.95fr] lg:px-14">
+          <div className="relative grid items-center gap-8 px-5 py-10 sm:px-10 lg:grid-cols-[1.05fr_0.95fr] lg:px-14">
             <div className="max-w-2xl">
               <p className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/15 px-4 py-2 text-sm font-bold text-emerald-50 backdrop-blur">
                 <Sparkles size={16} />
@@ -164,16 +143,13 @@ const Home = () => {
                     <Truck size={22} />
                   </span>
                 </div>
-                <div className="flex items-center gap-3 rounded-2xl border border-emerald-900/10 bg-white px-4 py-3 shadow-sm">
+                <button type="button" onClick={() => {
+                  document.getElementById('catalog-search')?.focus({ preventScroll: true });
+                  document.getElementById('shop')?.scrollIntoView({ behavior: 'smooth' });
+                }} className="flex w-full items-center gap-3 rounded-2xl border border-emerald-900/10 bg-white px-4 py-3 text-left shadow-sm">
                   <Search size={20} className="shrink-0 text-stone-400" />
-                  <input
-                    type="text"
-                    placeholder="Search apples, milk, rice..."
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    className="min-w-0 flex-1 bg-transparent text-stone-900 outline-none placeholder:text-stone-400"
-                  />
-                </div>
+                  <span className="text-stone-500">Search apples, milk, rice...</span>
+                </button>
                 <div className="mt-4 grid grid-cols-2 gap-3">
                   {['Fruits', 'Vegetables', 'Dairy', 'Snacks'].map((cat) => (
                     <button
@@ -189,13 +165,13 @@ const Home = () => {
               </div>
             </div>
           </div>
-        </section>
+        </section>}
 
         <div id="shop" className="mb-8 scroll-mt-28 flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <p className="text-sm font-black uppercase tracking-[0.2em] text-orange-500">Fresh picks</p>
             <h2 className="mt-2 text-3xl font-black tracking-tight text-stone-950 sm:text-4xl">Shop groceries</h2>
-            <p className="mt-2 text-sm font-semibold text-stone-500">{filteredProducts.length} item{filteredProducts.length === 1 ? '' : 's'} available</p>
+            <p aria-live="polite" className="mt-2 text-sm font-semibold text-stone-500">{loading ? 'Loading groceries...' : `${pagination.total} products · Page ${pagination.currentPage} of ${pagination.totalPages}`}</p>
           </div>
           <div className="flex max-w-full gap-2 overflow-x-auto pb-2 lg:flex-wrap lg:justify-end lg:overflow-visible">
             {categoryOptions.map(({ name }) => (
@@ -214,6 +190,15 @@ const Home = () => {
           </div>
         </div>
 
+        <div className="mb-6 flex items-center gap-3 rounded-2xl border border-emerald-900/10 bg-white px-4 py-3">
+          <Search size={20} className="text-stone-400" />
+          <label htmlFor="catalog-search" className="sr-only">Search this catalog</label>
+          <input id="catalog-search" value={search} onChange={(event) => changeFilters({ search: event.target.value }, true)}
+            placeholder="Search products..." className="min-w-0 flex-1 bg-transparent outline-none" />
+          {(search || selectedCategory !== 'All') && <button type="button" onClick={() => setSearchParams({})} className="text-sm font-bold text-emerald-700">Clear filters</button>}
+        </div>
+        <p className="mb-4 text-xs text-stone-500">Product images are illustrative. Actual appearance and packaging may vary.</p>
+
         {loading ? (
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {[1, 2, 3, 4].map((item) => (
@@ -224,44 +209,23 @@ const Home = () => {
           <div className="rounded-[1.75rem] border border-red-200 bg-red-50 px-6 py-8 text-center font-semibold text-red-800">{error}</div>
         ) : (
           <>
-            {!search && selectedCategory === 'All' && <HomeSections products={products} onCategorySelect={handleCategorySelect} />}
-            {selectedCategory === 'All' && !search ? (
-              <div className="space-y-12">
-                {allCategoryGroups.map((group) => (
-                  <section key={group.name}>
-                    <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-                      <div>
-                        <h3 className="text-2xl font-black tracking-tight text-stone-950">{group.name}</h3>
-                        <p className="mt-1 text-sm font-semibold text-stone-500">
-                          Showing {group.products.length} of {group.total} products
-                        </p>
-                      </div>
-                      {group.total > 4 && (
-                        <button
-                          type="button"
-                          onClick={() => handleCategorySelect(group.name)}
-                          className="inline-flex w-fit items-center justify-center rounded-full border border-emerald-900/10 bg-white px-5 py-2.5 text-sm font-black text-emerald-800 shadow-sm transition hover:-translate-y-0.5 hover:bg-emerald-50"
-                        >
-                          See more
-                        </button>
-                      )}
-                    </div>
-                    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-                      {group.products.map((product) => (
-                        <ProductCard key={product._id} product={product} />
-                      ))}
-                    </div>
-                  </section>
-                ))}
-              </div>
-            ) : (
               <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                {filteredProducts.map(product => (
+                {pagination.items.map(product => (
                   <ProductCard key={product._id} product={product} />
                 ))}
               </div>
-            )}
-            {filteredProducts.length === 0 && (
+            {pagination.total > 0 && <div className="mt-8 flex flex-col items-center gap-4">
+              <p className="text-sm text-stone-500">Showing {pagination.start + 1}–{pagination.start + pagination.items.length} of {pagination.total} products</p>
+              <nav aria-label="Product pages" className="flex flex-wrap justify-center gap-2">
+                <button type="button" disabled={pagination.currentPage === 1} onClick={() => goToPage(pagination.currentPage - 1)} className="rounded-xl border bg-white px-4 py-3 font-bold disabled:opacity-40">Previous</button>
+                {pageNumbers(pagination.currentPage, pagination.totalPages).map((page) => typeof page === 'number' ? (
+                  <button key={page} type="button" aria-label={`Page ${page}`} aria-current={page === pagination.currentPage ? 'page' : undefined}
+                    onClick={() => goToPage(page)} className={`min-w-11 rounded-xl border px-3 py-3 font-bold ${page === pagination.currentPage ? 'bg-emerald-700 text-white' : 'bg-white text-stone-700'}`}>{page}</button>
+                ) : <span key={page} className="px-1 py-3" aria-hidden="true">…</span>)}
+                <button type="button" disabled={pagination.currentPage === pagination.totalPages} onClick={() => goToPage(pagination.currentPage + 1)} className="rounded-xl border bg-white px-4 py-3 font-bold disabled:opacity-40">Next</button>
+              </nav>
+            </div>}
+            {pagination.total === 0 && (
               <div className="rounded-[1.75rem] border border-emerald-900/10 bg-white px-6 py-12 text-center shadow-sm">
                 <p className="text-lg font-black text-stone-800">No products found</p>
                 <p className="mt-2 font-medium text-stone-500">Try another search or category.</p>

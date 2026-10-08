@@ -1,28 +1,32 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
-const JWT_SECRET = process.env.JWT_SECRET || 'greenbasket-dev-secret';
+const getJwtSecret = () => {
+  if (!process.env.JWT_SECRET) throw new Error('JWT_SECRET is required');
+  return process.env.JWT_SECRET;
+};
 
 const generateToken = (id) => {
-  return jwt.sign({ id }, JWT_SECRET, { expiresIn: '30d' });
+  return jwt.sign({ id }, getJwtSecret(), { expiresIn: '30d', algorithm: 'HS256' });
 };
 
 const protect = async (req, res, next) => {
-  let token;
-  if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
-    try {
-      token = req.headers.authorization.split(' ')[1];
-      const decoded = jwt.verify(token, JWT_SECRET);
-      req.user = await User.findById(decoded.id).select('-password');
-      if (!req.user) {
-        return res.status(401).json({ message: 'Not authorized, user not found' });
-      }
-      next();
-    } catch (error) {
-      return res.status(401).json({ message: 'Not authorized, token failed' });
-    }
+  const token = /^Bearer\s+(\S+)$/i.exec(req.headers.authorization || '')?.[1];
+  if (!token) return res.status(401).json({ code: 'AUTH_REQUIRED', message: 'Please sign in to continue.' });
+  if (!process.env.JWT_SECRET) return res.status(503).json({ message: 'Sign-in is temporarily unavailable.' });
+  let decoded;
+  try {
+    decoded = jwt.verify(token, getJwtSecret(), { algorithms: ['HS256'] });
+    if (typeof decoded.id !== 'string' || !/^[a-f\d]{24}$/i.test(decoded.id)) throw new Error('Invalid subject');
+  } catch {
+    return res.status(401).json({ code: 'SESSION_EXPIRED', message: 'Your session has expired. Please sign in again.' });
   }
-  if (!token) {
-    return res.status(401).json({ message: 'Not authorized, no token' });
+  try {
+    req.user = await User.findById(decoded.id).select('-password');
+    if (!req.user) return res.status(401).json({ code: 'SESSION_EXPIRED', message: 'Please sign in again.' });
+    return next();
+  } catch (error) {
+    // A database outage is not an invalid login; do not log customers out.
+    return next(error);
   }
 };
 

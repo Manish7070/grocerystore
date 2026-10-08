@@ -38,9 +38,10 @@ app.use(cors({
     callback(new Error('Not allowed by CORS'));
   },
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'x-admin-key'],
 }));
-app.use(express.json());
+app.use('/api/orders/webhook', express.raw({ type: 'application/json', limit: '256kb' }));
+app.use(express.json({ limit: '100kb' }));
 
 let mongoConnectionPromise;
 
@@ -93,10 +94,11 @@ app.use((error, req, res, next) => {
     next(error);
     return;
   }
-  console.error('Unhandled API error:', error);
-  res.status(error.message === 'Not allowed by CORS' ? 403 : 500).json({
-    message: error.message === 'Not allowed by CORS' ? 'Origin is not allowed' : 'Unexpected server error',
-  });
+  if (error.type === 'entity.parse.failed') return res.status(400).json({ message: 'Invalid JSON request' });
+  if (error.type === 'entity.too.large') return res.status(413).json({ message: 'Request is too large' });
+  if (error.message === 'Not allowed by CORS') return res.status(403).json({ message: 'Origin is not allowed' });
+  console.error('Unhandled API error:', error.name || 'Error');
+  res.status(500).json({ message: 'Unexpected server error' });
 });
 
 const startServer = async () => {

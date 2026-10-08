@@ -1,9 +1,23 @@
 import axios from 'axios';
 
-const backendOrigin = import.meta.env.VITE_BACKEND_URL?.replace(/\/$/, '') || '';
+const environment = import.meta.env || {};
+const backendOrigin = environment.VITE_BACKEND_URL?.replace(/\/$/, '') || '';
 
 const api = axios.create({
-  baseURL: import.meta.env.DEV ? '/api' : `${backendOrigin}/api`,
+  baseURL: environment.DEV ? '/api' : `${backendOrigin}/api`,
+  timeout: 20000,
+});
+
+api.interceptors.response.use((response) => response, (error) => {
+  const requestToken = error.config?.headers?.Authorization;
+  const currentToken = localStorage.getItem('token');
+  const isLogin = /\/auth\/(signin|signup)$/.test(error.config?.url || '');
+  if (error.response?.status === 401 && !isLogin && currentToken && requestToken === `Bearer ${currentToken}`) {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    window.dispatchEvent(new Event('greenbasket:session-expired'));
+  }
+  return Promise.reject(error);
 });
 
 api.interceptors.request.use((config) => {
@@ -15,6 +29,7 @@ api.interceptors.request.use((config) => {
 });
 
 export const authAPI = {
+  profile: () => api.get('/auth/profile'),
   signup: (data) => api.post('/auth/signup', data),
   signin: (data) => api.post('/auth/signin', data),
 };
@@ -31,6 +46,7 @@ export const ordersAPI = {
   createOrder: (data) => api.post('/orders', data),
   createCodOrder: (data) => api.post('/orders/cod', data),
   verifyPayment: (id, data) => api.post(`/orders/${id}/verify`, data),
+  syncPayment: (id) => api.post(`/orders/${id}/sync`),
   getOrders: () => api.get('/orders'),
 };
 

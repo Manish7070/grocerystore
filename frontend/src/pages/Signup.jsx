@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { authAPI } from '../utils/api';
 import { UserPlus } from 'lucide-react';
@@ -10,6 +10,9 @@ const Signup = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const location = useLocation();
+  const requestedPath = location.state?.from;
+  const returnTo = typeof requestedPath === 'string' && requestedPath.startsWith('/') && !requestedPath.startsWith('//') && !requestedPath.includes('\\') ? requestedPath : '/';
   const { login } = useAuth();
   const { showToast } = useToast();
 
@@ -21,7 +24,7 @@ const Signup = () => {
       const res = await authAPI.signup(formData);
       login(res.data);
       showToast('Account created successfully');
-      navigate('/');
+      navigate(returnTo, { replace: true });
     } catch (err) {
       const message = err.response?.data?.message || 'Signup failed';
       setError(message);
@@ -83,7 +86,7 @@ const Signup = () => {
         </form>
         <p className="mt-6 text-center text-sm text-slate-600">
           Already have an account?{' '}
-          <Link to="/signin" className="font-medium text-emerald-600 hover:text-emerald-500">Sign in</Link>
+          <Link to="/signin" state={{ from: returnTo }} className="font-medium text-emerald-600 hover:text-emerald-500">Sign in</Link>
         </p>
       </div>
     </div>

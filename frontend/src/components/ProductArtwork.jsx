@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Package } from 'lucide-react';
 import categorySprite from '../assets/grocery-category-sprite.jpg';
+import { getProductArtwork } from '../utils/productArtwork';
 
 const categoryPositions = {
   Rice: [0, 0],
@@ -31,7 +32,8 @@ const ProductArtwork = ({ product = {}, className = '', showLabel = false }) => 
   const imageSource = isRenderableImage(product.image) ? product.image : '';
   const [imageAvailable, setImageAvailable] = useState(Boolean(imageSource));
   const spritePosition = categoryPositions[product.category];
-  const label = `${product.name || product.category || 'Grocery'} product image`;
+  const artwork = getProductArtwork(product);
+  const label = `${product.name || product.category || 'Grocery'} ${imageAvailable ? 'product image' : 'illustrative image'}`;
 
   useEffect(() => {
     setImageAvailable(Boolean(imageSource));
@@ -43,7 +45,13 @@ const ProductArtwork = ({ product = {}, className = '', showLabel = false }) => 
       aria-label={label}
       className={`relative isolate flex items-center justify-center overflow-hidden bg-gradient-to-br from-emerald-100 via-lime-50 to-amber-100 dark:from-stone-800 dark:via-emerald-950 dark:to-stone-900 ${className}`}
     >
-      {spritePosition ? (
+      {artwork ? (
+        <svg aria-hidden="true" focusable="false"
+          viewBox={`${artwork.column} ${artwork.row} 1 1`} preserveAspectRatio="xMidYMid slice"
+          className="absolute inset-0 h-full w-full overflow-hidden transition-transform duration-700 group-hover:scale-105">
+          <image href={artwork.src} width="4" height="4" />
+        </svg>
+      ) : spritePosition ? (
         <div
           aria-hidden="true"
           className="absolute inset-0 transition-transform duration-700 group-hover:scale-105"

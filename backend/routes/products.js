@@ -1,5 +1,6 @@
 ﻿const express = require('express');
 const Product = require('../models/Product');
+const asyncHandler = require('../middleware/asyncHandler');
 const router = express.Router();
 
 let productCache = {
@@ -43,7 +44,7 @@ const getCategoryProducts = async (category) => {
   return ensureCategoryCatalog(category);
 };
 
-router.get('/', async (req, res) => {
+router.get('/', asyncHandler(async (req, res) => {
   const products = await getPublicProducts();
   const { category } = req.query;
 
@@ -53,7 +54,7 @@ router.get('/', async (req, res) => {
   }
 
   res.json(products);
-});
+}));
 
 router.get('/categories', (req, res) => {
   res.json(Object.entries(categoryRoutes).map(([slug, name]) => ({
@@ -63,7 +64,7 @@ router.get('/categories', (req, res) => {
   })));
 });
 
-router.get('/:categorySlug', async (req, res, next) => {
+router.get('/:categorySlug', asyncHandler(async (req, res, next) => {
   const category = categoryRoutes[req.params.categorySlug];
 
   if (!category) {
@@ -73,16 +74,19 @@ router.get('/:categorySlug', async (req, res, next) => {
 
   const products = await getCategoryProducts(category);
   res.json(products);
-});
+}));
 
-router.get('/:id', async (req, res) => {
+router.get('/:id', asyncHandler(async (req, res) => {
+  if (!/^[a-f\d]{24}$/i.test(req.params.id)) {
+    return res.status(404).json({ message: 'Product not found' });
+  }
   const product = await Product.findById(req.params.id);
   if (product) {
     res.json(product);
   } else {
     res.status(404).json({ message: 'Product not found' });
   }
-});
+}));
 
 const seedData = [
   // RICE & GRAINS (15)
@@ -428,14 +432,17 @@ router.post('/seed', async (req, res) => {
   }
 });
 
-router.post('/refresh', async (req, res) => {
+router.post('/refresh', asyncHandler(async (req, res) => {
+  if (!process.env.CATALOG_ADMIN_KEY || req.get('x-admin-key') !== process.env.CATALOG_ADMIN_KEY) {
+    return res.status(403).json({ message: 'Catalog admin key required' });
+  }
   productCache = {
     expiresAt: 0,
     products: [],
   };
   const products = await ensureCuratedCatalog();
   res.json({ message: 'GreenBasket catalog refreshed', count: products.length });
-});
+}));
 
 module.exports = router;
 

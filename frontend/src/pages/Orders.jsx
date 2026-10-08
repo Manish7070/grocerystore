@@ -4,6 +4,7 @@ import { Banknote, CheckCircle2, Clock3, CreditCard, Package, ShoppingBag, Truck
 import { useAuth } from '../context/AuthContext';
 import { ordersAPI } from '../utils/api';
 import ProductArtwork from '../components/ProductArtwork';
+import { readPendingPayment, savePendingPayment } from '../utils/checkoutSession';
 
 const statusStyles = {
   pending: 'bg-amber-50 text-amber-700 ring-amber-200',
@@ -18,6 +19,26 @@ const Orders = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [syncing, setSyncing] = useState('');
+  const [statusMessage, setStatusMessage] = useState('');
+
+  const checkPayment = async (order) => {
+    setSyncing(order._id);
+    setError('');
+    setStatusMessage('');
+    try {
+      const { data } = await ordersAPI.syncPayment(order.razorpayOrderId);
+      if (data.paymentStatus === 'paid' && readPendingPayment(sessionStorage, user._id)?.id === order.razorpayOrderId) {
+        savePendingPayment(sessionStorage, user._id, null);
+      }
+      setOrders((current) => current.map((item) => item._id === order._id ? { ...item, paymentStatus: data.paymentStatus } : item));
+      setStatusMessage(data.paymentStatus === 'paid' ? 'Payment confirmed.' : 'Payment has not been confirmed yet. If money was debited, check again shortly.');
+    } catch (err) {
+      setError(err.response?.data?.message || 'Unable to check payment status. Please try again.');
+    } finally {
+      setSyncing('');
+    }
+  };
 
   useEffect(() => {
     if (!user) {
@@ -26,9 +47,14 @@ const Orders = () => {
     }
 
     ordersAPI.getOrders()
-      .then(({ data }) => setOrders(data || []))
+      .then(({ data }) => {
+        setOrders(data || []);
+        const pending = readPendingPayment(sessionStorage, user._id);
+        if (pending && data?.some(order => order.razorpayOrderId === pending.id && order.paymentStatus === 'paid')) {
+          savePendingPayment(sessionStorage, user._id, null);
+        }
+      })
       .catch((err) => {
-        console.error('Failed to fetch orders:', err);
         setError(err.response?.data?.message || 'Failed to load orders. Please try again.');
       })
       .finally(() => setLoading(false));
@@ -68,6 +94,7 @@ const Orders = () => {
         </div>
 
         {error && <div className="mb-6 rounded-2xl border border-red-200 bg-red-50 px-5 py-4 font-semibold text-red-800">{error}</div>}
+        {statusMessage && <p role="status" className="mb-6 rounded-2xl bg-emerald-50 px-5 py-4 text-emerald-800">{statusMessage}</p>}
 
         {orders.length === 0 ? (
           <div className="rounded-[2rem] border border-emerald-900/10 bg-white px-6 py-16 text-center shadow-xl">
@@ -102,6 +129,19 @@ const Orders = () => {
                   </div>
 
                   <div className="p-4 sm:p-6">
+                    {order.deliveryAddress?.address && (
+                      <div className="mb-4 rounded-2xl bg-stone-50 p-4 text-sm text-stone-700">
+                        <p className="font-bold">Deliver to {order.deliveryAddress.name}</p>
+                        <p>{order.deliveryAddress.address}, {order.deliveryAddress.city} - {order.deliveryAddress.pincode}</p>
+                        <p>{order.deliveryAddress.phone}</p>
+                      </div>
+                    )}
+                    {!isCod && order.paymentStatus !== 'paid' && order.razorpayOrderId && (
+                      <button type="button" onClick={() => checkPayment(order)} disabled={Boolean(syncing)}
+                        className="mb-4 rounded-xl border border-emerald-700 px-4 py-2 font-bold text-emerald-700 disabled:opacity-50">
+                        {syncing === order._id ? 'Checking payment...' : 'Check payment status'}
+                      </button>
+                    )}
                     <div className="space-y-3">
                       {order.items.map((item, index) => (
                         <div key={`${item.productId}-${index}`} className="flex items-center gap-3 rounded-2xl border border-stone-100 p-3 sm:gap-4">

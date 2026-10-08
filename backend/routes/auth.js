@@ -2,7 +2,11 @@ const express = require('express');
 const bcrypt = require('bcryptjs');
 const { generateToken, protect } = require('../middleware/auth');
 const User = require('../models/User');
+const asyncHandler = require('../middleware/asyncHandler');
 const router = express.Router();
+
+const textValue = (value) => typeof value === 'string' ? value.trim() : '';
+const validEmail = (email) => email.length <= 254 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
 const formatUser = (user, token) => ({
   _id: user._id,
@@ -15,12 +19,18 @@ const formatUser = (user, token) => ({
 
 router.post('/signup', async (req, res) => {
   try {
-    const name = req.body.name?.trim();
-    const email = req.body.email?.trim().toLowerCase();
+    const name = textValue(req.body.name);
+    const email = textValue(req.body.email).toLowerCase();
     const password = req.body.password;
 
-    if (!name || !email || !password) {
+    if (!name || !email || typeof password !== 'string' || !password) {
       return res.status(400).json({ message: 'Name, email and password are required' });
+    }
+    if (name.length > 100 || !validEmail(email)) {
+      return res.status(400).json({ message: 'Enter a valid name and email address' });
+    }
+    if (Buffer.byteLength(password, 'utf8') > 72) {
+      return res.status(400).json({ message: 'Password is too long (maximum 72 bytes)' });
     }
     if (password.length < 6) {
       return res.status(400).json({ message: 'Password must be at least 6 characters' });
@@ -46,10 +56,10 @@ router.post('/signup', async (req, res) => {
 
 router.post('/signin', async (req, res) => {
   try {
-    const email = req.body.email?.trim().toLowerCase();
+    const email = textValue(req.body.email).toLowerCase();
     const password = req.body.password;
 
-    if (!email || !password) {
+    if (!validEmail(email) || typeof password !== 'string' || !password || Buffer.byteLength(password, 'utf8') > 72) {
       return res.status(400).json({ message: 'Email and password are required' });
     }
 
@@ -68,8 +78,30 @@ router.get('/profile', protect, async (req, res) => {
   res.json(req.user);
 });
 
-router.put('/profile', protect, async (req, res) => {
-  const { name, email, deliveryProfile } = req.body;
+router.put('/profile', protect, asyncHandler(async (req, res) => {
+  const name = req.body.name === undefined ? req.user.name : textValue(req.body.name);
+  const email = req.body.email === undefined ? req.user.email : textValue(req.body.email).toLowerCase();
+  if (!name || name.length > 100 || !validEmail(email)) {
+    return res.status(400).json({ message: 'Enter a valid name and email address' });
+  }
+  let deliveryProfile;
+  if (req.body.deliveryProfile !== undefined) {
+    if (!req.body.deliveryProfile || typeof req.body.deliveryProfile !== 'object' || Array.isArray(req.body.deliveryProfile)) {
+      return res.status(400).json({ message: 'Invalid delivery profile' });
+    }
+    deliveryProfile = {};
+    for (const [field, limit] of Object.entries({ address: 500, city: 100, pincode: 6, preferredSlot: 100 })) {
+      const value = req.body.deliveryProfile[field];
+      if (value === undefined) continue;
+      if (typeof value !== 'string' || value.trim().length > limit) {
+        return res.status(400).json({ message: `Invalid delivery ${field}` });
+      }
+      deliveryProfile[field] = value.trim();
+    }
+    if (deliveryProfile.pincode && !/^[1-9]\d{5}$/.test(deliveryProfile.pincode)) {
+      return res.status(400).json({ message: 'Enter a valid 6-digit pincode' });
+    }
+  }
   const existingUser = await User.findOne({ email, _id: { $ne: req.user._id } });
 
   if (existingUser) {
@@ -86,13 +118,18 @@ router.put('/profile', protect, async (req, res) => {
   user.email = email || user.email;
   if (deliveryProfile) {
     user.deliveryProfile = {
-      ...user.deliveryProfile,
+      ...(user.deliveryProfile?.toObject?.() || user.deliveryProfile),
       ...deliveryProfile,
     };
   }
-  await user.save();
+  try {
+    await user.save();
+  } catch (error) {
+    if (error.code === 11000) return res.status(400).json({ message: 'Email already exists' });
+    throw error;
+  }
 
   res.json(formatUser(user));
-});
+}));
 
 module.exports = router;

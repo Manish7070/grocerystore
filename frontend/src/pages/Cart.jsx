@@ -89,6 +89,7 @@ const Cart = () => {
             ) : (
               <Link
                 to="/signin"
+                state={{ from: '/checkout' }}
                 className="flex w-full items-center justify-center gap-2 rounded-2xl bg-emerald-700 px-8 py-4 text-lg font-black text-white shadow-lg shadow-emerald-900/15 transition hover:-translate-y-1 hover:bg-emerald-800"
               >
                 Login to Checkout

@@ -10,6 +10,7 @@ const orderSchema = new mongoose.Schema({
       type: String,
     },
     name: String,
+    externalId: String,
     category: String,
     price: Number,
     quantity: Number,
@@ -18,6 +19,13 @@ const orderSchema = new mongoose.Schema({
   totalAmount: {
     type: Number,
     required: true,
+  },
+  deliveryAddress: {
+    name: String,
+    phone: String,
+    address: String,
+    city: String,
+    pincode: String,
   },
   paymentMethod: {
     type: String,

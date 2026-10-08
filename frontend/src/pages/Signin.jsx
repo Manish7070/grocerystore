@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { authAPI } from '../utils/api';
 import { LogIn } from 'lucide-react';
@@ -10,6 +10,9 @@ const Signin = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const location = useLocation();
+  const requestedPath = location.state?.from;
+  const returnTo = typeof requestedPath === 'string' && requestedPath.startsWith('/') && !requestedPath.startsWith('//') && !requestedPath.includes('\\') ? requestedPath : '/';
   const { login } = useAuth();
   const { showToast } = useToast();
 
@@ -21,7 +24,7 @@ const Signin = () => {
       const res = await authAPI.signin(formData);
       login(res.data);
       showToast('Signed in successfully');
-      navigate('/');
+      navigate(returnTo, { replace: true });
     } catch (err) {
       const message = err.response?.data?.message || 'Signin failed';
       setError(message);
@@ -40,6 +43,7 @@ const Signin = () => {
           <p className="text-slate-600">Sign in to your account</p>
         </div>
         <form onSubmit={handleSubmit}>
+          {location.state?.sessionExpired && <p role="status" className="mb-5 rounded-xl bg-amber-50 p-4 text-sm text-amber-900">Your session expired. Sign in again to continue. Your cart is saved.</p>}
           {error && <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg mb-6">{error}</div>}
           <div className="space-y-4 mb-6">
             <div>
@@ -73,7 +77,7 @@ const Signin = () => {
         </form>
         <p className="mt-6 text-center text-sm text-slate-600">
           Don&apos;t have an account?{' '}
-          <Link to="/signup" className="font-medium text-emerald-600 hover:text-emerald-500">Sign up</Link>
+          <Link to="/signup" state={{ from: returnTo }} className="font-medium text-emerald-600 hover:text-emerald-500">Sign up</Link>
         </p>
       </div>
     </div>
