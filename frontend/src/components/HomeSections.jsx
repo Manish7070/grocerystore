@@ -47,17 +47,17 @@ const HomeSections = ({ products = [], onCategorySelect }) => {
       </section>
 
       {/* Differentiator Highlight Banner: Freshness & Waste Reduction */}
-      <section className="mb-12 overflow-hidden rounded-[2.5rem] bg-gradient-to-br from-[#075F46] via-[#0b4d37] to-[#127552] p-8 text-white shadow-xl lg:p-12">
+      <section className="mb-12 overflow-hidden rounded-[2.5rem] bg-gradient-to-br from-[#192D2A] via-[#243B37] to-[#192D2A] p-8 text-white shadow-xl lg:p-12">
         <div className="grid gap-8 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
           <div>
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-white/20 px-3.5 py-1 text-xs font-black tracking-wider uppercase text-emerald-100 backdrop-blur">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-white/20 px-3.5 py-1 text-xs font-black tracking-wider uppercase text-[#D9A441] backdrop-blur">
               <Sparkles size={14} />
               What Makes Us Truly Different?
             </span>
             <h2 className="mt-4 text-3xl font-black tracking-tight sm:text-4xl">
               Freshness Radar & Zero-Waste Guarantee
             </h2>
-            <p className="mt-3 max-w-xl text-sm font-medium leading-relaxed text-emerald-100">
+            <p className="mt-3 max-w-xl text-sm font-medium leading-relaxed text-[#E7E2D9]">
               Normal supermarkets discard expiring food. At TaazaDaily, our intelligent batch management system tracks harvest expiry dates and offers automatic smart markdown discounts—saving you money while reducing food waste to zero.
             </p>
             <div className="mt-6 flex flex-wrap gap-4">
@@ -102,13 +102,13 @@ const HomeSections = ({ products = [], onCategorySelect }) => {
       </section>
 
       {/* 3 Step Shopping Journey */}
-      <section className="mb-12 overflow-hidden rounded-[2.5rem] border border-emerald-900/10 bg-[#075F46] px-6 py-10 text-white shadow-xl sm:px-10">
+      <section className="mb-12 overflow-hidden rounded-[2.5rem] border border-white/10 bg-[#192D2A] px-6 py-10 text-white shadow-xl sm:px-10">
         <div className="mb-8 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <p className="text-xs font-black uppercase tracking-[0.24em] text-emerald-300">Effortless Commerce</p>
+            <p className="text-xs font-black uppercase tracking-[0.24em] text-[#D9A441]">Effortless Commerce</p>
             <h2 className="mt-2 text-2xl font-black tracking-tight sm:text-3xl">From harvest soil to your kitchen in 3 steps</h2>
           </div>
-          <p className="max-w-md text-xs font-medium leading-relaxed text-stone-200">
+          <p className="max-w-md text-xs font-medium leading-relaxed text-[#E7E2D9]">
             Fewer taps, transparent Indian Rupee pricing, and a checkout that works with Cash on Delivery or Razorpay.
           </p>
         </div>
@@ -116,26 +116,26 @@ const HomeSections = ({ products = [], onCategorySelect }) => {
           {shoppingSteps.map(({ icon: Icon, number, title, text }) => (
             <div key={number} className="rounded-[1.75rem] border border-white/10 bg-white/[0.08] p-6 backdrop-blur">
               <div className="mb-5 flex items-center justify-between">
-                <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-400 text-stone-950">
+                <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#D9A441] text-[#242321]">
                   <Icon size={22} />
                 </span>
                 <span className="text-sm font-black tracking-[0.2em] text-white/30">{number}</span>
               </div>
               <h3 className="text-lg font-black text-white">{title}</h3>
-              <p className="mt-2 text-xs font-medium leading-relaxed text-stone-300">{text}</p>
+              <p className="mt-2 text-xs font-medium leading-relaxed text-[#E7E2D9]">{text}</p>
             </div>
           ))}
         </div>
       </section>
 
       {/* Shop by Category Grid */}
-      <section className="mb-16 rounded-[2.5rem] bg-white p-6 shadow-sm border border-emerald-900/10 dark:bg-[#14231a] dark:border-white/10 sm:p-10">
+      <section className="mb-16 rounded-[2.5rem] bg-white p-6 shadow-sm border border-[#E9DDCA] dark:bg-[#14231a] dark:border-white/10 sm:p-10">
         <div className="mx-auto mb-10 max-w-2xl text-center">
-          <span className="text-xs font-black uppercase tracking-[0.28em] text-orange-500">Curated Aisles</span>
-          <h2 className="mt-2 text-3xl font-black tracking-tight text-stone-900 dark:text-white sm:text-4xl">
+          <span className="text-xs font-black uppercase tracking-[0.28em] text-[#C66B42]">Curated Aisles</span>
+          <h2 className="mt-2 text-3xl font-black tracking-tight text-[#242321] dark:text-white sm:text-4xl">
             Shop by Fresh Category
           </h2>
-          <div className="mx-auto mt-3 h-1 w-16 rounded-full bg-emerald-600" />
+          <div className="mx-auto mt-3 h-1 w-16 rounded-full bg-[#C66B42]" />
           <p className="mx-auto mt-3 max-w-xl text-sm font-medium text-stone-500">
             Carefully curated daily staples and farm picks organized for effortless discovery.
           </p>
@@ -159,7 +159,7 @@ const HomeSections = ({ products = [], onCategorySelect }) => {
                 />
               </span>
               <span className={`mt-3 block text-sm font-black ${category.accent}`}>{category.title}</span>
-              <span className="mt-1 inline-flex items-center justify-center gap-1 text-[11px] font-bold text-stone-400 group-hover:text-emerald-700">
+              <span className="mt-1 inline-flex items-center justify-center gap-1 text-[11px] font-bold text-stone-400 group-hover:text-[#C66B42]">
                 Explore Aisle
                 <ArrowRight size={11} />
               </span>
@@ -169,20 +169,20 @@ const HomeSections = ({ products = [], onCategorySelect }) => {
       </section>
 
       {/* First Order Offer Banner */}
-      <section className="mb-14 rounded-[2.5rem] bg-amber-50 p-6 sm:p-10 border border-amber-200/60 dark:bg-amber-950/30 dark:border-amber-800/40">
+      <section className="mb-14 rounded-[2.5rem] bg-[#F6F0E5] p-6 sm:p-10 border border-[#E9DDCA] dark:bg-[#1A2322] dark:border-white/10">
         <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
           <div>
-            <span className="text-xs font-black uppercase tracking-widest text-amber-800 dark:text-amber-300">Welcome Gift</span>
-            <h2 className="mt-1 text-2xl font-black text-stone-900 tracking-tight dark:text-white sm:text-3xl">
+            <span className="text-xs font-black uppercase tracking-widest text-[#C66B42]">Welcome Gift</span>
+            <h2 className="mt-1 text-2xl font-black text-[#242321] tracking-tight dark:text-white sm:text-3xl">
               Get ₹50 OFF Your First Grocery Basket!
             </h2>
             <p className="mt-1 text-sm font-medium text-stone-600 dark:text-stone-300">
-              Use code <strong className="font-mono text-emerald-800 dark:text-emerald-400 font-black">WELCOME50</strong> during checkout on orders above ₹199.
+              Use code <strong className="font-mono text-[#C66B42] font-black">WELCOME50</strong> during checkout on orders above ₹199.
             </p>
           </div>
           <Link
             to="/shop"
-            className="inline-flex items-center justify-center gap-2 rounded-2xl bg-[#075F46] px-8 py-3.5 text-sm font-black text-white hover:bg-[#064D3A] transition shadow-md shrink-0"
+            className="inline-flex items-center justify-center gap-2 rounded-2xl bg-[#C66B42] px-8 py-3.5 text-sm font-black text-white hover:bg-[#B9583D] transition shadow-md shrink-0"
           >
             Claim Offer & Shop Now
             <ArrowRight size={16} />

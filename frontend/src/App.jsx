@@ -24,6 +24,7 @@ import Footer from './components/Footer';
 import Settings from './pages/Settings';
 import Watchlist from './pages/Watchlist';
 import NotFound from './pages/NotFound';
+import LogoConceptsShowcase from './components/LogoConceptsShowcase';
 
 function AppContent() {
   return (
@@ -49,6 +50,7 @@ function AppContent() {
           <Route path="/cart" element={<Cart />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/orders" element={<Orders />} />
+          <Route path="/brand-identity" element={<LogoConceptsShowcase />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>

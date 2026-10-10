@@ -8,16 +8,16 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: #F7F4EE;
+  background: #F1E8D8;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #E6DED3;
+  background: #DDD5C8;
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #B65337;
+  background: #C66B42;
 }
 
 html {
@@ -31,24 +31,24 @@ html {
 body {
   margin: 0;
   min-width: 320px;
-  background-color: #F7F4EE;
-  color: #27221F;
+  background-color: #F1E8D8;
+  color: #192D2A;
   font-family: 'Manrope', system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 html.dark body {
-  background-color: #191416;
-  color: #F7F4EE;
+  background-color: #192D2A;
+  color: #F1E8D8;
 }
 
-html.dark ::-webkit-scrollbar-track { background: #191416; }
-html.dark ::-webkit-scrollbar-thumb { background: #35272F; }
+html.dark ::-webkit-scrollbar-track { background: #192D2A; }
+html.dark ::-webkit-scrollbar-thumb { background: #292724; }
 
 ::selection {
-  background: #EED6C3;
-  color: #27221F;
+  background: #C66B42;
+  color: #FFFFFF;
 }
 
 .font-editorial {
@@ -59,24 +59,27 @@ html.dark ::-webkit-scrollbar-thumb { background: #35272F; }
   font-family: 'Manrope', system-ui, sans-serif;
 }
 
-/* Subtle luxury borders & cards */
 .editorial-border {
-  border-color: #E6DED3;
+  border-color: #DDD5C8;
 }
 
 html.dark .editorial-border {
-  border-color: rgba(230, 222, 211, 0.12);
+  border-color: rgba(221, 213, 200, 0.15);
 }
 
 @layer components {
+  /* Global Button System */
   .btn-primary {
-    @apply bg-terracotta text-ivory hover:bg-[#9C432A] active:scale-[0.99] transition-all duration-200 font-semibold shadow-sm;
+    @apply bg-copper text-surface hover:bg-[#B05932] active:scale-[0.99] transition-all duration-200 font-semibold shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-copper/40;
   }
   .btn-secondary {
-    @apply bg-porcelain border border-sandstone text-espresso hover:bg-sandstone/30 active:scale-[0.99] transition-all duration-200 font-semibold;
+    @apply bg-surface border border-sandstoneBorder text-forest hover:bg-oat active:scale-[0.99] transition-all duration-200 font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-forest/20;
+  }
+  .btn-dark {
+    @apply bg-forest text-surface hover:bg-charcoal active:scale-[0.99] transition-all duration-200 font-semibold shadow-sm;
   }
   .card-luxury {
-    @apply bg-ivory border border-sandstone shadow-subtle hover:shadow-card transition-all duration-300;
+    @apply bg-surface border border-sandstoneBorder shadow-subtle hover:shadow-card transition-all duration-300;
   }
 }
 

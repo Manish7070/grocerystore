@@ -1,137 +1,174 @@
 import { Link } from 'react-router-dom';
 
 /**
- * Concept A: Architectural Heritage Monogram
- * Chiseled serif junctions, interlocking vertical geometry,
- * inspired by classical luxury engraving and architectural cartouches.
+ * MASTER CUSTOM GS MONOGRAM — EMBOSSED BLACKLETTER & WHEAT CRAFTSMANSHIP
+ * Direct vector translation of the requested artisan emblem:
+ * - Chiseled Gothic / Blackletter 'G' with beveled spurs & faceted serifs
+ * - Interlocking tall Gothic 'S' weaving through G's center
+ * - Handcrafted wheat / barley ear stalk emerging through the central negative space
+ * - Botanical flourish at the base
+ * - Scalable from 28px navbar to 120px+ hero
  */
-export const GSMonogramConceptA = ({ className = 'h-10 w-10', color = '#27221F', accent = '#B65337' }) => (
-  <svg viewBox="0 0 54 54" fill="none" xmlns="http://www.w3.org/2000/svg" className={className} aria-hidden="true">
-    {/* Subtle architectural border */}
-    <rect x="2" y="2" width="50" height="50" rx="10" stroke={color} strokeWidth="1.2" strokeOpacity="0.25" />
-    <rect x="4.5" y="4.5" width="45" height="45" rx="8" stroke={color} strokeWidth="0.6" strokeOpacity="0.12" />
-    {/* Architectural letter 'G' */}
-    <path
-      d="M37 18C34.2 13.6 29.8 11.5 24.5 11.5C15.8 11.5 9.5 17.8 9.5 26.5C9.5 35.2 15.8 41.5 24.5 41.5C32.2 41.5 37.5 36.8 38.5 29.5H25.5V25H42C42.4 26.8 42.6 28.5 42.6 30C42.6 39 35 45.5 24.5 45.5C13.5 45.5 5.5 37 5.5 26.5C5.5 16 13.5 7.5 24.5 7.5C31.2 7.5 37 10.4 40.5 15.5L37 18Z"
-      fill={color}
-    />
-    {/* Chiseled letter 'S' interwoven through the 'G' spine */}
-    <path
-      d="M36 21C36 17.5 32.8 15 28 15C23 15 19.5 17.5 19.5 21C19.5 25.5 27 26.5 32.5 28C37.8 29.5 41 33 41 37.5C41 43.5 35.5 46.5 28.5 46.5C22.2 46.5 17 43.2 14.5 38.5L18.8 35.5C20.8 39 24.5 41.8 28.5 41.8C33 41.8 36.2 39.8 36.2 36.8C36.2 33 30 31.8 24.5 30.2C19.8 28.8 15.5 25.5 15.5 20.8C15.5 14.8 21 10.8 28 10.8C33.8 10.8 38.5 13.5 40.8 18L36 21Z"
-      fill={accent}
-    />
-  </svg>
-);
+export const GSMonogram = ({
+  className = 'h-10 w-10',
+  variant = 'default',
+  colorOverride = null,
+}) => {
+  // Theme palette mapping
+  let mainColor = '#192D2A';   // Forest ink
+  let accentColor = '#C66B42'; // Burnt copper
+  let grainColor = '#D9A441';  // Golden ochre
 
-/**
- * Concept B: Sculpted Contemporary Monogram
- * Clean calligraphic continuous-stroke integration where G and S
- * form a unified luxury seal.
- */
-export const GSMonogramConceptB = ({ className = 'h-10 w-10', color = '#27221F', accent = '#B65337' }) => (
-  <svg viewBox="0 0 54 54" fill="none" xmlns="http://www.w3.org/2000/svg" className={className} aria-hidden="true">
-    <circle cx="27" cy="27" r="24" stroke={color} strokeWidth="1.2" strokeOpacity="0.2" />
-    <path
-      d="M27 9C17 9 9 17 9 27C9 37 17 45 27 45C34.5 45 40.5 40.5 43 34H27V28H46C46.5 30 46.8 32 46.8 34C46.8 44 38 49 27 49C14.8 49 5 39.2 5 27C5 14.8 14.8 5 27 5C35 5 41.8 9.2 45.2 15.5L40.2 18.5C37.8 12.8 32.8 9 27 9Z"
-      fill={color}
-    />
-    <path
-      d="M33 19C33 16 30 14 26 14C21.5 14 18 16.5 18 20C18 24 24 25.5 29 27C35 28.8 39 32 39 37C39 43 33.5 46 26.5 46C20 46 15 42.5 12.8 37.5L17.5 34.5C19 38 22.5 40.8 26.5 40.8C30.5 40.8 33.5 38.8 33.5 35.8C33.5 32 27.5 30.8 22.5 29C17.5 27.2 13.5 24 13.5 19.5C13.5 14 19 10 26 10C31.8 10 36.2 13 38.5 17.5L33 19Z"
-      fill={accent}
-    />
-  </svg>
-);
+  if (variant === 'inverted' || variant === 'white') {
+    mainColor = '#F8F3EA';
+    accentColor = '#D9A441';
+    grainColor = '#D9A441';
+  } else if (variant === 'copper') {
+    mainColor = '#C66B42';
+    accentColor = '#192D2A';
+    grainColor = '#D9A441';
+  }
 
-/**
- * Concept C: Modern Artisan Monogram
- * Handcrafted diamond emblem with engraved finials and sharp terminals.
- */
-export const GSMonogramConceptC = ({ className = 'h-10 w-10', color = '#27221F', accent = '#B58B4C' }) => (
-  <svg viewBox="0 0 54 54" fill="none" xmlns="http://www.w3.org/2000/svg" className={className} aria-hidden="true">
-    <path d="M27 3L51 27L27 51L3 27L27 3Z" stroke={color} strokeWidth="1.2" strokeOpacity="0.3" fill="none" />
-    <path d="M27 7L47 27L27 47L7 27L27 7Z" stroke={accent} strokeWidth="0.8" strokeOpacity="0.4" fill="none" />
-    <path
-      d="M35 18C32.5 14 28.5 12 24 12C16 12 10.5 17.5 10.5 25.5C10.5 33.5 16 39 24 39C30.5 39 35 35 36.2 29H25V25H40C40.2 26.5 40.5 28 40.5 29.5C40.5 36.5 34 43 24 43C13.5 43 6.5 35 6.5 25.5C6.5 16 13.5 8 24 8C30 8 35.5 10.5 38.8 15L35 18Z"
-      fill={color}
-    />
-    <path
-      d="M33 21C33 18 30 16 26.5 16C22.5 16 19.5 18 19.5 21C19.5 24.8 25.5 25.8 30 27C34.5 28.2 37.5 31 37.5 35C37.5 40 33 43 27 43C21.5 43 17 40 15 36L18.5 33C20 36 23 38.5 27 38.5C30.5 38.5 33 37 33 34.5C33 31.5 27.5 30.5 23 29C18.5 27.5 15.5 24.8 15.5 21C15.5 16 20.2 12.5 26.5 12.5C31.5 12.5 35.2 15 37.2 19L33 21Z"
-      fill={accent}
-    />
-  </svg>
-);
-
-/**
- * MASTER PRODUCTION GS MONOGRAM
- * Selected Concept: Architectural Heritage.
- * Precision sculpted vector paths, balanced negative space,
- * legible at 24px–120px+, monochrome or dual-tone luxury palette.
- */
-export const GSMonogram = ({ className = 'h-9 w-9', variant = 'default' }) => {
-  // Variant palettes
-  let frameColor = '#E6DED3';
-  let letterGColor = '#27221F';
-  let letterSColor = '#B65337';
-  let bgColor = '#FFFCF7';
-
-  if (variant === 'inverted') {
-    frameColor = 'rgba(247, 244, 238, 0.25)';
-    letterGColor = '#F7F4EE';
-    letterSColor = '#D4A373';
-    bgColor = '#35272F';
-  } else if (variant === 'black') {
-    frameColor = '#27221F';
-    letterGColor = '#27221F';
-    letterSColor = '#27221F';
-    bgColor = 'transparent';
-  } else if (variant === 'white') {
-    frameColor = '#FFFFFF';
-    letterGColor = '#FFFFFF';
-    letterSColor = '#FFFFFF';
-    bgColor = 'transparent';
+  if (colorOverride) {
+    mainColor = colorOverride;
+    accentColor = colorOverride;
+    grainColor = colorOverride;
   }
 
   return (
     <svg
-      viewBox="0 0 54 54"
+      viewBox="0 0 100 105"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       className={className}
-      aria-hidden="true"
+      aria-label="GroceryStore Handcrafted GS Monogram"
     >
-      {/* Precision Chamfered Frame */}
-      <rect x="1.5" y="1.5" width="51" height="51" rx="11" fill={bgColor} stroke={frameColor} strokeWidth="1.2" />
-      <rect x="4" y="4" width="46" height="46" rx="8.5" fill="none" stroke={frameColor} strokeWidth="0.5" strokeOpacity="0.4" />
-
-      {/* Architectural Letter 'G' with classical serif spur */}
+      {/* ─────────────────────────────────────────────────────────────
+          1. CHISELED BLACKLETTER / GOTHIC 'G'
+          Features faceted spurs, diagonal cut bevels, and Roman base
+      ───────────────────────────────────────────────────────────── */}
+      {/* Upper serif flag of G */}
       <path
-        d="M37 17.5C34.2 13.2 29.8 11.2 24.5 11.2C15.8 11.2 9.5 17.5 9.5 26.5C9.5 35.5 15.8 41.8 24.5 41.8C32.2 41.8 37.5 37 38.5 29.8H25.5V25.2H42C42.4 27 42.6 28.6 42.6 30.2C42.6 39.2 35 45.8 24.5 45.8C13.5 45.8 5.5 37.2 5.5 26.5C5.5 15.8 13.5 7.2 24.5 7.2C31.2 7.2 37 10.2 40.5 15.2L37 17.5Z"
-        fill={letterGColor}
+        d="M26 18L32 10L36 12L31 20H46L49 14L53 16L48 24C48 24 43 27 38 27C30 27 25 32 25 41C25 50 30 55 38 55C44 55 49 51 51 45H39V37H59V46C59 58 49 65 37 65C21 65 13 54 13 40C13 26 21 16 35 16C40 16 45 18 48 20L44 24C41 22 38 21 35 21C27 21 21 27 21 39C21 51 27 58 37 58C44 58 50 54 52 47H45V43H53V47C53 52 48 59 38 59C28 59 22 51 22 40C22 29 27 22 35 22C38 22 42 24 44 26L41 29L37 26C34 26 31 28 30 30L26 18Z"
+        fill={mainColor}
+      />
+      {/* Main body of G with chiseled spurs and faceted bevel cuts */}
+      <path
+        d="M36 15C44 15 50 19 53 24L48 28C46 24 41 21 36 21C26 21 19 28 19 40C19 52 26 59 36 59C44 59 49 54 51 46H39V38H58V45C58 58 48 66 36 66C20 66 11 54 11 40C11 25 20 15 36 15Z"
+        fill={mainColor}
+      />
+      {/* Left chiseled mid-spur of G */}
+      <path
+        d="M11 39L5 37L7 32L13 34L11 39Z"
+        fill={mainColor}
+      />
+      <path
+        d="M13 34L5 37L11 42L15 38L13 34Z"
+        fill={accentColor}
+        opacity="0.85"
       />
 
-      {/* Sculpted Letter 'S' weaving through G's center */}
+      {/* ─────────────────────────────────────────────────────────────
+          2. INTERTWINED TALL BLACKLETTER 'S'
+          Features arching top terminal, central spine weaving through G,
+          and sweeping bottom loop
+      ───────────────────────────────────────────────────────────── */}
+      {/* Upper arch and flag of S */}
       <path
-        d="M36 20.8C36 17.2 32.8 14.8 28 14.8C23 14.8 19.5 17.2 19.5 20.8C19.5 25.2 27 26.2 32.5 27.8C37.8 29.2 41 32.8 41 37.2C41 43.2 35.5 46.2 28.5 46.2C22.2 46.2 17 43 14.5 38.2L18.8 35.2C20.8 38.8 24.5 41.5 28.5 41.5C33 41.5 36.2 39.5 36.2 36.5C36.2 32.8 30 31.5 24.5 29.8C19.8 28.5 15.5 25.2 15.5 20.5C15.5 14.5 21 10.5 28 10.5C33.8 10.5 38.5 13.2 40.8 17.8L36 20.8Z"
-        fill={letterSColor}
+        d="M50 12L56 5L61 8L57 16C62 17 68 20 71 24C75 29 76 35 73 40C70 45 64 47 57 49C48 52 43 54 43 60C43 65 47 69 55 69C62 69 68 65 71 59L76 62C72 70 64 75 54 75C42 75 35 69 35 59C35 51 41 46 50 43C59 40 65 38 65 32C65 27 61 23 54 23C48 23 43 26 39 30L34 26C39 20 46 16 55 16L50 12Z"
+        fill={accentColor}
+      />
+      {/* Shaded faceted depth line for S spine */}
+      <path
+        d="M53 19C61 19 68 23 68 31C68 37 62 40 54 43C45 46 39 49 39 58C39 65 45 71 54 71C60 71 66 67 69 62L66 60C63 64 59 66 54 66C48 66 44 62 44 57C44 51 49 48 57 45C65 42 72 38 72 31C72 24 65 19 55 19H53Z"
+        fill={mainColor}
+      />
+      {/* S bottom decorative terminal flourish */}
+      <path
+        d="M71 59L77 55L78 61L72 63L71 59Z"
+        fill={accentColor}
+      />
+
+      {/* ─────────────────────────────────────────────────────────────
+          3. CENTRAL WHEAT / BARLEY EAR STALK (The Agricultural Soul)
+          Grows right through the center intersection of G and S
+      ───────────────────────────────────────────────────────────── */}
+      {/* Central stem */}
+      <path
+        d="M48 24C47.5 32 46.5 42 46 54C45.5 62 44 70 42 76"
+        stroke={grainColor}
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
+      {/* Grain husks (alternating right and left along the stem) */}
+      <path
+        d="M47 26C45 22 47 18 48 16C49 18 51 22 49 26C48 27 47.5 27 47 26Z"
+        fill={grainColor}
+      />
+      <path
+        d="M44 31C41 29 42 25 43 23C45 25 46 29 45 32C44.5 32 44.2 31.5 44 31Z"
+        fill={grainColor}
+      />
+      <path
+        d="M50 32C53 30 54 26 54 24C52 26 50 30 49 33L50 32Z"
+        fill={grainColor}
+      />
+      <path
+        d="M43 38C40 36 40 32 42 30C43 32 45 36 44 39L43 38Z"
+        fill={grainColor}
+      />
+      <path
+        d="M49 39C52 37 53 33 53 31C51 33 49 37 48 40L49 39Z"
+        fill={grainColor}
+      />
+      <path
+        d="M42 45C39 43 39 39 41 37C42 39 44 43 43 46L42 45Z"
+        fill={grainColor}
+      />
+      <path
+        d="M48 46C51 44 52 40 52 38C50 40 48 44 47 47L48 46Z"
+        fill={grainColor}
+      />
+
+      {/* ─────────────────────────────────────────────────────────────
+          4. BOTANICAL ROOT / BASE FLOURISH
+          Rooted at the base of the emblem, matching the reference photo
+      ───────────────────────────────────────────────────────────── */}
+      <path
+        d="M46 76C44 79 40 82 36 84L37 81C40 80 43 78 45 75L46 76Z"
+        fill={grainColor}
+      />
+      <path
+        d="M46 76C48 79 52 82 56 84L55 81C52 80 49 78 47 75L46 76Z"
+        fill={grainColor}
+      />
+      <path
+        d="M46 76V86H45V76H46Z"
+        fill={grainColor}
       />
     </svg>
   );
 };
 
 export const BrandLogoIcon = GSMonogram;
+export const GSMonogramConceptA = (props) => <GSMonogram {...props} variant="default" />;
+export const GSMonogramConceptB = (props) => <GSMonogram {...props} variant="copper" />;
+export const GSMonogramConceptC = (props) => <GSMonogram {...props} variant="inverted" />;
 
 /**
- * Production Brand Lockup for GroceryStore
+ * MASTER BRAND LOCKUP
+ * Combines the sculpted GS Wheat Monogram with the Calligraphic Script
+ * "Grocery Store" wordmark and elegant swash.
  */
 export const Brand = ({
   compact = false,
   inverted = false,
   stacked = false,
-  variant = 'default',
   onClick,
   className = '',
 }) => {
-  const chosenVariant = inverted ? 'inverted' : variant;
+  const textColor = inverted ? '#F8F3EA' : '#192D2A';
+  const swashColor = inverted ? '#D9A441' : '#C66B42';
 
   if (stacked) {
     return (
@@ -139,17 +176,29 @@ export const Brand = ({
         to="/"
         onClick={onClick}
         className={`group flex flex-col items-center text-center transition-opacity hover:opacity-95 ${className}`}
-        aria-label="GroceryStore — Contemporary Premium Grocery"
+        aria-label="GroceryStore — Premium Grocery Commerce"
       >
-        <span className="h-14 w-14 mb-2 flex items-center justify-center transition-transform duration-300 group-hover:scale-105">
-          <GSMonogram className="h-full w-full drop-shadow-subtle" variant={chosenVariant} />
+        <span className="h-16 w-16 mb-2 flex items-center justify-center transition-transform duration-300 group-hover:scale-105">
+          <GSMonogram
+            className="h-full w-full drop-shadow-sm"
+            variant={inverted ? 'inverted' : 'default'}
+          />
         </span>
-        <span className={`block font-serif text-2xl tracking-[-0.02em] font-semibold ${inverted ? 'text-ivory' : 'text-espresso dark:text-ivory'}`}>
-          Grocery<span className={inverted ? 'text-apricot' : 'text-terracotta'}>Store</span>
-        </span>
-        <span className={`mt-0.5 block font-sans text-[10px] font-bold uppercase tracking-[0.24em] ${inverted ? 'text-ivory/60' : 'text-warmStone dark:text-ivory/50'}`}>
-          Fine Provisions & Market
-        </span>
+        <div className="flex flex-col items-center">
+          <span className={`font-serif text-3xl font-normal tracking-[-0.02em] ${inverted ? 'text-surface' : 'text-forest dark:text-surface'}`}>
+            Grocery<span className={inverted ? 'text-ochre' : 'text-copper'}>Store</span>
+          </span>
+          {/* Calligraphic swash line */}
+          <svg viewBox="0 0 160 14" fill="none" className="w-32 h-3 mt-0.5 text-copper dark:text-ochre">
+            <path
+              d="M5 4C35 4 60 11 110 8C135 6 150 2 155 1C152 4 140 10 110 11C60 13 35 6 5 4Z"
+              fill={swashColor}
+            />
+          </svg>
+          <span className={`mt-0.5 block font-sans text-[10px] font-bold uppercase tracking-[0.24em] ${inverted ? 'text-surface/70' : 'text-mutedStone dark:text-surface/60'}`}>
+            Fine Provisions & Fresh Market
+          </span>
+        </div>
       </Link>
     );
   }
@@ -158,18 +207,28 @@ export const Brand = ({
     <Link
       to="/"
       onClick={onClick}
-      className={`group inline-flex shrink-0 items-center gap-3 transition-opacity hover:opacity-95 ${className}`}
-      aria-label="GroceryStore — Contemporary Premium Grocery"
+      className={`group inline-flex shrink-0 items-center gap-3.5 transition-opacity hover:opacity-95 ${className}`}
+      aria-label="GroceryStore — Premium Grocery Commerce"
     >
-      <span className={`${compact ? 'h-9 w-9' : 'h-11 w-11'} flex shrink-0 items-center justify-center transition-transform duration-300 group-hover:scale-105`}>
-        <GSMonogram className="h-full w-full drop-shadow-subtle" variant={chosenVariant} />
+      <span className={`${compact ? 'h-10 w-10' : 'h-12 w-12'} flex shrink-0 items-center justify-center transition-transform duration-300 group-hover:scale-105`}>
+        <GSMonogram
+          className="h-full w-full drop-shadow-sm"
+          variant={inverted ? 'inverted' : 'default'}
+        />
       </span>
-      <span className="leading-tight">
-        <span className={`block font-serif tracking-[-0.03em] font-semibold ${compact ? 'text-xl' : 'text-2xl sm:text-[25px]'} ${inverted ? 'text-ivory' : 'text-espresso dark:text-ivory'}`}>
-          Grocery<span className={inverted ? 'text-apricot' : 'text-terracotta'}>Store</span>
+      <span className="leading-tight flex flex-col justify-center">
+        <span className={`block font-serif tracking-[-0.03em] font-normal ${compact ? 'text-2xl' : 'text-2xl sm:text-[27px]'} ${inverted ? 'text-surface' : 'text-forest dark:text-surface'}`}>
+          Grocery<span className={inverted ? 'text-ochre' : 'text-copper'}>Store</span>
         </span>
-        <span className={`block font-sans text-[9px] font-extrabold uppercase tracking-[0.24em] ${inverted ? 'text-ivory/60' : 'text-warmStone dark:text-ivory/50'}`}>
-          Fine Provisions & Fresh Market
+        {/* Calligraphic delicate swash */}
+        <svg viewBox="0 0 130 10" fill="none" className="w-24 sm:w-28 h-2 -mt-0.5 text-copper dark:text-ochre">
+          <path
+            d="M2 3C25 3 45 8 85 6C105 5 118 2 125 1C122 3 112 7 85 8C45 9 25 4 2 3Z"
+            fill={swashColor}
+          />
+        </svg>
+        <span className={`block font-sans text-[9px] font-extrabold uppercase tracking-[0.24em] ${inverted ? 'text-surface/70' : 'text-mutedStone dark:text-surface/60'}`}>
+          Fine Provisions & Market
         </span>
       </span>
     </Link>
