@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { authAPI, ordersAPI, couponsAPI } from '../utils/api';
 import { initiatePayment } from '../utils/razorpay';
-import { CreditCard, CheckCircle, Tag, Truck } from 'lucide-react';
+import { CreditCard, CheckCircle, Tag, Truck, ShieldCheck, MapPin } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
 import { readAddressDraft, readPendingPayment, savePendingPayment, cartFingerprint } from '../utils/checkoutSession';
 
@@ -16,13 +16,13 @@ const Checkout = () => {
   const [paymentSuccess, setPaymentSuccess] = useState(false);
   const [completedPaymentMethod, setCompletedPaymentMethod] = useState('');
   const [placedOrder, setPlacedOrder] = useState(null);
-  const [deliverySlot, setDeliverySlot] = useState('Express Delivery (30-45 mins)');
+  const [deliverySlot, setDeliverySlot] = useState('Express Dispatch (Next 2-hour window)');
   const [couponInput, setCouponInput] = useState('');
   const [appliedCoupon, setAppliedCoupon] = useState('');
   const [couponDiscount, setCouponDiscount] = useState(0);
   const [couponLoading, setCouponLoading] = useState(false);
   const [pendingPayment, setPendingPayment] = useState(() => readPendingPayment(sessionStorage, user?._id));
-  const [paymentMethod, setPaymentMethod] = useState(() => pendingPayment ? 'razorpay' : 'cod');
+  const [paymentMethod, setPaymentMethod] = useState(() => (pendingPayment ? 'razorpay' : 'cod'));
   const [paymentConfigured, setPaymentConfigured] = useState(null);
   const [paymentError, setPaymentError] = useState('');
   const [paymentMode, setPaymentMode] = useState('');
@@ -40,7 +40,7 @@ const Checkout = () => {
       setCouponDiscount(res.data.discount);
       showToast(res.data.message, 'success');
     } catch (err) {
-      showToast(err.response?.data?.message || 'Invalid coupon code', 'error');
+      showToast(err.response?.data?.message || 'Invalid promotional voucher', 'error');
     } finally {
       setCouponLoading(false);
     }
@@ -54,15 +54,24 @@ const Checkout = () => {
 
   useEffect(() => {
     if (user && !paymentSuccess) {
-      try { sessionStorage.setItem(`checkout-address:${user._id}`, JSON.stringify(deliveryAddress)); } catch { /* Storage may be disabled. */ }
+      try {
+        sessionStorage.setItem(`checkout-address:${user._id}`, JSON.stringify(deliveryAddress));
+      } catch {
+        /* Storage may be disabled. */
+      }
     }
     if (user && paymentSuccess) {
-      try { sessionStorage.removeItem(`checkout-address:${user._id}`); } catch { /* Storage may be disabled. */ }
+      try {
+        sessionStorage.removeItem(`checkout-address:${user._id}`);
+      } catch {
+        /* Storage may be disabled. */
+      }
     }
   }, [deliveryAddress, user, paymentSuccess]);
 
   useEffect(() => {
-    ordersAPI.getPaymentConfig()
+    ordersAPI
+      .getPaymentConfig()
       .then(({ data }) => {
         setPaymentConfigured(Boolean(data.configured));
         setPaymentMode(data.mode);
@@ -78,14 +87,13 @@ const Checkout = () => {
     setLoading(true);
     setPaymentError('');
     try {
-      // Validate this session before creating an order or opening the payment gateway.
       await authAPI.profile();
       const orderData = {
         deliveryAddress,
         deliverySlot,
         couponCode: appliedCoupon,
         couponDiscount,
-        items: cart.map(item => ({
+        items: cart.map((item) => ({
           productId: item._id,
           name: item.name,
           price: item.price,
@@ -99,7 +107,7 @@ const Checkout = () => {
         setCompletedPaymentMethod('cod');
         setPlacedOrder(res.data.order);
         setPaymentSuccess(true);
-        showToast('Cash on Delivery order placed successfully.');
+        showToast('Cash on Delivery order confirmed.');
         return;
       }
 
@@ -108,9 +116,16 @@ const Checkout = () => {
         const res = await ordersAPI.createOrder(orderData);
         const paymentKey = res.data.keyId;
         if (!paymentKey) throw new Error('Online payment is currently unavailable');
-        const paymentResponse = await initiatePayment(paymentKey, res.data, { ...user, phone: deliveryAddress.phone });
-        confirmation = { id: res.data.id, response: paymentResponse, cartFingerprint: cartFingerprint(cart), orderNumber: res.data.orderNumber };
-        // Save before verification: a session expiry or refresh must not ask for a second payment.
+        const paymentResponse = await initiatePayment(paymentKey, res.data, {
+          ...user,
+          phone: deliveryAddress.phone,
+        });
+        confirmation = {
+          id: res.data.id,
+          response: paymentResponse,
+          cartFingerprint: cartFingerprint(cart),
+          orderNumber: res.data.orderNumber,
+        };
         savePendingPayment(sessionStorage, user._id, confirmation);
         setPendingPayment(confirmation);
       }
@@ -121,15 +136,19 @@ const Checkout = () => {
         razorpaySignature: paymentResponse.razorpay_signature,
       });
       savePendingPayment(sessionStorage, user._id, null);
-      // A resumed receipt must not empty a different basket added since the payment.
       if (confirmation.cartFingerprint === cartFingerprint(cart)) clearCart();
       setCompletedPaymentMethod('razorpay');
-      setPlacedOrder({ orderNumber: confirmation.orderNumber || 'TD-Verified', totalAmount: Math.max(total - couponDiscount, 1), deliverySlot });
+      setPlacedOrder({
+        orderNumber: confirmation.orderNumber || 'GS-Verified',
+        totalAmount: Math.max(total - couponDiscount, 1),
+        deliverySlot,
+      });
       setPaymentSuccess(true);
-      showToast('Payment successful. Your order has been placed.');
+      showToast('Payment verified. Order confirmed.');
     } catch (error) {
       if (error.response?.status === 401) return;
-      const message = error.response?.data?.message || error.message || 'Unable to complete checkout. Please try again.';
+      const message =
+        error.response?.data?.message || error.message || 'Unable to complete checkout. Please try again.';
       setPaymentError(message);
       showToast(message, 'error');
     } finally {
@@ -137,42 +156,52 @@ const Checkout = () => {
       submitting.current = false;
     }
   };
+
   if (paymentSuccess) {
     return (
-      <div className="min-h-screen py-12 px-4 flex items-center justify-center">
-        <div className="text-center max-w-md rounded-[2.5rem] bg-white p-8 border border-emerald-900/10 shadow-xl dark:bg-[#14231a] dark:border-white/10">
-          <CheckCircle size={80} className="mx-auto text-emerald-600 mb-6" />
-          <h2 className="text-3xl font-black text-stone-900 mb-2 dark:text-white">
-            {completedPaymentMethod === 'cod' ? 'Order Confirmed!' : 'Payment Verified & Placed!'}
-          </h2>
-          <p className="text-sm font-medium text-stone-600 mb-4 dark:text-stone-300">
+      <div className="min-h-screen bg-porcelain px-4 py-16 flex items-center justify-center">
+        <div className="max-w-md w-full rounded-2xl border border-sandstone bg-ivory p-8 text-center shadow-subtle dark:bg-[#1D151A] dark:border-white/10">
+          <CheckCircle size={56} className="mx-auto text-terracotta mb-4 dark:text-apricot" />
+          <h1 className="font-serif text-2xl font-normal text-espresso mb-1 dark:text-ivory">
+            {completedPaymentMethod === 'cod' ? 'Order Confirmed!' : 'Payment Verified & Confirmed!'}
+          </h1>
+          <p className="text-xs text-warmStone mb-6 dark:text-ivory/70">
             {completedPaymentMethod === 'cod'
-              ? 'Pay with cash upon doorstep delivery.'
-              : 'Payment captured securely. Fulfillment center preparing your produce.'}
+              ? 'Please keep exact cash ready upon doorstep delivery.'
+              : 'Payment captured securely. Distribution hub is packing your fresh provisions.'}
           </p>
+
           {placedOrder?.orderNumber && (
-            <div className="mb-6 rounded-2xl bg-emerald-50 p-4 border border-emerald-200 dark:bg-emerald-950/60 dark:border-emerald-800">
-              <span className="text-[10px] font-black uppercase text-emerald-700 dark:text-emerald-300">Order ID</span>
-              <p className="text-xl font-black text-emerald-900 dark:text-emerald-100">{placedOrder.orderNumber}</p>
+            <div className="mb-6 rounded-xl border border-sandstone bg-porcelain p-4 text-left dark:bg-[#251D21] dark:border-white/10">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-warmStone dark:text-ivory/60">
+                Order Tracking Reference
+              </span>
+              <p className="font-serif text-xl font-bold text-espresso dark:text-ivory">
+                {placedOrder.orderNumber}
+              </p>
               {placedOrder.deliveryOtp && (
-                <p className="mt-1 text-xs font-bold text-emerald-700 dark:text-emerald-300">
-                  Doorstep OTP: <span className="font-mono text-base">{placedOrder.deliveryOtp}</span>
-                </p>
+                <div className="mt-2.5 rounded-lg border border-terracotta/20 bg-terracotta/5 p-2 flex items-center justify-between">
+                  <span className="text-[11px] font-bold text-terracotta dark:text-apricot">Doorstep Handover OTP:</span>
+                  <span className="font-mono text-base font-black text-espresso dark:text-ivory">{placedOrder.deliveryOtp}</span>
+                </div>
               )}
             </div>
           )}
+
           <div className="flex flex-col gap-2.5">
             {placedOrder?.orderNumber && (
               <button
+                type="button"
                 onClick={() => navigate(`/track/${placedOrder.orderNumber}`)}
-                className="w-full bg-[#075F46] text-white py-3.5 rounded-2xl font-black hover:bg-[#064D3A] transition shadow-md"
+                className="w-full rounded-xl bg-terracotta py-3 text-xs font-bold uppercase tracking-wider text-ivory hover:bg-[#9C432A] transition"
               >
-                Track Delivery Live
+                Track Delivery Timeline
               </button>
             )}
             <button
+              type="button"
               onClick={() => navigate('/orders')}
-              className="w-full border border-stone-200 bg-white text-stone-800 py-3 rounded-2xl font-bold hover:bg-stone-50 transition dark:bg-stone-800 dark:border-white/10 dark:text-white"
+              className="w-full rounded-xl border border-sandstone bg-porcelain py-3 text-xs font-bold uppercase tracking-wider text-espresso hover:bg-sandstone/30 transition dark:bg-[#251D21] dark:border-white/10 dark:text-ivory"
             >
               View Order History
             </button>
@@ -181,196 +210,255 @@ const Checkout = () => {
       </div>
     );
   }
+
   return (
-    <form onSubmit={handleCheckout} className="py-8 px-4 sm:py-12">
-      <div className="max-w-4xl mx-auto grid gap-6 md:grid-cols-2">
-        <div className="bg-white rounded-[2rem] border border-emerald-900/10 shadow-sm p-6 sm:p-8 dark:bg-[#14231a] dark:border-white/10">
-          <h2 className="text-2xl font-black text-stone-900 mb-6 dark:text-white">Order Summary</h2>
-          <div className="space-y-3 mb-6 max-h-56 overflow-y-auto pr-1">
-            {cart.map(item => (
-              <div key={item._id} className="flex justify-between items-center py-2 text-sm">
-                <span className="font-semibold text-stone-800 dark:text-stone-200 truncate">{item.name} ×{item.quantity}</span>
-                <span className="font-black text-emerald-800 dark:text-emerald-400 shrink-0 ml-2">₹{(item.price * item.quantity).toFixed(0)}</span>
+    <div className="min-h-screen bg-porcelain px-4 py-10 sm:px-6 lg:py-14">
+      <div className="mx-auto max-w-5xl">
+        <div className="mb-8 border-b border-sandstone pb-6 dark:border-white/10">
+          <p className="text-xs font-bold uppercase tracking-widest text-terracotta dark:text-apricot">Secure Checkout</p>
+          <h1 className="mt-1 font-serif text-3xl font-normal text-espresso sm:text-4xl dark:text-ivory">
+            Delivery & Payment
+          </h1>
+        </div>
+
+        <form onSubmit={handleCheckout} className="grid gap-8 md:grid-cols-2">
+          {/* Left Column: Basket Items & Delivery Details */}
+          <div className="space-y-6">
+            {/* Basket Items Summary */}
+            <div className="rounded-2xl border border-sandstone bg-ivory p-6 shadow-subtle dark:bg-[#1D151A] dark:border-white/10">
+              <h2 className="font-serif text-base font-semibold text-espresso dark:text-ivory mb-4">
+                Basket Items ({cart.length})
+              </h2>
+              <div className="space-y-2.5 max-h-48 overflow-y-auto pr-1 border-b border-sandstone pb-4 dark:border-white/10">
+                {cart.map((item) => (
+                  <div key={item._id} className="flex justify-between items-center text-xs">
+                    <span className="font-medium text-espresso truncate max-w-[200px] dark:text-ivory">
+                      {item.name} × {item.quantity}
+                    </span>
+                    <span className="font-serif font-bold text-espresso dark:text-ivory">
+                      ₹{(item.price * item.quantity).toFixed(0)}
+                    </span>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
 
-          {/* Coupon Code Section */}
-          <div className="mb-6 rounded-2xl bg-stone-50 p-4 border border-stone-200/60 dark:bg-stone-900 dark:border-white/5">
-            <span className="text-xs font-black uppercase tracking-wider text-stone-400 flex items-center gap-1.5 mb-2">
-              <Tag size={14} className="text-emerald-700" />
-              Promo Coupon
-            </span>
-            <div className="flex gap-2">
-              <input
-                type="text"
-                placeholder="e.g. TAAZA20, WELCOME50"
-                value={couponInput}
-                onChange={(e) => setCouponInput(e.target.value.toUpperCase())}
-                className="flex-1 bg-white px-3 py-2 rounded-xl text-xs font-bold border border-stone-200 uppercase outline-none dark:bg-stone-800 dark:border-white/10 dark:text-white"
-              />
-              <button
-                type="button"
-                onClick={handleApplyCoupon}
-                disabled={couponLoading || !couponInput.trim()}
-                className="rounded-xl bg-[#075F46] px-4 py-2 text-xs font-black text-white hover:bg-[#064D3A] disabled:opacity-40"
-              >
-                {couponLoading ? '...' : 'Apply'}
-              </button>
-            </div>
-            {appliedCoupon && (
-              <p className="mt-2 text-xs font-bold text-emerald-700">
-                Applied: {appliedCoupon} (-₹{couponDiscount})
-              </p>
-            )}
-          </div>
-
-          <div className="border-t border-stone-100 pt-4 dark:border-white/5 space-y-2">
-            <div className="flex justify-between text-sm text-stone-500">
-              <span>Subtotal</span>
-              <span>₹{total.toFixed(0)}</span>
-            </div>
-            {couponDiscount > 0 && (
-              <div className="flex justify-between text-sm font-bold text-emerald-700">
-                <span>Coupon Savings</span>
-                <span>-₹{couponDiscount}</span>
+              {/* Promo Coupon */}
+              <div className="mt-4 pt-2">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-warmStone flex items-center gap-1.5 mb-2 dark:text-ivory/60">
+                  <Tag size={13} className="text-terracotta" /> Promotional Voucher
+                </span>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    placeholder="e.g. WELCOME50, SAVER100"
+                    value={couponInput}
+                    onChange={(e) => setCouponInput(e.target.value.toUpperCase())}
+                    className="flex-1 rounded-lg border border-sandstone bg-porcelain px-3 py-2 text-xs font-bold uppercase text-espresso outline-none focus:border-terracotta dark:bg-[#251D21] dark:border-white/10 dark:text-ivory"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleApplyCoupon}
+                    disabled={couponLoading || !couponInput.trim()}
+                    className="rounded-lg bg-terracotta px-4 py-2 text-xs font-bold text-ivory hover:bg-[#9C432A] transition disabled:opacity-40"
+                  >
+                    {couponLoading ? '...' : 'Apply'}
+                  </button>
+                </div>
+                {appliedCoupon && (
+                  <p className="mt-2 text-xs font-bold text-successGreen">
+                    Voucher Applied: {appliedCoupon} (-₹{couponDiscount})
+                  </p>
+                )}
               </div>
-            )}
-            <div className="flex justify-between text-xl font-black pt-2 text-stone-900 dark:text-white border-t border-stone-100 dark:border-white/5">
-              <span>Final Total</span>
-              <span className="text-emerald-800 dark:text-emerald-400">₹{Math.max(total - couponDiscount, 1).toFixed(0)}</span>
+
+              {/* Totals */}
+              <div className="mt-4 border-t border-sandstone pt-4 space-y-2 text-xs dark:border-white/10">
+                <div className="flex justify-between text-warmStone dark:text-ivory/70">
+                  <span>Subtotal</span>
+                  <span className="font-serif font-bold text-espresso dark:text-ivory">₹{total.toFixed(0)}</span>
+                </div>
+                {couponDiscount > 0 && (
+                  <div className="flex justify-between font-bold text-successGreen">
+                    <span>Discount</span>
+                    <span>-₹{couponDiscount}</span>
+                  </div>
+                )}
+                <div className="flex justify-between items-baseline pt-2 border-t border-sandstone font-serif text-lg font-bold text-espresso dark:text-ivory dark:border-white/10">
+                  <span>Grand Total</span>
+                  <span className="text-terracotta dark:text-apricot">
+                    ₹{Math.max(total - couponDiscount, 1).toFixed(0)}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Delivery Slot Choice */}
+            <div className="rounded-2xl border border-sandstone bg-ivory p-6 shadow-subtle dark:bg-[#1D151A] dark:border-white/10">
+              <h3 className="font-serif text-sm font-semibold text-espresso flex items-center gap-2 mb-3 dark:text-ivory">
+                <Truck size={15} className="text-terracotta" /> Preferred Delivery Window
+              </h3>
+              <div className="space-y-2 text-xs">
+                {[
+                  'Express Dispatch (Next 2-hour window)',
+                  'Morning Window (7:00 AM – 10:00 AM)',
+                  'Evening Window (5:00 PM – 8:00 PM)',
+                ].map((slot) => (
+                  <label
+                    key={slot}
+                    className={`flex items-center gap-3 rounded-xl border p-3 cursor-pointer font-medium transition ${
+                      deliverySlot === slot
+                        ? 'border-terracotta bg-terracotta/5 text-espresso font-bold dark:border-apricot dark:bg-apricot/10 dark:text-ivory'
+                        : 'border-sandstone text-warmStone hover:bg-porcelain dark:border-white/10 dark:text-ivory/70'
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="deliverySlot"
+                      value={slot}
+                      checked={deliverySlot === slot}
+                      onChange={() => setDeliverySlot(slot)}
+                      className="accent-terracotta"
+                    />
+                    <span>{slot}</span>
+                  </label>
+                ))}
+              </div>
             </div>
           </div>
 
-          {/* Delivery Slot Selector */}
-          <div className="mt-6 border-t border-stone-100 pt-6 dark:border-white/5">
-            <h3 className="text-sm font-black uppercase tracking-wider text-stone-400 flex items-center gap-1.5 mb-3">
-              <Truck size={16} className="text-emerald-700" />
-              Choose Delivery Slot
-            </h3>
-            <div className="space-y-2">
+          {/* Right Column: Address Form & Payment Gateway */}
+          <div className="space-y-6">
+            {/* Delivery Address Details */}
+            <fieldset
+              disabled={loading || Boolean(pendingPayment)}
+              className="rounded-2xl border border-sandstone bg-ivory p-6 shadow-subtle space-y-3 dark:bg-[#1D151A] dark:border-white/10"
+            >
+              <legend className="font-serif text-base font-semibold text-espresso dark:text-ivory px-2">
+                Delivery Address Details
+              </legend>
               {[
-                'Express Delivery (30-45 mins)',
-                'Morning Slot (7:00 AM - 10:00 AM)',
-                'Evening Slot (5:00 PM - 8:00 PM)',
-              ].map((slot) => (
+                { key: 'name', label: 'Full name', autoComplete: 'name', maxLength: 100 },
+                {
+                  key: 'phone',
+                  label: 'Mobile phone (10 digits)',
+                  type: 'tel',
+                  autoComplete: 'tel-national',
+                  pattern: '[6-9][0-9]{9}',
+                  maxLength: 10,
+                },
+                {
+                  key: 'address',
+                  label: 'Flat, house number & street',
+                  autoComplete: 'street-address',
+                  maxLength: 500,
+                },
+                { key: 'city', label: 'City', autoComplete: 'address-level2', maxLength: 100 },
+                {
+                  key: 'pincode',
+                  label: 'Postal PIN code',
+                  autoComplete: 'postal-code',
+                  pattern: '[1-9][0-9]{5}',
+                  maxLength: 6,
+                },
+              ].map(({ key, label, ...inputProps }) => (
+                <label key={key} className="block text-xs font-semibold text-warmStone dark:text-ivory/70">
+                  {label}
+                  <input
+                    {...inputProps}
+                    required
+                    value={deliveryAddress[key]}
+                    onChange={(event) =>
+                      setDeliveryAddress({ ...deliveryAddress, [key]: event.target.value })
+                    }
+                    className="mt-1 w-full rounded-xl border border-sandstone bg-porcelain px-3.5 py-2 text-xs font-medium text-espresso outline-none focus:border-terracotta dark:bg-[#251D21] dark:border-white/10 dark:text-ivory"
+                  />
+                </label>
+              ))}
+            </fieldset>
+
+            {/* Payment Method Selection */}
+            <div className="rounded-2xl border border-sandstone bg-ivory p-6 shadow-subtle dark:bg-[#1D151A] dark:border-white/10">
+              <h3 className="font-serif text-base font-semibold text-espresso mb-3 dark:text-ivory">
+                Payment Method
+              </h3>
+              <div className="space-y-2 mb-4 text-xs">
                 <label
-                  key={slot}
-                  className={`flex items-center gap-3 rounded-xl border p-3 cursor-pointer text-xs font-bold transition ${
-                    deliverySlot === slot
-                      ? 'border-emerald-600 bg-emerald-50 text-emerald-900 dark:bg-emerald-950 dark:text-emerald-200'
-                      : 'border-stone-200 text-stone-700 hover:bg-stone-50 dark:border-white/10 dark:text-stone-300 dark:hover:bg-white/5'
+                  className={`block rounded-xl border p-3.5 cursor-pointer transition ${
+                    paymentMethod === 'cod'
+                      ? 'border-terracotta bg-terracotta/5 dark:border-apricot dark:bg-apricot/10'
+                      : 'border-sandstone text-warmStone hover:bg-porcelain dark:border-white/10 dark:text-ivory/70'
                   }`}
                 >
                   <input
                     type="radio"
-                    name="deliverySlot"
-                    value={slot}
-                    checked={deliverySlot === slot}
-                    onChange={() => setDeliverySlot(slot)}
-                    className="accent-[#075F46]"
+                    name="paymentMethod"
+                    value="cod"
+                    checked={paymentMethod === 'cod'}
+                    disabled={loading || Boolean(pendingPayment)}
+                    onChange={() => setPaymentMethod('cod')}
+                    className="mr-2.5 accent-terracotta"
                   />
-                  <span>{slot}</span>
+                  <span className="font-bold text-espresso dark:text-ivory">Cash on Delivery</span>
+                  <span className="block pl-6 text-[11px] text-warmStone mt-0.5 dark:text-ivory/60">
+                    Pay securely in cash or via driver QR upon arrival.
+                  </span>
                 </label>
-              ))}
+
+                <label
+                  className={`block rounded-xl border p-3.5 cursor-pointer transition ${
+                    paymentMethod === 'razorpay'
+                      ? 'border-terracotta bg-terracotta/5 dark:border-apricot dark:bg-apricot/10'
+                      : 'border-sandstone text-warmStone hover:bg-porcelain dark:border-white/10 dark:text-ivory/70'
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    name="paymentMethod"
+                    value="razorpay"
+                    checked={paymentMethod === 'razorpay'}
+                    disabled={loading || Boolean(pendingPayment)}
+                    onChange={() => setPaymentMethod('razorpay')}
+                    className="mr-2.5 accent-terracotta"
+                  />
+                  <span className="font-bold text-espresso dark:text-ivory">Pay Online (Razorpay)</span>
+                  <span className="block pl-6 text-[11px] text-warmStone mt-0.5 dark:text-ivory/60">
+                    UPI, Credit / Debit Cards & Net Banking with instant HMAC verification.
+                  </span>
+                </label>
+              </div>
+
+              {paymentError && (
+                <div className="mb-4 rounded-xl border border-errorRed/30 bg-errorRed/10 p-3 text-xs text-errorRed">
+                  {paymentError}
+                </div>
+              )}
+
+              <button
+                type="submit"
+                disabled={
+                  authLoading ||
+                  !user ||
+                  loading ||
+                  (!pendingPayment && paymentMethod === 'razorpay' && paymentConfigured !== true)
+                }
+                className="w-full rounded-xl bg-terracotta py-3.5 text-xs font-bold uppercase tracking-wider text-ivory hover:bg-[#9C432A] transition shadow-subtle disabled:opacity-50"
+              >
+                {authLoading
+                  ? 'Verifying session...'
+                  : loading
+                  ? 'Processing Order...'
+                  : pendingPayment
+                  ? 'Check Payment Status'
+                  : paymentMethod === 'cod'
+                  ? `Confirm COD Order (₹${Math.max(total - couponDiscount, 1).toFixed(0)})`
+                  : `Pay Now (₹${Math.max(total - couponDiscount, 1).toFixed(0)})`}
+              </button>
             </div>
           </div>
-          <fieldset disabled={loading || Boolean(pendingPayment)} className="space-y-4 border-t pt-6">
-            <legend className="text-xl font-bold text-slate-950">Delivery details</legend>
-            {[
-              { key: 'name', label: 'Full name', autoComplete: 'name', maxLength: 100 },
-              { key: 'phone', label: 'Mobile number (10 digits)', type: 'tel', autoComplete: 'tel-national', pattern: '[6-9][0-9]{9}', maxLength: 10 },
-              { key: 'address', label: 'House, street and area', autoComplete: 'street-address', maxLength: 500 },
-              { key: 'city', label: 'City', autoComplete: 'address-level2', maxLength: 100 },
-              { key: 'pincode', label: 'Pincode', autoComplete: 'postal-code', pattern: '[1-9][0-9]{5}', maxLength: 6 },
-            ].map(({ key, label, ...inputProps }) => (
-              <label key={key} className="block text-sm font-semibold text-slate-700">
-                {label}
-                <input {...inputProps} required value={deliveryAddress[key]}
-                  onChange={(event) => setDeliveryAddress({ ...deliveryAddress, [key]: event.target.value })}
-                  className="mt-1 w-full rounded-xl border border-slate-300 bg-transparent px-4 py-3" />
-              </label>
-            ))}
-          </fieldset>
-        </div>
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 sm:p-8">
-          <div className="text-center mb-8">
-            <CreditCard size={56} className="mx-auto text-emerald-600 mb-4" />
-            <h2 className="text-2xl font-bold text-slate-950 mb-2">Payment Method</h2>
-            <p className="text-slate-600">Choose how you want to pay</p>
-          </div>
-          <div className="mb-5 grid gap-3">
-            <label className={`cursor-pointer rounded-xl border p-4 transition-colors ${paymentMethod === 'cod' ? 'border-emerald-500 bg-emerald-50' : 'border-slate-200'}`}>
-              <input
-                type="radio"
-                name="paymentMethod"
-                value="cod"
-                checked={paymentMethod === 'cod'}
-                disabled={loading || Boolean(pendingPayment)}
-                onChange={() => setPaymentMethod('cod')}
-                className="mr-3"
-              />
-              <span className="font-semibold text-slate-900">Cash on Delivery</span>
-              <span className="mt-1 block pl-7 text-sm text-slate-600">Pay when your groceries arrive.</span>
-            </label>
-            <label className={`cursor-pointer rounded-xl border p-4 transition-colors ${paymentMethod === 'razorpay' ? 'border-emerald-500 bg-emerald-50' : 'border-slate-200'}`}>
-              <input
-                type="radio"
-                name="paymentMethod"
-                value="razorpay"
-                checked={paymentMethod === 'razorpay'}
-                disabled={loading || Boolean(pendingPayment)}
-                onChange={() => setPaymentMethod('razorpay')}
-                className="mr-3"
-              />
-              <span className="font-semibold text-slate-900">Pay Online with Razorpay</span>
-            </label>
-          </div>
-          {paymentMethod === 'razorpay' && paymentConfigured === false && (
-            <div className="mb-5 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
-              Online payment is currently unavailable. Please choose Cash on Delivery.
-            </div>
-          )}
-          {paymentError && (
-            <div className="mb-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
-              {paymentError}
-            </div>
-          )}
-          {paymentMethod === 'razorpay' && paymentMode === 'test' && (
-            <p className="mb-4 rounded-xl bg-amber-50 p-3 text-sm text-amber-900">Test checkout: no real money is charged.</p>
-          )}
-          {pendingPayment && (
-            <p role="status" className="mb-4 rounded-xl bg-amber-50 p-3 text-sm text-amber-900">
-              Payment was submitted. Use Check payment status to confirm it without paying again.
-              You can also check payment status from Your orders.
-            </p>
-          )}
-          <button
-            type="submit"
-            disabled={authLoading || !user || loading || (!pendingPayment && paymentMethod === 'razorpay' && paymentConfigured !== true)}
-            className="w-full bg-emerald-600 text-white py-4 px-8 rounded-xl hover:bg-emerald-700 font-semibold text-xl transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
-          >
-            {authLoading ? 'Checking your session...' : paymentMethod === 'razorpay' && paymentConfigured === null ? (
-              'Checking payment...'
-            ) : loading ? (
-              <>
-                <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                <span>Processing...</span>
-              </>
-            ) : pendingPayment ? 'Check payment status' : (
-              paymentMethod === 'cod'
-                ? `Place COD Order ₹${total.toFixed(0)}`
-                : `Pay Now ₹${total.toFixed(0)}`
-            )}
-          </button>
-          <p className="text-xs text-slate-500 text-center mt-4">
-            {paymentMethod === 'cod'
-              ? 'No online payment is required.'
-              : 'Secure payment powered by Razorpay.'}
-          </p>
-        </div>
+        </form>
       </div>
-    </form>
+    </div>
   );
 };
+
 export default Checkout;

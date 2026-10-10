@@ -1,124 +1,152 @@
-import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { Link } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import CartItem from '../components/CartItem';
-import { ArrowRight, ShoppingCart, Trash2 } from 'lucide-react';
+import { ArrowRight, ShoppingCart, Trash2, ShieldCheck, Truck } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
 
 const Cart = () => {
-  const { user } = useAuth();
   const { cart, total, clearCart } = useCart();
   const { showToast } = useToast();
-  const navigate = useNavigate();
 
   const handleClearCart = () => {
     clearCart();
-    showToast('Cart cleared', 'info');
+    showToast('Your basket has been cleared', 'info');
   };
+
+  const freeDeliveryThreshold = 499;
+  const deliveryFee = total >= freeDeliveryThreshold ? 0 : 49;
+  const freeDeliveryProgress = Math.min(100, (total / freeDeliveryThreshold) * 100);
 
   if (cart.length === 0) {
     return (
-      <div className="px-4 py-16">
-        <div className="mx-auto max-w-4xl rounded-[2rem] border border-emerald-900/10 bg-white p-8 text-center shadow-2xl shadow-emerald-950/10 sm:p-12">
-          <span className="mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-[2rem] bg-emerald-50 text-emerald-700">
-            <ShoppingCart size={54} />
+      <div className="min-h-[70vh] bg-porcelain px-4 py-20">
+        <div className="mx-auto max-w-xl rounded-2xl border border-sandstone bg-ivory p-8 sm:p-12 text-center shadow-subtle dark:bg-[#1D151A] dark:border-white/10">
+          <span className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-sandstone/30 text-terracotta dark:bg-white/10 dark:text-apricot">
+            <ShoppingCart size={32} />
           </span>
-          <h2 className="mb-4 text-3xl font-black tracking-tight text-stone-950">Your cart is empty</h2>
-          <p className="mb-8 text-lg font-semibold text-stone-500">Add some fresh groceries to get started.</p>
-          <Link
-            to="/"
-            className="inline-flex items-center gap-2 rounded-full bg-emerald-700 px-8 py-4 text-lg font-black text-white shadow-lg shadow-emerald-900/15 transition hover:-translate-y-1 hover:bg-emerald-800"
-          >
-            Continue Shopping
-            <ArrowRight size={19} />
-          </Link>
+          <h2 className="font-serif text-2xl font-normal text-espresso sm:text-3xl dark:text-ivory">
+            Your basket is waiting
+          </h2>
+          <p className="mt-2 text-xs text-warmStone max-w-sm mx-auto dark:text-ivory/60">
+            Explore daily harvested vegetables, orchard fruits, stone-milled grains, and 1-click recipe kits.
+          </p>
+          <div className="mt-8">
+            <Link
+              to="/shop"
+              className="inline-flex items-center gap-2 rounded-xl bg-terracotta px-8 py-3.5 text-xs font-bold uppercase tracking-wider text-ivory shadow-subtle hover:bg-[#9C432A] transition"
+            >
+              Start Grocery Shopping
+              <ArrowRight size={15} />
+            </Link>
+          </div>
         </div>
       </div>
     );
   }
+
   return (
-    <div className="px-4 py-8 sm:py-12">
+    <div className="min-h-screen bg-porcelain px-4 py-10 sm:px-6 lg:py-14">
       <div className="mx-auto max-w-6xl">
-        <div className="mb-8">
-          <p className="text-sm font-black uppercase tracking-[0.2em] text-orange-500">Your basket</p>
-          <h1 className="mt-2 text-3xl font-black tracking-tight text-stone-950 sm:text-4xl">Shopping cart</h1>
+        <div className="mb-8 border-b border-sandstone pb-6 flex items-baseline justify-between dark:border-white/10">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-widest text-terracotta dark:text-apricot">Checkout Preparation</p>
+            <h1 className="mt-1 font-serif text-3xl font-normal text-espresso sm:text-4xl dark:text-ivory">
+              Your Grocery Basket
+            </h1>
+          </div>
+          <button
+            type="button"
+            onClick={handleClearCart}
+            className="flex items-center gap-1.5 text-xs font-semibold text-warmStone hover:text-errorRed transition"
+          >
+            <Trash2 size={13} />
+            Clear Basket
+          </button>
         </div>
+
+        {/* 65% Items / 35% Summary Split */}
         <div className="grid gap-8 lg:grid-cols-[1fr_360px]">
-          <div className="overflow-hidden rounded-[2rem] border border-emerald-900/10 bg-white shadow-[0_18px_50px_rgba(38,58,34,0.07)]">
-            <div className="border-b border-emerald-900/10 bg-emerald-50/60 p-5 sm:p-6">
-              <h2 className="text-xl font-black text-stone-950">Your Items ({cart.length})</h2>
-              <p className="mt-1 text-sm font-semibold text-stone-500">Review quantities before checkout.</p>
+          {/* Cart Items Table */}
+          <div className="rounded-2xl border border-sandstone bg-ivory shadow-subtle overflow-hidden dark:bg-[#1D151A] dark:border-white/10">
+            <div className="border-b border-sandstone bg-porcelain px-6 py-4 dark:bg-[#251D21] dark:border-white/10">
+              <h2 className="font-serif text-sm font-semibold text-espresso dark:text-ivory">
+                Selected Provisions ({cart.length} items)
+              </h2>
             </div>
             <div>
-              {cart.map(item => (
+              {cart.map((item) => (
                 <CartItem key={item._id} item={item} />
               ))}
             </div>
           </div>
 
-          <aside className="h-fit rounded-[2rem] border border-emerald-900/10 bg-white p-5 shadow-[0_18px_50px_rgba(38,58,34,0.07)] sm:p-6 dark:bg-[#14231a] dark:border-white/10">
-            {/* Free Delivery Meter */}
-            <div className="mb-5 rounded-2xl bg-emerald-50 p-4 border border-emerald-100 dark:bg-emerald-950/60 dark:border-emerald-800">
-              <div className="flex items-center justify-between text-xs font-bold mb-1.5">
-                <span className="text-emerald-900 dark:text-emerald-200">
-                  {total >= 499 ? '🎉 Free Delivery Unlocked!' : `Add ₹${Math.max(499 - total, 0).toFixed(0)} more for FREE Delivery`}
+          {/* Sticky Summary Rail */}
+          <aside className="h-fit space-y-6">
+            <div className="rounded-2xl border border-sandstone bg-ivory p-6 shadow-subtle dark:bg-[#1D151A] dark:border-white/10">
+              {/* Free Delivery Meter */}
+              <div className="mb-6 rounded-xl border border-sandstone/70 bg-porcelain p-4 dark:bg-[#251D21] dark:border-white/10">
+                <div className="flex items-center justify-between text-xs mb-2">
+                  <span className="font-semibold text-espresso dark:text-ivory flex items-center gap-1.5">
+                    <Truck size={14} className="text-terracotta" />
+                    {total >= freeDeliveryThreshold ? 'Free Delivery Unlocked!' : `Add ₹${freeDeliveryThreshold - total} for Free Delivery`}
+                  </span>
+                </div>
+                <div className="h-1.5 w-full overflow-hidden rounded-full bg-sandstone">
+                  <div
+                    className="h-full bg-terracotta transition-all duration-300"
+                    style={{ width: `${freeDeliveryProgress}%` }}
+                  />
+                </div>
+              </div>
+
+              <h3 className="font-serif text-base font-semibold text-espresso dark:text-ivory mb-4">
+                Order Summary
+              </h3>
+
+              <div className="space-y-3 text-xs border-b border-sandstone pb-4 dark:border-white/10">
+                <div className="flex justify-between text-warmStone dark:text-ivory/70">
+                  <span>Subtotal</span>
+                  <span className="font-serif font-bold text-espresso dark:text-ivory">₹{total.toFixed(0)}</span>
+                </div>
+                <div className="flex justify-between text-warmStone dark:text-ivory/70">
+                  <span>Dispatch & Packaging</span>
+                  <span className="font-serif font-bold text-espresso dark:text-ivory">
+                    {deliveryFee === 0 ? <span className="text-successGreen">Free</span> : `₹${deliveryFee}`}
+                  </span>
+                </div>
+                <div className="flex justify-between text-warmStone dark:text-ivory/70">
+                  <span>Cold-Chain Handling</span>
+                  <span className="text-successGreen font-bold">Included</span>
+                </div>
+              </div>
+
+              <div className="pt-4 mb-6 flex justify-between items-baseline">
+                <span className="font-serif text-sm font-semibold text-espresso dark:text-ivory">Estimated Total</span>
+                <span className="font-serif text-2xl font-bold text-espresso dark:text-ivory">
+                  ₹{(total + deliveryFee).toFixed(0)}
                 </span>
-                <span className="text-emerald-700 dark:text-emerald-400 font-black">{Math.min(Math.round((total / 499) * 100), 100)}%</span>
               </div>
-              <div className="h-2 w-full rounded-full bg-emerald-200/60 dark:bg-emerald-900 overflow-hidden">
-                <div
-                  className="h-full rounded-full bg-emerald-600 transition-all duration-500"
-                  style={{ width: `${Math.min((total / 499) * 100, 100)}%` }}
-                />
-              </div>
+
+              <Link
+                to="/checkout"
+                className="flex w-full items-center justify-center gap-2 rounded-xl bg-terracotta py-3.5 text-xs font-bold uppercase tracking-wider text-ivory hover:bg-[#9C432A] transition shadow-subtle"
+              >
+                Proceed to Delivery Details
+                <ArrowRight size={14} />
+              </Link>
             </div>
 
-            <h2 className="text-xl font-black text-stone-900 dark:text-white">Order summary</h2>
-            <div className="mt-5 space-y-3 text-sm font-semibold text-stone-500">
-              <div className="flex justify-between">
-                <span>Subtotal</span>
-                <span className="text-stone-950">₹{total.toFixed(0)}</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Delivery</span>
-                <span className="text-emerald-700">Free</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Packaging</span>
-                <span className="text-stone-950">₹0</span>
-              </div>
+            {/* Trust Assurances */}
+            <div className="rounded-xl border border-sandstone bg-porcelain p-4 text-xs text-warmStone space-y-2 dark:bg-[#1D151A] dark:border-white/10 dark:text-ivory/60">
+              <p className="flex items-center gap-2">
+                <ShieldCheck size={14} className="text-terracotta shrink-0" />
+                Verified Razorpay Gateway & Cash on Delivery
+              </p>
+              <p className="flex items-center gap-2">
+                <Truck size={14} className="text-terracotta shrink-0" />
+                Doorstep Handover with 4-Digit Security PIN
+              </p>
             </div>
-            <div className="my-5 border-t border-emerald-900/10 pt-5">
-              <div className="flex items-center justify-between">
-                <span className="text-lg font-black text-stone-950">Total</span>
-                <span className="text-3xl font-black text-emerald-800">₹{total.toFixed(0)}</span>
-              </div>
-            </div>
-            {user ? (
-              <button
-                onClick={() => navigate('/checkout')}
-                className="flex w-full items-center justify-center gap-2 rounded-2xl bg-emerald-700 px-8 py-4 text-lg font-black text-white shadow-lg shadow-emerald-900/15 transition hover:-translate-y-1 hover:bg-emerald-800"
-              >
-                Proceed to Checkout
-                <ArrowRight size={19} />
-              </button>
-            ) : (
-              <Link
-                to="/signin"
-                state={{ from: '/checkout' }}
-                className="flex w-full items-center justify-center gap-2 rounded-2xl bg-emerald-700 px-8 py-4 text-lg font-black text-white shadow-lg shadow-emerald-900/15 transition hover:-translate-y-1 hover:bg-emerald-800"
-              >
-                Login to Checkout
-                <ArrowRight size={19} />
-              </Link>
-            )}
-            <button
-              onClick={handleClearCart}
-              className="mt-4 flex w-full items-center justify-center gap-2 rounded-2xl border border-red-100 px-5 py-3 font-black text-red-600 transition hover:bg-red-50"
-            >
-              <Trash2 size={18} />
-              Clear Cart
-            </button>
           </aside>
         </div>
       </div>

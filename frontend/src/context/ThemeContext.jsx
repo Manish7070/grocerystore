@@ -3,7 +3,7 @@ import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 const ThemeContext = createContext(null);
 
 const getInitialTheme = () => {
-  const savedTheme = localStorage.getItem('greenbasket-theme');
+  const savedTheme = localStorage.getItem('grocerystore-theme') || localStorage.getItem('greenbasket-theme');
   if (savedTheme === 'light' || savedTheme === 'dark') return savedTheme;
   return window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
 };
@@ -14,7 +14,7 @@ export const ThemeProvider = ({ children }) => {
   useEffect(() => {
     document.documentElement.classList.toggle('dark', theme === 'dark');
     document.documentElement.style.colorScheme = theme;
-    localStorage.setItem('greenbasket-theme', theme);
+    localStorage.setItem('grocerystore-theme', theme);
   }, [theme]);
 
   const value = useMemo(() => ({

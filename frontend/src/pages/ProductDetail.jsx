@@ -1,21 +1,22 @@
 import { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { Heart, ShoppingCart, Star, Sparkles, MapPin, ChevronRight, AlertCircle } from 'lucide-react';
+import { useParams, Link, useNavigate } from 'react-router-dom';
+import { Heart, ShoppingCart, Star, Sparkles, MapPin, ChevronRight, ShieldCheck, Truck, Award, CheckCircle2 } from 'lucide-react';
 import { productsAPI } from '../utils/api';
 import { useCart } from '../context/CartContext';
 import { useToast } from '../context/ToastContext';
 import { useWatchlist } from '../context/WatchlistContext';
-import QuantityModal from '../components/QuantityModal';
 import ProductArtwork from '../components/ProductArtwork';
 import api from '../utils/api';
 
 const ProductDetail = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('description');
+  const [activeTab, setActiveTab] = useState('overview');
   const [pincode, setPincode] = useState('');
   const [pinStatus, setPinStatus] = useState(null);
+  const [quantity, setQuantity] = useState(1);
   const [reviews, setReviews] = useState([]);
   const [reviewRating, setReviewRating] = useState(5);
   const [reviewComment, setReviewComment] = useState('');
@@ -24,7 +25,6 @@ const ProductDetail = () => {
   const { addItem } = useCart();
   const { showToast } = useToast();
   const { toggleWatchlist, isInWatchlist } = useWatchlist();
-  const [quantityOpen, setQuantityOpen] = useState(false);
 
   useEffect(() => {
     productsAPI.getById(id)
@@ -37,7 +37,7 @@ const ProductDetail = () => {
         setLoading(false);
       });
 
-    // Load reviews
+    // Load verified reviews
     api.get(`/reviews/${id}`)
       .then((res) => setReviews(res.data || []))
       .catch(() => {});
@@ -48,318 +48,357 @@ const ProductDetail = () => {
     if (/^[1-9][0-9]{5}$/.test(pincode.trim())) {
       setPinStatus({
         valid: true,
-        message: `Express Delivery Available to PIN ${pincode.trim()} (in 30–45 mins)`,
+        message: `Direct Cold-Chain Delivery Active for PIN ${pincode.trim()} (Next 2-hour window)`,
       });
     } else {
       setPinStatus({
         valid: false,
-        message: 'Please enter a valid 6-digit Indian PIN code',
+        message: 'Please enter a valid 6-digit postal PIN code',
       });
     }
   };
 
-  const handlePostReview = async (e) => {
+  const handleAddToCart = () => {
+    addItem(product, quantity);
+    showToast(`Added ${quantity} x ${product.name} to basket`);
+  };
+
+  const handleBuyNow = () => {
+    addItem(product, quantity);
+    navigate('/checkout');
+  };
+
+  const handleSubmitReview = (e) => {
     e.preventDefault();
     if (!reviewComment.trim()) return;
+
     setSubmittingReview(true);
-    try {
-      const res = await api.post(`/reviews/${id}`, {
-        rating: reviewRating,
-        comment: reviewComment,
-        title: 'Customer Feedback',
+    api.post(`/reviews/${id}`, { rating: reviewRating, comment: reviewComment.trim() })
+      .then((res) => {
+        showToast('Review submitted successfully', 'success');
+        setReviews((prev) => [res.data, ...prev]);
+        setReviewComment('');
+        setSubmittingReview(false);
+      })
+      .catch((err) => {
+        showToast(err.response?.data?.message || 'Failed to submit review', 'error');
+        setSubmittingReview(false);
       });
-      setReviews([res.data, ...reviews]);
-      setReviewComment('');
-      showToast('Thank you! Review posted successfully.', 'success');
-    } catch (err) {
-      showToast(err.response?.data?.message || 'Sign in to post a review', 'error');
-    } finally {
-      setSubmittingReview(false);
-    }
   };
 
   if (loading) {
     return (
-      <div className="mx-auto max-w-7xl px-4 py-16 text-center">
-        <div className="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-emerald-700 border-t-transparent" />
-        <p className="mt-4 font-bold text-stone-600">Loading produce details...</p>
+      <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6">
+        <div className="grid gap-12 lg:grid-cols-2 animate-pulse">
+          <div className="aspect-square rounded-2xl bg-sandstone/30" />
+          <div className="space-y-4">
+            <div className="h-8 w-2/3 rounded bg-sandstone/30" />
+            <div className="h-4 w-1/3 rounded bg-sandstone/30" />
+            <div className="h-24 w-full rounded bg-sandstone/30" />
+          </div>
+        </div>
       </div>
     );
   }
 
   if (!product) {
     return (
-      <div className="mx-auto max-w-md px-4 py-20 text-center">
-        <AlertCircle size={48} className="mx-auto text-stone-400 mb-3" />
-        <h2 className="text-2xl font-black text-stone-900">Product Not Found</h2>
-        <p className="mt-1 text-sm text-stone-500">The product you are looking for may have been archived or moved.</p>
-        <Link to="/shop" className="mt-6 inline-block rounded-2xl bg-[#075F46] px-6 py-3 font-bold text-white">
-          Back to Shop
+      <div className="mx-auto max-w-7xl px-4 py-20 text-center">
+        <p className="font-serif text-2xl text-espresso dark:text-ivory">Product not found</p>
+        <Link to="/shop" className="mt-4 inline-block text-xs font-bold text-terracotta underline">
+          Return to All Aisles
         </Link>
       </div>
     );
   }
 
   const saved = isInWatchlist(product._id);
-  const discountPercent = product.discount || 0;
-  const originalPrice = discountPercent > 0 ? Math.round(product.price * (1 + discountPercent / 100)) : product.price;
-
-  const handleAddToCart = (quantity) => {
-    addItem(product, quantity);
-    setQuantityOpen(false);
-    showToast(`${quantity} x ${product.name} added to cart`);
-  };
-
-  const handleWatchlist = () => {
-    toggleWatchlist(product);
-    showToast(saved ? `${product.name} removed from watchlist` : `${product.name} added to watchlist`, saved ? 'info' : 'success');
-  };
+  const mrp = product.mrp || (product.discount > 0 ? Math.round(product.price * (1 + product.discount / 100)) : 0);
+  const savings = mrp > product.price ? mrp - product.price : 0;
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
-      {/* Breadcrumb */}
-      <nav className="mb-6 flex items-center gap-2 text-xs font-semibold text-stone-500">
-        <Link to="/" className="hover:text-emerald-700">Home</Link>
-        <ChevronRight size={12} />
-        <Link to="/shop" className="hover:text-emerald-700">Shop</Link>
-        <ChevronRight size={12} />
-        <Link to={`/shop?category=${encodeURIComponent(product.category)}`} className="hover:text-emerald-700">{product.category}</Link>
-        <ChevronRight size={12} />
-        <span className="truncate text-stone-900 font-bold dark:text-stone-100">{product.name}</span>
-      </nav>
+    <div className="min-h-screen bg-porcelain px-4 py-8 sm:px-6 lg:py-12">
+      <div className="mx-auto max-w-7xl">
+        {/* Breadcrumb Navigation */}
+        <nav className="mb-6 flex items-center gap-2 text-xs font-medium text-warmStone dark:text-ivory/60" aria-label="Breadcrumb">
+          <Link to="/" className="hover:text-espresso dark:hover:text-ivory">Home</Link>
+          <ChevronRight size={13} />
+          <Link to="/shop" className="hover:text-espresso dark:hover:text-ivory">Catalog</Link>
+          <ChevronRight size={13} />
+          <Link to={`/shop?category=${encodeURIComponent(product.category)}`} className="hover:text-espresso dark:hover:text-ivory">
+            {product.category}
+          </Link>
+          <ChevronRight size={13} />
+          <span className="text-espresso font-semibold truncate dark:text-ivory">{product.name}</span>
+        </nav>
 
-      <div className="grid gap-10 rounded-[2.5rem] border border-emerald-900/10 bg-white p-6 shadow-sm dark:bg-[#14231a] dark:border-white/10 md:grid-cols-2 lg:p-10">
-        {/* Left Column: Image Artwork */}
-        <div>
-          <div className="relative overflow-hidden rounded-[2rem] bg-[#eef6e8] shadow-inner dark:bg-stone-900">
-            <ProductArtwork product={product} className="h-96 w-full object-cover sm:h-[480px]" showLabel />
-            {discountPercent > 0 && (
-              <span className="absolute left-4 top-4 rounded-full bg-orange-500 px-3.5 py-1 text-xs font-black text-white shadow-lg">
-                {discountPercent}% OFF
-              </span>
-            )}
-            <button
-              onClick={handleWatchlist}
-              className={`absolute right-4 top-4 rounded-full p-3 shadow-md backdrop-blur transition hover:scale-105 ${
-                saved ? 'bg-red-50 text-red-600' : 'bg-white/90 text-stone-700'
-              }`}
-            >
-              <Heart size={20} fill={saved ? 'currentColor' : 'none'} />
-            </button>
-          </div>
-
-          {/* Farm Provenance Card */}
-          <div className="mt-6 rounded-2xl bg-emerald-50/70 p-4 border border-emerald-100 dark:bg-emerald-950/40 dark:border-emerald-800">
-            <span className="text-[10px] font-black uppercase tracking-wider text-emerald-800 dark:text-emerald-300 flex items-center gap-1.5">
-              <Sparkles size={13} />
-              Farm-to-Fork Direct Provenance
-            </span>
-            <div className="mt-2 grid grid-cols-2 gap-3 text-xs font-medium text-stone-700 dark:text-stone-300">
-              <div>
-                <span className="text-stone-400 block text-[10px] font-bold">SOURCE ORIGIN</span>
-                <span className="font-bold text-stone-900 dark:text-white">{product.farmSource || 'Nashik Valley Farms'}</span>
-              </div>
-              <div>
-                <span className="text-stone-400 block text-[10px] font-bold">FRESHNESS INDEX</span>
-                <span className="font-bold text-emerald-700 dark:text-emerald-400">{product.freshnessScore || 98}% Grade A+</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Right Column: Info & Purchasing */}
-        <div className="flex flex-col justify-between">
-          <div>
-            <div className="flex items-center justify-between">
-              <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-black text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200">
-                {product.category}
-              </span>
-              <span className="flex items-center gap-1 text-xs font-black text-amber-700">
-                <Star size={14} fill="currentColor" />
-                {product.rating || 4.8} ({reviews.length + 18} reviews)
-              </span>
-            </div>
-
-            <h1 className="mt-3 text-3xl font-black text-stone-900 tracking-tight dark:text-white sm:text-4xl">
-              {product.name}
-            </h1>
-            <p className="mt-1 text-xs font-bold uppercase tracking-wider text-stone-400">
-              Brand: {product.brand || 'TaazaDaily Harvest'} · Pack: {product.unit || '1 pack'}
-            </p>
-
-            {/* Pricing Section */}
-            <div className="my-5 flex items-baseline gap-3">
-              <span className="text-4xl font-black text-emerald-800 dark:text-emerald-400">
-                ₹{product.price}
-              </span>
-              {discountPercent > 0 && (
-                <>
-                  <span className="text-base font-semibold text-stone-400 line-through">
-                    ₹{originalPrice}
-                  </span>
-                  <span className="rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-black text-emerald-700">
-                    You Save ₹{originalPrice - product.price}
-                  </span>
-                </>
+        {/* Top Product Hero Split */}
+        <div className="grid gap-12 lg:grid-cols-2 lg:gap-16">
+          {/* Left: Product Photography Gallery */}
+          <div className="space-y-4">
+            <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl border border-sandstone bg-ivory shadow-card dark:bg-[#1D151A] dark:border-white/10">
+              <ProductArtwork product={product} className="h-full w-full object-cover" />
+              {product.isOrganic && (
+                <span className="absolute left-4 top-4 rounded-md border border-sandstone bg-ivory px-3 py-1 text-[11px] font-extrabold uppercase tracking-wider text-terracotta shadow-subtle dark:bg-[#251D21] dark:border-white/10 dark:text-apricot">
+                  Certified Organic
+                </span>
               )}
             </div>
+          </div>
 
-            <p className="text-sm font-medium leading-relaxed text-stone-600 dark:text-stone-300">
-              {product.description || 'Farm-fresh, crisp grocery essential handpicked daily for authentic taste and nutrition.'}
-            </p>
-
-            {/* PIN Code Serviceability Checker */}
-            <div className="my-6 rounded-2xl bg-stone-50 p-4 dark:bg-stone-900">
-              <span className="text-xs font-black uppercase tracking-wider text-stone-400 flex items-center gap-1.5 mb-2">
-                <MapPin size={14} className="text-emerald-700" />
-                Delivery Availability
+          {/* Right: Product Purchase Panel */}
+          <div className="flex flex-col">
+            <div className="border-b border-sandstone pb-6 dark:border-white/10">
+              <span className="text-[11px] font-bold uppercase tracking-widest text-terracotta dark:text-apricot">
+                {product.category} • {product.brand || 'GroceryStore Provenance'}
               </span>
-              <form onSubmit={checkPincode} className="flex gap-2">
+              <h1 className="mt-2 font-serif text-3xl font-normal text-espresso sm:text-4xl dark:text-ivory">
+                {product.name}
+              </h1>
+              <p className="mt-1 text-xs text-warmStone dark:text-ivory/60">
+                Unit Pack: {product.unit || 'Standard size'}
+              </p>
+
+              {/* Price & Savings */}
+              <div className="mt-5 flex items-baseline gap-3">
+                <span className="font-serif text-3xl font-bold text-espresso dark:text-ivory">
+                  ₹{product.price}
+                </span>
+                {mrp > product.price && (
+                  <span className="text-sm text-warmStone line-through dark:text-ivory/50">
+                    ₹{mrp}
+                  </span>
+                )}
+                {savings > 0 && (
+                  <span className="rounded-md bg-terracotta/10 px-2.5 py-1 text-xs font-bold text-terracotta dark:bg-apricot/20 dark:text-apricot">
+                    Save ₹{savings} ({product.discount}% Off)
+                  </span>
+                )}
+              </div>
+            </div>
+
+            {/* Quantity Stepper & Action Controls */}
+            <div className="py-6 space-y-4 border-b border-sandstone dark:border-white/10">
+              <div className="flex items-center gap-4">
+                <label htmlFor="pdetail-qty" className="text-xs font-bold uppercase tracking-wider text-espresso dark:text-ivory">
+                  Quantity
+                </label>
+                <div className="flex items-center rounded-xl border border-sandstone bg-ivory dark:bg-[#251D21] dark:border-white/10">
+                  <button
+                    type="button"
+                    onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                    className="px-3.5 py-1.5 text-xs font-bold hover:bg-sandstone/30 transition text-espresso dark:text-ivory"
+                    aria-label="Decrease quantity"
+                  >
+                    -
+                  </button>
+                  <span id="pdetail-qty" className="px-3 text-xs font-bold text-espresso dark:text-ivory">
+                    {quantity}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setQuantity((q) => q + 1)}
+                    className="px-3.5 py-1.5 text-xs font-bold hover:bg-sandstone/30 transition text-espresso dark:text-ivory"
+                    aria-label="Increase quantity"
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-3 sm:flex-row">
+                <button
+                  type="button"
+                  onClick={handleAddToCart}
+                  className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-terracotta px-6 py-3.5 text-xs font-bold uppercase tracking-wider text-ivory hover:bg-[#9C432A] transition shadow-subtle"
+                >
+                  <ShoppingCart size={15} />
+                  Add to Basket
+                </button>
+                <button
+                  type="button"
+                  onClick={handleBuyNow}
+                  className="flex items-center justify-center rounded-xl border border-espresso bg-espresso px-6 py-3.5 text-xs font-bold uppercase tracking-wider text-ivory hover:bg-[#3E3632] transition dark:border-ivory dark:bg-ivory dark:text-espresso"
+                >
+                  Buy Now
+                </button>
+                <button
+                  type="button"
+                  onClick={() => toggleWatchlist(product)}
+                  className={`flex h-12 w-12 items-center justify-center rounded-xl border border-sandstone bg-ivory transition ${
+                    saved ? 'text-errorRed' : 'text-warmStone hover:text-errorRed'
+                  } dark:bg-[#251D21] dark:border-white/10`}
+                  aria-label="Save to kitchen wishlist"
+                >
+                  <Heart size={18} fill={saved ? 'currentColor' : 'none'} />
+                </button>
+              </div>
+            </div>
+
+            {/* Postal PIN Code Serviceability Check */}
+            <div className="pt-6">
+              <p className="text-xs font-bold uppercase tracking-wider text-espresso mb-2 dark:text-ivory">
+                Check Delivery Serviceability
+              </p>
+              <form onSubmit={checkPincode} className="flex gap-2 max-w-sm">
                 <input
                   type="text"
                   maxLength={6}
-                  placeholder="Enter 6-digit PIN code"
                   value={pincode}
                   onChange={(e) => setPincode(e.target.value)}
-                  className="w-48 rounded-xl border border-stone-200 bg-white px-3 py-2 text-xs font-bold outline-none dark:bg-stone-800 dark:border-white/10 dark:text-white"
+                  placeholder="Enter 6-digit PIN code"
+                  className="min-w-0 flex-1 rounded-xl border border-sandstone bg-ivory px-3.5 py-2 text-xs text-espresso outline-none focus:border-terracotta dark:bg-[#251D21] dark:border-white/10 dark:text-ivory"
                 />
                 <button
                   type="submit"
-                  className="rounded-xl bg-[#075F46] px-4 py-2 text-xs font-bold text-white hover:bg-[#064D3A]"
+                  className="rounded-xl border border-sandstone bg-porcelain px-4 py-2 text-xs font-bold text-espresso hover:bg-sandstone/20 transition dark:bg-[#1D151A] dark:border-white/10 dark:text-ivory"
                 >
-                  Check PIN
+                  Check
                 </button>
               </form>
               {pinStatus && (
-                <p className={`mt-2 text-xs font-bold ${pinStatus.valid ? 'text-emerald-700' : 'text-red-600'}`}>
+                <p className={`mt-2 text-xs font-semibold ${pinStatus.valid ? 'text-successGreen dark:text-sage' : 'text-errorRed'}`}>
                   {pinStatus.message}
                 </p>
               )}
             </div>
           </div>
+        </div>
 
-          {/* Action CTAs */}
-          <div className="border-t border-stone-100 pt-6 dark:border-white/5">
-            <div className="flex gap-3">
+        {/* Detailed Information Tabs */}
+        <div className="mt-16 border-t border-sandstone pt-10 dark:border-white/10">
+          <div className="flex border-b border-sandstone dark:border-white/10">
+            {['overview', 'provenance', 'storage', 'reviews'].map((tab) => (
               <button
-                onClick={() => setQuantityOpen(true)}
-                disabled={(product.stock ?? 1) <= 0}
-                className="flex flex-1 items-center justify-center gap-2 rounded-2xl bg-[#075F46] py-4 text-base font-black text-white shadow-lg transition hover:bg-[#064D3A] active:scale-[0.99] disabled:opacity-40"
+                key={tab}
+                type="button"
+                onClick={() => setActiveTab(tab)}
+                className={`px-6 py-3 text-xs font-bold uppercase tracking-wider border-b-2 transition ${
+                  activeTab === tab
+                    ? 'border-terracotta text-terracotta font-extrabold dark:border-apricot dark:text-apricot'
+                    : 'border-transparent text-warmStone hover:text-espresso dark:text-ivory/60'
+                }`}
               >
-                <ShoppingCart size={20} />
-                {(product.stock ?? 1) > 0 ? 'Add to Cart' : 'Out of Stock'}
+                {tab === 'overview' && 'Overview & Description'}
+                {tab === 'provenance' && 'Farm Provenance'}
+                {tab === 'storage' && 'Storage & Shelf Life'}
+                {tab === 'reviews' && `Verified Reviews (${reviews.length})`}
               </button>
-            </div>
+            ))}
+          </div>
+
+          <div className="py-8">
+            {activeTab === 'overview' && (
+              <div className="max-w-2xl space-y-4">
+                <p className="text-xs leading-relaxed text-warmStone dark:text-ivory/80">
+                  {product.description || 'Carefully graded and inspected at central distribution to guarantee peak freshness and nutrition.'}
+                </p>
+                <div className="grid grid-cols-2 gap-4 pt-4 border-t border-sandstone dark:border-white/10">
+                  <div>
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-warmStone">Category</span>
+                    <p className="text-xs font-semibold text-espresso dark:text-ivory">{product.category}</p>
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-warmStone">Dispatched From</span>
+                    <p className="text-xs font-semibold text-espresso dark:text-ivory">Central Cold-Chain Hub</p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'provenance' && (
+              <div className="max-w-2xl space-y-3">
+                <h4 className="font-serif text-base font-semibold text-espresso dark:text-ivory">
+                  Grower Origin Information
+                </h4>
+                <p className="text-xs text-warmStone dark:text-ivory/80">
+                  {product.farmSource || 'Sourced directly from verified organic partner growers in Maharashtra and Himachal.'}
+                </p>
+                <div className="rounded-xl border border-sandstone bg-ivory p-4 dark:bg-[#1D151A] dark:border-white/10">
+                  <p className="text-xs font-bold text-espresso dark:text-ivory">Harvest Date</p>
+                  <p className="text-xs text-warmStone mt-0.5 dark:text-ivory/70">{product.harvestDate || 'Harvested within 24 hours of intake'}</p>
+                  <p className="text-xs font-bold text-espresso mt-3 dark:text-ivory">Freshness Index</p>
+                  <p className="text-xs text-successGreen font-bold mt-0.5">{product.freshnessScore || 98}% Grade A+ Inspected</p>
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'storage' && (
+              <div className="max-w-2xl space-y-3">
+                <h4 className="font-serif text-base font-semibold text-espresso dark:text-ivory">
+                  Recommended Storage Instructions
+                </h4>
+                <p className="text-xs text-warmStone leading-relaxed dark:text-ivory/80">
+                  {product.storageInstructions || 'Store in a cool, dry pantry away from direct sunlight. Refrigerate leafy greens immediately upon doorstep handover.'}
+                </p>
+                <p className="text-xs text-warmStone mt-2 dark:text-ivory/80">
+                  Estimated Shelf Life: <strong className="text-espresso dark:text-ivory">{product.shelfLife || '3–7 days from delivery'}</strong>
+                </p>
+              </div>
+            )}
+
+            {activeTab === 'reviews' && (
+              <div className="max-w-2xl space-y-6">
+                {/* Submit Review Form */}
+                <form onSubmit={handleSubmitReview} className="rounded-xl border border-sandstone bg-ivory p-5 dark:bg-[#1D151A] dark:border-white/10">
+                  <h4 className="font-serif text-sm font-semibold text-espresso dark:text-ivory mb-3">
+                    Write a Verified Review
+                  </h4>
+                  <div className="mb-3 flex items-center gap-2">
+                    <span className="text-xs font-medium text-warmStone">Rating:</span>
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <button
+                        key={star}
+                        type="button"
+                        onClick={() => setReviewRating(star)}
+                        className="text-harvestAmber hover:scale-110 transition"
+                      >
+                        <Star size={16} fill={star <= reviewRating ? 'currentColor' : 'none'} />
+                      </button>
+                    ))}
+                  </div>
+                  <textarea
+                    required
+                    rows={3}
+                    value={reviewComment}
+                    onChange={(e) => setReviewComment(e.target.value)}
+                    placeholder="Share your culinary notes on freshness and flavor..."
+                    className="w-full rounded-lg border border-sandstone bg-porcelain p-2.5 text-xs text-espresso outline-none focus:border-terracotta dark:bg-[#251D21] dark:border-white/10 dark:text-ivory"
+                  />
+                  <button
+                    type="submit"
+                    disabled={submittingReview}
+                    className="mt-3 rounded-lg bg-terracotta px-4 py-2 text-xs font-bold uppercase tracking-wider text-ivory hover:bg-[#9C432A] transition disabled:opacity-50"
+                  >
+                    {submittingReview ? 'Submitting...' : 'Post Review'}
+                  </button>
+                </form>
+
+                {/* Review List */}
+                <div className="space-y-3">
+                  {reviews.length === 0 ? (
+                    <p className="text-xs text-warmStone">No reviews posted yet. Be the first to share your notes!</p>
+                  ) : (
+                    reviews.map((rev) => (
+                      <div key={rev._id} className="rounded-xl border border-sandstone bg-ivory p-4 dark:bg-[#1D151A] dark:border-white/10">
+                        <div className="flex items-center justify-between mb-1.5">
+                          <span className="text-xs font-bold text-espresso dark:text-ivory">{rev.userName || 'Verified Customer'}</span>
+                          <div className="flex text-harvestAmber">
+                            {Array.from({ length: rev.rating || 5 }).map((_, i) => (
+                              <Star key={i} size={12} fill="currentColor" />
+                            ))}
+                          </div>
+                        </div>
+                        <p className="text-xs text-warmStone leading-relaxed dark:text-ivory/80">{rev.comment}</p>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
-
-      {/* Tabs Section: Description, Nutrition, Storage, Reviews */}
-      <div className="mt-12 rounded-[2.5rem] border border-emerald-900/10 bg-white p-6 shadow-sm dark:bg-[#14231a] dark:border-white/10 sm:p-10">
-        <div className="flex border-b border-stone-200 dark:border-white/10 gap-6 text-sm font-bold">
-          {['description', 'storage', 'reviews'].map((tab) => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className={`pb-3 capitalize transition ${
-                activeTab === tab
-                  ? 'border-b-2 border-emerald-700 text-emerald-800 font-black dark:text-emerald-300'
-                  : 'text-stone-500 hover:text-stone-900 dark:text-stone-400'
-              }`}
-            >
-              {tab === 'reviews' ? `Reviews (${reviews.length})` : tab}
-            </button>
-          ))}
-        </div>
-
-        <div className="py-6">
-          {activeTab === 'description' && (
-            <div className="prose text-sm text-stone-600 dark:text-stone-300 max-w-none">
-              <p>{product.description || 'Sourced directly from verified growers, sorted and quality checked before dispatch.'}</p>
-              <div className="mt-6 grid grid-cols-2 sm:grid-cols-4 gap-4">
-                <div className="rounded-2xl bg-stone-50 p-4 dark:bg-stone-900">
-                  <span className="text-[10px] font-bold text-stone-400 uppercase">Country of Origin</span>
-                  <p className="font-bold text-stone-800 dark:text-stone-200 mt-1">{product.origin || 'India'}</p>
-                </div>
-                <div className="rounded-2xl bg-stone-50 p-4 dark:bg-stone-900">
-                  <span className="text-[10px] font-bold text-stone-400 uppercase">Quality Grade</span>
-                  <p className="font-bold text-stone-800 dark:text-stone-200 mt-1">Grade A+ Certified</p>
-                </div>
-                <div className="rounded-2xl bg-stone-50 p-4 dark:bg-stone-900">
-                  <span className="text-[10px] font-bold text-stone-400 uppercase">Packaging</span>
-                  <p className="font-bold text-stone-800 dark:text-stone-200 mt-1">Eco-friendly Sealed</p>
-                </div>
-                <div className="rounded-2xl bg-stone-50 p-4 dark:bg-stone-900">
-                  <span className="text-[10px] font-bold text-stone-400 uppercase">Stock Status</span>
-                  <p className="font-bold text-emerald-700 mt-1">Available in Hub</p>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {activeTab === 'storage' && (
-            <div className="text-sm text-stone-600 dark:text-stone-300 space-y-3">
-              <p><strong>Storage Instructions: </strong>{product.storageInstructions || 'Store in a cool, ventilated container away from sunlight.'}</p>
-              <p><strong>Expected Shelf Life: </strong>{product.shelfLife || '3-7 days from the delivery date'}</p>
-            </div>
-          )}
-
-          {activeTab === 'reviews' && (
-            <div className="space-y-6">
-              {/* Write Review Form */}
-              <form onSubmit={handlePostReview} className="rounded-2xl bg-stone-50 p-5 dark:bg-stone-900">
-                <h3 className="font-black text-stone-900 dark:text-white text-sm mb-3">Add Verified Review</h3>
-                <div className="mb-3 flex items-center gap-2">
-                  <span className="text-xs font-bold text-stone-500">Rating:</span>
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <button
-                      type="button"
-                      key={star}
-                      onClick={() => setReviewRating(star)}
-                      className={`text-sm ${reviewRating >= star ? 'text-amber-500' : 'text-stone-300'}`}
-                    >
-                      ★
-                    </button>
-                  ))}
-                </div>
-                <textarea
-                  rows={3}
-                  value={reviewComment}
-                  onChange={(e) => setReviewComment(e.target.value)}
-                  placeholder="Share your experience with freshness, packing and taste..."
-                  className="w-full rounded-xl border border-stone-200 bg-white p-3 text-xs outline-none dark:bg-stone-800 dark:border-white/10 dark:text-white"
-                />
-                <button
-                  type="submit"
-                  disabled={submittingReview || !reviewComment.trim()}
-                  className="mt-3 rounded-xl bg-[#075F46] px-5 py-2 text-xs font-black text-white hover:bg-[#064D3A] disabled:opacity-40"
-                >
-                  Submit Review
-                </button>
-              </form>
-
-              {/* Existing Reviews */}
-              {reviews.length === 0 ? (
-                <p className="text-xs text-stone-500">Be the first to review this produce!</p>
-              ) : (
-                <div className="space-y-3">
-                  {reviews.map((rev) => (
-                    <div key={rev._id} className="rounded-2xl border border-stone-100 p-4 dark:border-white/5">
-                      <div className="flex items-center justify-between">
-                        <span className="font-bold text-stone-800 dark:text-stone-200 text-sm">{rev.userName}</span>
-                        <span className="text-xs text-amber-600 font-bold">★ {rev.rating}/5</span>
-                      </div>
-                      <p className="mt-1 text-xs text-stone-600 dark:text-stone-300">{rev.comment}</p>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-      </div>
-
-      <QuantityModal product={product} open={quantityOpen} onClose={() => setQuantityOpen(false)} onConfirm={handleAddToCart} />
     </div>
   );
 };

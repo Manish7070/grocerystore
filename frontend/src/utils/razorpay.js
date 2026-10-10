@@ -36,8 +36,8 @@ const initiatePayment = (keyId, order, customer = {}) => {
         key: keyId,
         amount: order.amount,
         currency: order.currency,
-        name: 'GreenBasket',
-        description: 'Online Grocery Store order',
+        name: 'GroceryStore',
+        description: 'GroceryStore Market Order',
         order_id: order.id,
         handler: resolve,
         prefill: {
@@ -46,7 +46,7 @@ const initiatePayment = (keyId, order, customer = {}) => {
           contact: customer.phone || '',
         },
         theme: {
-          color: '#145c35',
+          color: '#B65337',
         },
         modal: {
           ondismiss: () => reject(new Error('Payment cancelled')),

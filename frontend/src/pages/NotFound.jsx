@@ -2,16 +2,21 @@ import { ArrowLeft, Compass } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const NotFound = () => (
-  <div className="flex min-h-[65vh] items-center justify-center px-4 py-12">
-    <div className="max-w-xl rounded-[2rem] border border-emerald-900/10 bg-white p-8 text-center shadow-xl sm:p-12">
-      <span className="mx-auto flex h-20 w-20 items-center justify-center rounded-[1.75rem] bg-emerald-50 text-emerald-700">
-        <Compass size={40} />
+  <div className="min-h-[70vh] bg-porcelain flex items-center justify-center px-4 py-16">
+    <div className="max-w-lg w-full rounded-2xl border border-sandstone bg-ivory p-8 sm:p-12 text-center shadow-[0_2px_12px_rgba(39,34,31,0.04)]">
+      <span className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-porcelain border border-sandstone text-terracotta">
+        <Compass size={32} />
       </span>
-      <p className="mt-6 text-xs font-black uppercase tracking-[0.24em] text-orange-500">404 · Lost aisle</p>
-      <h1 className="mt-2 text-3xl font-black text-stone-950">This shelf is empty</h1>
-      <p className="mt-3 font-medium leading-7 text-stone-500">The page may have moved, but fresh groceries are still waiting for you.</p>
-      <Link to="/" className="mt-7 inline-flex items-center gap-2 rounded-full bg-emerald-700 px-6 py-3 font-black text-white hover:bg-emerald-800">
-        <ArrowLeft size={18} /> Back to GreenBasket
+      <p className="mt-6 text-xs font-semibold uppercase tracking-widest text-terracotta">404 &bull; Aisle Uncharted</p>
+      <h1 className="mt-2 font-serif text-3xl font-semibold text-espresso">This Shelf Is Empty</h1>
+      <p className="mt-3 text-xs sm:text-sm text-warmStone leading-relaxed">
+        The destination you requested may have moved or been retired, but farm-fresh essentials are waiting in the main market.
+      </p>
+      <Link
+        to="/"
+        className="mt-8 inline-flex items-center gap-2 rounded-xl bg-terracotta px-6 py-3 text-xs font-semibold uppercase tracking-wider text-ivory hover:bg-terracotta/90 transition-colors shadow-sm"
+      >
+        <ArrowLeft size={16} /> Return to GroceryStore
       </Link>
     </div>
   </div>

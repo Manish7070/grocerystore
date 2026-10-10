@@ -1,8 +1,6 @@
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import {
-  ChevronDown,
   Heart,
-  Home,
   LayoutDashboard,
   LogOut,
   Menu,
@@ -18,6 +16,10 @@ import {
   Sun,
   Truck,
   X,
+  MapPin,
+  ChevronDown,
+  Sparkles,
+  ArrowRight,
 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
@@ -29,19 +31,23 @@ import Brand from './Brand';
 import { useTheme } from '../context/ThemeContext';
 
 const navLinkClass = ({ isActive }) =>
-  `rounded-full px-4 py-2 text-sm font-semibold transition-all ${
+  `relative px-3 py-1 text-xs uppercase tracking-[0.16em] font-bold transition-all duration-200 ${
     isActive
-      ? 'bg-emerald-100 text-emerald-800 shadow-sm'
-      : 'text-stone-600 hover:bg-white hover:text-emerald-800 hover:shadow-sm'
+      ? 'text-terracotta font-extrabold after:absolute after:bottom-0 after:left-3 after:right-3 after:h-[2px] after:bg-terracotta dark:text-apricot dark:after:bg-apricot'
+      : 'text-warmStone hover:text-espresso dark:text-ivory/70 dark:hover:text-ivory'
   }`;
+
+const popularSearches = ['San Marzano Tomatoes', 'Himachal Royal Apples', 'A2 Desi Cultured Ghee', 'Artisan Sourdough', 'Dehradun Basmati', 'Cold Pressed Mustard Oil'];
 
 const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
+  const [searchFocused, setSearchFocused] = useState(false);
   const [navSearch, setNavSearch] = useState('');
   const profileRef = useRef(null);
   const cartRef = useRef(null);
+  const searchRef = useRef(null);
   const { user, logout } = useAuth();
   const { cart, total, removeItem } = useCart();
   const { watchlist } = useWatchlist();
@@ -58,6 +64,9 @@ const Navbar = () => {
       if (cartRef.current && !cartRef.current.contains(event.target)) {
         setCartOpen(false);
       }
+      if (searchRef.current && !searchRef.current.contains(event.target)) {
+        setSearchFocused(false);
+      }
     };
 
     document.addEventListener('mousedown', handleClick);
@@ -68,7 +77,7 @@ const Navbar = () => {
     logout();
     setProfileOpen(false);
     setMobileOpen(false);
-    showToast('Logged out successfully', 'info');
+    showToast('Signed out successfully', 'info');
     navigate('/');
   };
 
@@ -76,227 +85,360 @@ const Navbar = () => {
     setMobileOpen(false);
     setProfileOpen(false);
     setCartOpen(false);
+    setSearchFocused(false);
   };
 
-  const submitSearch = (event) => {
-    event.preventDefault();
-    if (navSearch.trim()) {
-      navigate(`/?search=${encodeURIComponent(navSearch.trim())}`);
+  const submitSearch = (queryText) => {
+    const query = (queryText || navSearch).trim();
+    if (query) {
+      navigate(`/shop?search=${encodeURIComponent(query)}`);
     } else {
-      navigate('/');
+      navigate('/shop');
     }
     closeMenus();
   };
 
-  const profileLinks = [
-    { to: '/dashboard', label: 'Customer Overview', icon: LayoutDashboard },
-    { to: '/orders', label: 'My Orders', icon: Package },
-    { to: '/track', label: 'Track Delivery', icon: Truck },
-    { to: '/watchlist', label: 'Saved Watchlist', icon: Heart },
-    { to: '/admin', label: 'Store Admin Console', icon: LayoutDashboard },
-    { to: '/delivery', label: 'Delivery Terminal', icon: Truck },
-    { to: '/waste-center', label: 'Waste Reduction Radar', icon: SlidersHorizontal },
-    { to: '/settings', label: 'Account Settings', icon: Settings },
-  ];
-
   return (
-    <nav className="sticky top-0 z-50 border-b border-emerald-900/5 bg-[#fbfdf9]/90 shadow-[0_10px_30px_rgba(20,92,53,0.06)] backdrop-blur-xl dark:bg-[#0c1712]/95 dark:border-white/5">
+    <header className="sticky top-0 z-50 border-b border-sandstone bg-porcelain/95 backdrop-blur-md transition-colors dark:bg-[#191416]/95 dark:border-white/10">
+      {/* Top Heritage Utility Bar */}
+      <div className="hidden border-b border-sandstone/70 px-4 py-1.5 text-[11px] font-medium text-warmStone md:block dark:border-white/5 dark:text-ivory/60">
+        <div className="mx-auto flex max-w-7xl items-center justify-between">
+          <div className="flex items-center gap-6">
+            <span className="flex items-center gap-1.5 text-espresso font-semibold dark:text-ivory">
+              <MapPin size={12} className="text-terracotta" />
+              Direct From Independent Growers & Master Roasters
+            </span>
+            <span className="h-3 w-[1px] bg-sandstone dark:bg-white/10" />
+            <span>Complimentary Temperature-Sealed Dispatch on Orders Above ₹499</span>
+          </div>
+          <div className="flex items-center gap-5">
+            <Link to="/track" className="hover:text-espresso dark:hover:text-ivory transition">Track Order</Link>
+            <span className="h-3 w-[1px] bg-sandstone dark:bg-white/10" />
+            <Link to="/waste-center" className="hover:text-espresso dark:hover:text-ivory transition flex items-center gap-1 text-terracotta dark:text-apricot font-semibold">
+              <Sparkles size={11} /> Smart Savings (Less Waste)
+            </Link>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Commerce Header */}
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
-        <div className="flex min-h-20 items-center justify-between gap-3">
-          <Brand compact onClick={closeMenus} />
+        <div className="flex min-h-[72px] items-center justify-between gap-4">
+          {/* Brand Monogram & Wordmark */}
+          <Brand onClick={closeMenus} />
 
-          <form onSubmit={submitSearch} className="hidden min-w-0 flex-1 max-w-md items-center gap-2 rounded-full border border-emerald-900/10 bg-white/90 px-3 py-2 shadow-sm lg:flex dark:bg-stone-900 dark:border-white/10">
-            <Search size={18} className="ml-1 text-stone-400" />
-            <input
-              type="text"
-              value={navSearch}
-              onChange={(event) => setNavSearch(event.target.value)}
-              placeholder="Search farm vegetables, milk, basmati..."
-              className="min-w-0 flex-1 bg-transparent text-sm font-medium text-stone-800 outline-none placeholder:text-stone-400 dark:text-white"
-            />
-            <button type="submit" className="rounded-full bg-[#075F46] px-4 py-2 text-xs font-bold text-white transition hover:bg-[#064D3A]">
-              Search
-            </button>
-          </form>
+          {/* Center: Intelligent Product Search */}
+          <div ref={searchRef} className="relative hidden max-w-md flex-1 lg:block">
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                submitSearch();
+              }}
+              className={`flex items-center gap-2 rounded-xl border bg-ivory px-4 py-2 transition-all duration-200 dark:bg-[#251D21] ${
+                searchFocused ? 'border-terracotta ring-1 ring-terracotta/30 dark:border-apricot' : 'border-sandstone dark:border-white/10'
+              }`}
+            >
+              <Search size={15} className="text-warmStone shrink-0 dark:text-ivory/50" />
+              <input
+                type="text"
+                value={navSearch}
+                onFocus={() => setSearchFocused(true)}
+                onChange={(e) => setNavSearch(e.target.value)}
+                placeholder="Search farm harvest, pantry essentials, spices..."
+                className="min-w-0 flex-1 bg-transparent text-xs font-medium text-espresso outline-none placeholder:text-warmStone dark:text-ivory"
+              />
+              {navSearch && (
+                <button
+                  type="button"
+                  onClick={() => setNavSearch('')}
+                  className="rounded-full p-0.5 text-warmStone hover:text-espresso dark:text-ivory/60"
+                  aria-label="Clear search"
+                >
+                  <X size={14} />
+                </button>
+              )}
+            </form>
 
-          <div className="hidden items-center gap-1 md:flex">
-            <NavLink to="/" className={navLinkClass}>Home</NavLink>
-            <NavLink to="/shop" className={navLinkClass}>Shop</NavLink>
-            <NavLink to="/bundles" className={navLinkClass}>Recipe Kits</NavLink>
-            <NavLink to="/waste-center" className={navLinkClass}>Waste Radar</NavLink>
-            <NavLink to="/track" className={navLinkClass}>Track Order</NavLink>
+            {/* Quick Search Palette */}
+            {searchFocused && (
+              <div className="absolute left-0 right-0 top-full mt-2 overflow-hidden rounded-xl border border-sandstone bg-ivory p-4 shadow-floating z-50 dark:bg-[#251D21] dark:border-white/10">
+                <p className="text-[10px] font-extrabold uppercase tracking-widest text-warmStone mb-2 dark:text-ivory/50">
+                  Curated Searches
+                </p>
+                <div className="flex flex-wrap gap-1.5 mb-3">
+                  {popularSearches.map((item) => (
+                    <button
+                      key={item}
+                      type="button"
+                      onClick={() => {
+                        setNavSearch(item);
+                        submitSearch(item);
+                      }}
+                      className="rounded-lg border border-sandstone bg-porcelain px-3 py-1 text-xs font-medium text-espresso transition hover:border-terracotta hover:bg-terracotta hover:text-ivory dark:bg-[#1D151A] dark:text-ivory dark:border-white/10"
+                    >
+                      {item}
+                    </button>
+                  ))}
+                </div>
+                <div className="border-t border-sandstone pt-2.5 flex items-center justify-between text-[11px] text-warmStone dark:border-white/10 dark:text-ivory/60">
+                  <span>Press <kbd className="font-mono bg-sandstone/50 px-1 py-0.5 rounded text-[10px] text-espresso dark:bg-white/10 dark:text-ivory">Enter</kbd> to search</span>
+                  <Link to="/shop" onClick={closeMenus} className="font-bold text-terracotta hover:underline dark:text-apricot">
+                    Explore All Aisles →
+                  </Link>
+                </div>
+              </div>
+            )}
           </div>
 
-          <div className="flex items-center gap-2">
+          {/* Navigation Links */}
+          <nav className="hidden items-center gap-1 md:flex" aria-label="Main navigation">
+            <NavLink to="/" className={navLinkClass}>Home</NavLink>
+            <NavLink to="/shop" className={navLinkClass}>Shop</NavLink>
+            <NavLink to="/shop?category=Vegetables" className={navLinkClass}>Fresh Market</NavLink>
+            <NavLink to="/bundles" className={navLinkClass}>Recipe Kits</NavLink>
+            <NavLink to="/waste-center" className={navLinkClass}>Smart Savings</NavLink>
+          </nav>
+
+          {/* Right Action Icons */}
+          <div className="flex items-center gap-2 sm:gap-2.5">
+            {/* Theme Toggle */}
             <button
               type="button"
               onClick={toggleTheme}
-              className="rounded-2xl border border-emerald-900/10 bg-white p-3 text-stone-700 shadow-sm transition hover:-translate-y-0.5 hover:text-emerald-700 dark:border-white/10 dark:bg-stone-900 dark:text-stone-200"
+              className="flex h-10 w-10 items-center justify-center rounded-xl border border-sandstone bg-ivory text-espresso transition-transform hover:scale-105 active:scale-95 dark:border-white/10 dark:bg-[#251D21] dark:text-ivory"
               aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
-              title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
             >
-              {theme === 'dark' ? <Sun size={21} /> : <Moon size={21} />}
+              {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
             </button>
+
+            {/* Wishlist Link */}
+            <Link
+              to="/watchlist"
+              className="relative flex h-10 w-10 items-center justify-center rounded-xl border border-sandstone bg-ivory text-espresso transition-transform hover:scale-105 active:scale-95 dark:border-white/10 dark:bg-[#251D21] dark:text-ivory"
+              aria-label="Kitchen Wishlist"
+            >
+              <Heart size={16} />
+              {watchlist.length > 0 && (
+                <span className="absolute -top-1 -right-1 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-terracotta px-1 text-[10px] font-bold text-ivory">
+                  {watchlist.length}
+                </span>
+              )}
+            </Link>
+
+            {/* Cart Trigger */}
             <div ref={cartRef} className="relative">
               <button
                 type="button"
-                onClick={() => setCartOpen((open) => !open)}
-                className="relative rounded-2xl border border-emerald-900/10 bg-white p-3 text-stone-700 shadow-sm transition hover:-translate-y-0.5 hover:text-emerald-800 hover:shadow-md"
-                aria-label="Open cart"
+                onClick={() => setCartOpen((prev) => !prev)}
+                className="relative flex h-10 items-center gap-2 rounded-xl border border-terracotta bg-terracotta px-3.5 text-ivory transition-transform hover:opacity-95 active:scale-95 shadow-subtle"
+                aria-label={`Basket with ${totalItems} items`}
               >
-                <ShoppingCart size={22} />
+                <ShoppingCart size={15} />
+                <span className="text-xs font-bold font-sans">
+                  ₹{total.toFixed(0)}
+                </span>
                 {totalItems > 0 && (
-                  <span className="absolute -right-1 -top-1 min-w-5 rounded-full bg-orange-500 px-1.5 text-center text-xs font-black text-white">
+                  <span className="flex h-4 min-w-[16px] items-center justify-center rounded-full bg-ivory text-terracotta px-1 text-[10px] font-black">
                     {totalItems}
                   </span>
                 )}
               </button>
 
+              {/* Cart Drawer Preview */}
               {cartOpen && (
-                <div className="absolute right-0 mt-4 w-[min(90vw,390px)] overflow-hidden rounded-[2rem] border border-emerald-900/10 bg-white shadow-2xl shadow-stone-950/15">
-                  <div className="flex items-center justify-between border-b border-stone-100 bg-emerald-50/70 px-5 py-4">
+                <div className="absolute right-0 mt-3 w-[min(92vw,380px)] overflow-hidden rounded-xl border border-sandstone bg-ivory shadow-floating z-50 dark:bg-[#251D21] dark:border-white/10">
+                  <div className="flex items-center justify-between border-b border-sandstone bg-porcelain px-4 py-3 dark:bg-[#1D151A] dark:border-white/10">
                     <div>
-                      <p className="text-sm font-black text-stone-950">Shopping cart</p>
-                      <p className="text-xs font-medium text-stone-500">{totalItems} item{totalItems === 1 ? '' : 's'} in your basket</p>
+                      <p className="font-serif text-sm font-semibold text-espresso dark:text-ivory">Your Grocery Basket</p>
+                      <p className="text-[11px] font-medium text-warmStone dark:text-ivory/60">{totalItems} item{totalItems === 1 ? '' : 's'} selected</p>
                     </div>
-                    <button type="button" onClick={() => setCartOpen(false)} className="rounded-full p-2 text-stone-500 hover:bg-white">
-                      <X size={18} />
+                    <button type="button" onClick={() => setCartOpen(false)} className="rounded-full p-1 text-warmStone hover:text-espresso dark:text-ivory/60">
+                      <X size={15} />
                     </button>
                   </div>
-                  <div className="max-h-80 overflow-auto p-3">
+
+                  <div className="max-h-72 overflow-y-auto p-3 space-y-2">
                     {cart.length === 0 ? (
-                      <div className="px-5 py-10 text-center">
-                        <ShoppingBag size={46} className="mx-auto mb-3 text-emerald-200" />
-                        <p className="font-bold text-stone-800">Your basket is empty</p>
-                        <p className="mt-1 text-sm text-stone-500">Fresh finds are waiting.</p>
+                      <div className="py-8 text-center">
+                        <ShoppingBag size={34} className="mx-auto mb-2 text-sandstone" />
+                        <p className="font-serif text-sm font-medium text-espresso dark:text-ivory">Your basket is waiting</p>
+                        <p className="text-xs text-warmStone mt-1 dark:text-ivory/60">Explore fresh farm harvest and recipe kits.</p>
                       </div>
                     ) : (
-                      <div className="space-y-3">
-                        {cart.map((item) => (
-                          <div key={item._id} className="flex items-center gap-3 rounded-2xl bg-stone-50 p-3">
-                            <ProductArtwork product={item} className="h-14 w-14 shrink-0 rounded-xl" />
-                            <div className="min-w-0 flex-1">
-                              <p className="truncate text-sm font-bold text-stone-900">{item.name}</p>
-                              <p className="text-xs font-semibold text-stone-500">Qty {item.quantity} · ₹{item.price}</p>
-                            </div>
-                            <button type="button" onClick={() => removeItem(item._id)} className="rounded-full p-2 text-stone-400 hover:bg-red-50 hover:text-red-500">
-                              <Trash2 size={16} />
-                            </button>
+                      cart.map((item) => (
+                        <div key={item._id} className="flex items-center gap-3 rounded-lg border border-sandstone/70 bg-porcelain p-2.5 dark:bg-[#1D151A] dark:border-white/5">
+                          <ProductArtwork product={item} className="h-12 w-12 shrink-0 rounded-md object-cover" />
+                          <div className="min-w-0 flex-1">
+                            <p className="truncate text-xs font-bold text-espresso dark:text-ivory">{item.name}</p>
+                            <p className="text-[11px] font-medium text-warmStone dark:text-ivory/60">Qty {item.quantity} · ₹{item.price}</p>
                           </div>
-                        ))}
-                      </div>
+                          <button
+                            type="button"
+                            onClick={() => removeItem(item._id)}
+                            className="rounded-lg p-1 text-warmStone hover:bg-errorRed/10 hover:text-errorRed transition"
+                            aria-label="Remove item"
+                          >
+                            <Trash2 size={13} />
+                          </button>
+                        </div>
+                      ))
                     )}
                   </div>
-                  <div className="border-t border-stone-100 p-4">
-                    <div className="mb-4 flex items-center justify-between text-sm">
-                      <span className="font-semibold text-stone-500">Subtotal</span>
-                      <span className="text-xl font-black text-stone-950">₹{total.toFixed(0)}</span>
+
+                  {cart.length > 0 && (
+                    <div className="border-t border-sandstone p-4 bg-ivory dark:bg-[#251D21] dark:border-white/10">
+                      <div className="mb-3 flex items-center justify-between text-xs">
+                        <span className="font-semibold text-warmStone dark:text-ivory/60">Subtotal</span>
+                        <span className="font-serif text-base font-bold text-espresso dark:text-ivory">₹{total.toFixed(0)}</span>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2">
+                        <Link
+                          to="/cart"
+                          onClick={closeMenus}
+                          className="flex items-center justify-center rounded-lg border border-sandstone py-2 text-xs font-bold text-espresso hover:bg-sandstone/20 dark:border-white/20 dark:text-ivory"
+                        >
+                          View Basket
+                        </Link>
+                        <Link
+                          to="/checkout"
+                          onClick={closeMenus}
+                          className="flex items-center justify-center rounded-lg bg-terracotta py-2 text-xs font-bold text-ivory hover:bg-[#9C432A] transition"
+                        >
+                          Checkout
+                        </Link>
+                      </div>
                     </div>
-                    <Link to="/cart" onClick={closeMenus} className="flex w-full items-center justify-center rounded-2xl bg-emerald-700 px-5 py-3 font-black text-white transition hover:bg-emerald-800">
-                      View cart
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* Profile Dropdown */}
+            <div ref={profileRef} className="relative">
+              {user ? (
+                <button
+                  type="button"
+                  onClick={() => setProfileOpen((prev) => !prev)}
+                  className="flex h-10 items-center gap-2 rounded-xl border border-sandstone bg-ivory px-3 text-xs font-bold text-espresso transition hover:border-terracotta dark:border-white/10 dark:bg-[#251D21] dark:text-ivory"
+                >
+                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-terracotta text-ivory text-[10px] font-serif">
+                    {user.name ? user.name.charAt(0).toUpperCase() : 'G'}
+                  </span>
+                  <span className="hidden sm:inline-block max-w-[85px] truncate">{user.name || 'Account'}</span>
+                  <ChevronDown size={13} className="text-warmStone" />
+                </button>
+              ) : (
+                <Link
+                  to="/signin"
+                  className="flex h-10 items-center gap-1.5 rounded-xl border border-sandstone bg-ivory px-3.5 text-xs font-bold text-espresso hover:border-terracotta hover:text-terracotta transition dark:border-white/10 dark:bg-[#251D21] dark:text-ivory"
+                >
+                  <User size={15} />
+                  <span>Sign In</span>
+                </Link>
+              )}
+
+              {/* Profile Menu */}
+              {profileOpen && user && (
+                <div className="absolute right-0 mt-3 w-56 overflow-hidden rounded-xl border border-sandstone bg-ivory py-2 shadow-floating z-50 dark:bg-[#251D21] dark:border-white/10">
+                  <div className="border-b border-sandstone px-4 py-2.5 dark:border-white/10">
+                    <p className="text-xs font-bold text-espresso truncate dark:text-ivory">{user.name}</p>
+                    <p className="text-[11px] text-warmStone truncate dark:text-ivory/60">{user.email}</p>
+                  </div>
+                  <div className="py-1">
+                    <Link to="/dashboard" onClick={closeMenus} className="flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-espresso hover:bg-porcelain dark:text-ivory dark:hover:bg-[#1D151A]">
+                      <LayoutDashboard size={14} className="text-warmStone" /> Customer Overview
                     </Link>
+                    <Link to="/orders" onClick={closeMenus} className="flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-espresso hover:bg-porcelain dark:text-ivory dark:hover:bg-[#1D151A]">
+                      <Package size={14} className="text-warmStone" /> Order History
+                    </Link>
+                    <Link to="/track" onClick={closeMenus} className="flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-espresso hover:bg-porcelain dark:text-ivory dark:hover:bg-[#1D151A]">
+                      <Truck size={14} className="text-warmStone" /> Track Active Order
+                    </Link>
+                    <Link to="/settings" onClick={closeMenus} className="flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-espresso hover:bg-porcelain dark:text-ivory dark:hover:bg-[#1D151A]">
+                      <Settings size={14} className="text-warmStone" /> Account Settings
+                    </Link>
+                  </div>
+                  {(user.role === 'admin' || user.role === 'inventory_manager' || user.role === 'delivery') && (
+                    <div className="border-t border-sandstone py-1 bg-porcelain/60 dark:bg-[#1D151A]/60 dark:border-white/10">
+                      <p className="px-4 py-1 text-[9px] font-extrabold uppercase tracking-widest text-warmStone dark:text-ivory/50">Staff Terminals</p>
+                      {user.role === 'admin' && (
+                        <Link to="/admin" onClick={closeMenus} className="flex items-center gap-2.5 px-4 py-1.5 text-xs font-semibold text-terracotta hover:bg-porcelain dark:text-apricot">
+                          <LayoutDashboard size={14} /> Store Admin Console
+                        </Link>
+                      )}
+                      {(user.role === 'admin' || user.role === 'inventory_manager') && (
+                        <Link to="/waste-center" onClick={closeMenus} className="flex items-center gap-2.5 px-4 py-1.5 text-xs font-semibold text-terracotta hover:bg-porcelain dark:text-apricot">
+                          <SlidersHorizontal size={14} /> Freshness Waste Radar
+                        </Link>
+                      )}
+                      {(user.role === 'admin' || user.role === 'delivery') && (
+                        <Link to="/delivery" onClick={closeMenus} className="flex items-center gap-2.5 px-4 py-1.5 text-xs font-semibold text-terracotta hover:bg-porcelain dark:text-apricot">
+                          <Truck size={14} /> Delivery Terminal
+                        </Link>
+                      )}
+                    </div>
+                  )}
+                  <div className="border-t border-sandstone pt-1 dark:border-white/10">
+                    <button
+                      type="button"
+                      onClick={handleLogout}
+                      className="flex w-full items-center gap-2.5 px-4 py-2 text-xs font-semibold text-errorRed hover:bg-errorRed/5"
+                    >
+                      <LogOut size={14} /> Sign Out
+                    </button>
                   </div>
                 </div>
               )}
             </div>
 
-            {user ? (
-              <div ref={profileRef} className="relative hidden md:block">
-                <button
-                  type="button"
-                  onClick={() => setProfileOpen((open) => !open)}
-                  className="flex items-center gap-2 rounded-2xl border border-emerald-900/10 bg-white px-3 py-2 text-sm font-bold text-stone-800 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
-                >
-                  <span className="flex h-9 w-9 items-center justify-center rounded-full bg-orange-100 text-orange-600">
-                    <User size={18} />
-                  </span>
-                  <span className="max-w-28 truncate">{user.name}</span>
-                  <ChevronDown size={16} className={`transition-transform ${profileOpen ? 'rotate-180' : ''}`} />
-                </button>
-
-                {profileOpen && (
-                  <div className="absolute right-0 mt-4 w-64 overflow-hidden rounded-[1.75rem] border border-emerald-900/10 bg-white shadow-2xl shadow-stone-950/10">
-                    <div className="border-b border-stone-100 bg-stone-50 px-4 py-3">
-                      <p className="truncate text-sm font-bold text-stone-950">{user.name}</p>
-                      <p className="truncate text-xs text-stone-500">{user.email}</p>
-                    </div>
-                    <div className="p-2">
-                      {profileLinks.map(({ to, label, icon: Icon }) => (
-                        <Link key={to} to={to} onClick={closeMenus} className="flex items-center gap-3 rounded-2xl px-3 py-2.5 text-sm font-semibold text-stone-700 hover:bg-emerald-50 hover:text-emerald-800">
-                          <Icon size={18} />
-                          <span className="flex-1">{label}</span>
-                          {label === 'Watchlist' && watchlist.length > 0 && <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-xs text-emerald-800">{watchlist.length}</span>}
-                        </Link>
-                      ))}
-                      <button type="button" onClick={handleLogout} className="flex w-full items-center gap-3 rounded-2xl px-3 py-2.5 text-sm font-semibold text-red-600 hover:bg-red-50">
-                        <LogOut size={18} />
-                        Logout
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </div>
-            ) : (
-              <div className="hidden items-center gap-2 md:flex">
-                <Link to="/signin" className="rounded-full px-4 py-2 text-sm font-bold text-stone-700 transition hover:bg-white hover:text-emerald-800">Login</Link>
-                <Link to="/signup" className="rounded-full bg-emerald-900 px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-emerald-950/15 transition hover:-translate-y-0.5 hover:bg-emerald-700">Sign Up</Link>
-              </div>
-            )}
-
-            <button type="button" onClick={() => setMobileOpen((open) => !open)} className="rounded-2xl border border-emerald-900/10 bg-white p-3 text-stone-700 shadow-sm md:hidden">
-              {mobileOpen ? <X size={22} /> : <Menu size={22} />}
+            {/* Mobile Menu Button */}
+            <button
+              type="button"
+              onClick={() => setMobileOpen((prev) => !prev)}
+              className="flex h-10 w-10 items-center justify-center rounded-xl border border-sandstone bg-ivory text-espresso md:hidden dark:border-white/10 dark:bg-[#251D21] dark:text-ivory"
+              aria-label="Toggle navigation menu"
+            >
+              {mobileOpen ? <X size={17} /> : <Menu size={17} />}
             </button>
           </div>
         </div>
 
+        {/* Mobile Navigation Drawer */}
         {mobileOpen && (
-          <div className="border-t border-emerald-900/10 py-4 md:hidden">
-            <form onSubmit={submitSearch} className="mb-3 flex items-center gap-2 rounded-2xl bg-white px-3 py-2 shadow-sm">
-              <Search size={18} className="text-stone-400" />
-              <input value={navSearch} onChange={(event) => setNavSearch(event.target.value)} placeholder="Search groceries..." className="min-w-0 flex-1 bg-transparent py-2 text-sm outline-none" />
+          <div className="border-t border-sandstone py-4 md:hidden dark:border-white/10">
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                submitSearch();
+              }}
+              className="flex items-center gap-2 rounded-xl border border-sandstone bg-ivory px-3 py-2 mb-4 dark:bg-[#251D21] dark:border-white/10"
+            >
+              <Search size={15} className="text-warmStone shrink-0" />
+              <input
+                type="text"
+                value={navSearch}
+                onChange={(e) => setNavSearch(e.target.value)}
+                placeholder="Search fresh provisions..."
+                className="min-w-0 flex-1 bg-transparent text-xs font-medium text-espresso outline-none dark:text-ivory"
+              />
+              <button type="submit" className="rounded-lg bg-terracotta px-3 py-1 text-xs font-bold text-ivory">
+                Go
+              </button>
             </form>
-            <div className="space-y-1">
-              <Link to="/" onClick={closeMenus} className="flex items-center gap-3 rounded-2xl px-3 py-3 text-sm font-bold text-stone-700 hover:bg-white">
-                <Home size={18} />
-                Home
-              </Link>
-              <Link to="/cart" onClick={closeMenus} className="flex items-center gap-3 rounded-2xl px-3 py-3 text-sm font-bold text-stone-700 hover:bg-white">
-                <ShoppingCart size={18} />
-                Cart ({totalItems})
-              </Link>
-              <Link to="/#shop" onClick={closeMenus} className="flex items-center gap-3 rounded-2xl px-3 py-3 text-sm font-bold text-stone-700 hover:bg-white">
-                <SlidersHorizontal size={18} />
-                Browse categories
-              </Link>
-              {user ? (
-                <>
-                  <div className="my-2 rounded-2xl bg-white px-3 py-3">
-                    <p className="truncate text-sm font-bold text-stone-900">{user.name}</p>
-                    <p className="truncate text-xs text-stone-500">{user.email}</p>
-                  </div>
-                  {profileLinks.map(({ to, label, icon: Icon }) => (
-                    <Link key={to} to={to} onClick={closeMenus} className="flex items-center gap-3 rounded-2xl px-3 py-3 text-sm font-bold text-stone-700 hover:bg-white">
-                      <Icon size={18} />
-                      <span className="flex-1">{label}</span>
-                      {label === 'Watchlist' && watchlist.length > 0 && <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-xs text-emerald-800">{watchlist.length}</span>}
-                    </Link>
-                  ))}
-                  <button type="button" onClick={handleLogout} className="flex w-full items-center gap-3 rounded-2xl px-3 py-3 text-sm font-bold text-red-600 hover:bg-red-50">
-                    <LogOut size={18} />
-                    Logout
-                  </button>
-                </>
-              ) : (
-                <div className="grid grid-cols-2 gap-2 pt-2">
-                  <Link to="/signin" onClick={closeMenus} className="rounded-2xl border border-emerald-900/10 bg-white px-4 py-3 text-center text-sm font-bold text-stone-700">Login</Link>
-                  <Link to="/signup" onClick={closeMenus} className="rounded-2xl bg-emerald-700 px-4 py-3 text-center text-sm font-bold text-white">Sign Up</Link>
-                </div>
-              )}
+
+            <div className="flex flex-col space-y-1">
+              <Link to="/" onClick={closeMenus} className="px-3 py-2 text-xs font-bold uppercase tracking-wider text-espresso dark:text-ivory">Home</Link>
+              <Link to="/shop" onClick={closeMenus} className="px-3 py-2 text-xs font-bold uppercase tracking-wider text-espresso dark:text-ivory">All Aisles</Link>
+              <Link to="/shop?category=Vegetables" onClick={closeMenus} className="px-3 py-2 text-xs font-bold uppercase tracking-wider text-espresso dark:text-ivory">Farm Produce</Link>
+              <Link to="/bundles" onClick={closeMenus} className="px-3 py-2 text-xs font-bold uppercase tracking-wider text-espresso dark:text-ivory">1-Click Recipe Kits</Link>
+              <Link to="/waste-center" onClick={closeMenus} className="px-3 py-2 text-xs font-bold uppercase tracking-wider text-espresso dark:text-ivory">Smart Savings & Radar</Link>
+              <Link to="/track" onClick={closeMenus} className="px-3 py-2 text-xs font-bold uppercase tracking-wider text-espresso dark:text-ivory">Track Order</Link>
+              <Link to="/watchlist" onClick={closeMenus} className="px-3 py-2 text-xs font-bold uppercase tracking-wider text-espresso dark:text-ivory">Saved Items ({watchlist.length})</Link>
             </div>
           </div>
         )}
       </div>
-    </nav>
+    </header>
   );
 };
 

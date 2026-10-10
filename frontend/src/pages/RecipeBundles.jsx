@@ -1,8 +1,17 @@
 import { useState, useEffect } from 'react';
-import { ChefHat, Clock, Users, ShoppingCart } from 'lucide-react';
+import { Clock, Users, ShoppingBag, Sparkles, Check, ChefHat } from 'lucide-react';
 import { productsAPI } from '../utils/api';
 import { useCart } from '../context/CartContext';
 import { useToast } from '../context/ToastContext';
+import { getProductLiveImage } from '../utils/remoteProductImages';
+
+const RECIPE_EDITORIAL_PHOTOS = {
+  'Creamy Tuscan Garlic Pasta': 'https://images.unsplash.com/photo-1621996346565-e3d5d6281228?auto=format&fit=crop&w=900&q=80',
+  'Sunday Sourdough French Toast': 'https://images.unsplash.com/photo-1484723091739-30a097e8f929?auto=format&fit=crop&w=900&q=80',
+  'Organic Supergreen Detox Salad': 'https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=900&q=80',
+  'Classic Shakshuka with Feta': 'https://images.unsplash.com/photo-1590301157890-4810ed352733?auto=format&fit=crop&w=900&q=80',
+  'Wild Forest Mushroom Risotto': 'https://images.unsplash.com/photo-1633964913295-ceb43826e7c9?auto=format&fit=crop&w=900&q=80',
+};
 
 const RecipeBundles = () => {
   const [bundles, setBundles] = useState([]);
@@ -25,105 +34,137 @@ const RecipeBundles = () => {
     bundle.items.forEach((item) => {
       addItem(item, 1);
     });
-    showToast(`Added all ${bundle.items.length} ingredients for "${bundle.title}" to cart!`, 'success');
+    showToast(`Added all ${bundle.items.length} recipe ingredients for "${bundle.title}" to cart!`);
   };
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
-      {/* Hero Header */}
-      <div className="mb-10 text-center">
-        <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-100 px-4 py-1 text-xs font-black text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">
-          <ChefHat size={16} />
-          1-Click Cook Baskets
-        </span>
-        <h1 className="mt-3 text-3xl font-black text-stone-900 tracking-tight dark:text-white sm:text-4xl">
-          Cook Tonight: Curated Meal Recipe Kits
-        </h1>
-        <p className="mx-auto mt-2 max-w-2xl text-sm font-medium text-stone-500">
-          Skip endless searching. Get all farm-fresh ingredients in exact proportions for iconic home-cooked dishes in one click.
-        </p>
-      </div>
-
-      {loading ? (
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-          {[1, 2, 3].map((n) => (
-            <div key={n} className="h-96 animate-pulse rounded-[2.5rem] bg-stone-200 dark:bg-stone-800" />
-          ))}
+    <div className="min-h-screen bg-porcelain pb-24">
+      {/* Editorial Header */}
+      <section className="border-b border-sandstone bg-ivory py-16 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-4xl mx-auto text-center">
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-apricot/30 border border-terracotta/20 rounded-full text-xs font-semibold text-terracotta uppercase tracking-wider mb-4">
+            <ChefHat size={14} />
+            <span>Culinary Discovery Studio</span>
+          </div>
+          <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl text-espresso font-semibold tracking-tight">
+            One-Click Recipe Kits
+          </h1>
+          <p className="mt-4 text-warmStone text-base sm:text-lg max-w-2xl mx-auto font-sans leading-relaxed">
+            Eliminate meal-planning friction. Every ingredient measured in pristine condition, sourced straight from our cold-chain market and bundled into your cart in a single click.
+          </p>
         </div>
-      ) : (
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-          {bundles.map((bundle) => {
-            const bundleTotal = bundle.items.reduce((sum, item) => sum + (item.price || 0), 0);
+      </section>
 
-            return (
-              <div
-                key={bundle.id}
-                className="group flex flex-col justify-between overflow-hidden rounded-[2.5rem] border border-emerald-900/10 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl dark:bg-[#14231a] dark:border-white/10"
-              >
-                <div>
-                  <div className="mb-4 flex items-center justify-between">
-                    <span className="inline-flex items-center gap-1 text-xs font-bold text-stone-500">
-                      <Clock size={14} className="text-emerald-700" />
-                      {bundle.timeToCook}
-                    </span>
-                    <span className="inline-flex items-center gap-1 text-xs font-bold text-stone-500">
-                      <Users size={14} className="text-emerald-700" />
-                      {bundle.servings}
-                    </span>
-                  </div>
+      {/* Main Kits Grid */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12">
+        {loading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[1, 2, 3].map((n) => (
+              <div key={n} className="h-[520px] rounded-2xl bg-ivory border border-sandstone animate-pulse" />
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {bundles.map((bundle) => {
+              const bundleTotal = bundle.items.reduce((sum, item) => sum + (item.price || 0), 0);
+              const heroImg = RECIPE_EDITORIAL_PHOTOS[bundle.title] ||
+                bundle.items?.[0]?.image ||
+                'https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&w=900&q=80';
 
-                  <h3 className="text-2xl font-black text-stone-900 tracking-tight dark:text-white">
-                    {bundle.title}
-                  </h3>
-                  <p className="mt-1 text-xs font-medium text-stone-500 leading-relaxed">
-                    {bundle.subtitle}
-                  </p>
+              return (
+                <div
+                  key={bundle.id}
+                  className="bg-ivory rounded-2xl border border-sandstone overflow-hidden shadow-[0_2px_12px_rgba(39,34,31,0.04)] hover:shadow-[0_8px_24px_rgba(39,34,31,0.08)] transition-all flex flex-col justify-between"
+                >
+                  <div>
+                    {/* Kit Photo */}
+                    <div className="relative h-56 w-full overflow-hidden bg-sandstone/30">
+                      <img
+                        src={heroImg}
+                        alt={bundle.title}
+                        className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
+                      />
+                      <div className="absolute top-3 left-3 flex gap-2">
+                        <span className="px-2.5 py-1 bg-ivory/95 backdrop-blur-sm rounded-md text-[11px] font-semibold text-espresso flex items-center gap-1 shadow-sm border border-sandstone/60">
+                          <Clock size={12} className="text-terracotta" />
+                          {bundle.timeToCook}
+                        </span>
+                        <span className="px-2.5 py-1 bg-ivory/95 backdrop-blur-sm rounded-md text-[11px] font-semibold text-espresso flex items-center gap-1 shadow-sm border border-sandstone/60">
+                          <Users size={12} className="text-terracotta" />
+                          {bundle.servings}
+                        </span>
+                      </div>
+                    </div>
 
-                  {/* Chef Tip */}
-                  <div className="my-4 rounded-2xl bg-amber-50/80 p-3.5 border border-amber-200/50 dark:bg-amber-950/40 dark:border-amber-800/40">
-                    <p className="text-xs font-semibold text-amber-900 dark:text-amber-200 leading-snug">
-                      <strong className="font-black text-amber-800 dark:text-amber-300">Chef&apos;s Secret: </strong>
-                      {bundle.chefTip}
-                    </p>
-                  </div>
+                    <div className="p-6">
+                      <h3 className="font-serif text-2xl text-espresso font-semibold mb-2">
+                        {bundle.title}
+                      </h3>
+                      <p className="text-xs text-warmStone leading-relaxed mb-4">
+                        {bundle.subtitle}
+                      </p>
 
-                  {/* Ingredients Included */}
-                  <div className="my-4">
-                    <p className="mb-2 text-xs font-black uppercase tracking-wider text-stone-400">
-                      Ingredients Included ({bundle.items.length})
-                    </p>
-                    <div className="space-y-2">
-                      {bundle.items.map((item, idx) => (
-                        <div
-                          key={idx}
-                          className="flex items-center justify-between rounded-xl bg-stone-50 px-3 py-2 text-xs font-semibold text-stone-700 dark:bg-stone-900 dark:text-stone-300"
-                        >
-                          <span className="truncate">{item.name}</span>
-                          <span className="font-bold text-emerald-800 dark:text-emerald-400 shrink-0 ml-2">₹{item.price}</span>
+                      {/* Chef's Secret Note */}
+                      <div className="p-3.5 bg-porcelain border border-sandstone rounded-xl mb-6">
+                        <div className="flex items-center gap-1.5 text-terracotta mb-1">
+                          <Sparkles size={14} />
+                          <span className="text-xs font-semibold uppercase tracking-wider">Chef&apos;s Pro Tip</span>
                         </div>
-                      ))}
+                        <p className="text-xs text-espresso/90 italic leading-snug">
+                          &ldquo;{bundle.chefTip}&rdquo;
+                        </p>
+                      </div>
+
+                      {/* Ingredients Included */}
+                      <div>
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-xs font-semibold text-espresso uppercase tracking-wider">
+                            Market Ingredients Included
+                          </span>
+                          <span className="text-xs text-warmStone">{bundle.items.length} items</span>
+                        </div>
+                        <div className="space-y-1.5">
+                          {bundle.items.map((item, idx) => (
+                            <div
+                              key={idx}
+                              className="flex items-center justify-between p-2 rounded-lg bg-porcelain/60 text-xs text-espresso border border-sandstone/40"
+                            >
+                              <div className="flex items-center gap-2 truncate">
+                                <span className="w-1.5 h-1.5 rounded-full bg-terracotta shrink-0" />
+                                <span className="truncate">{item.name}</span>
+                              </div>
+                              <span className="font-semibold text-espresso shrink-0 ml-2">₹{item.price}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                <div className="mt-6 border-t border-stone-100 pt-4 dark:border-white/5">
-                  <div className="mb-3 flex items-baseline justify-between">
-                    <span className="text-xs font-bold text-stone-500">Bundle Total</span>
-                    <span className="text-2xl font-black text-emerald-800 dark:text-emerald-400">₹{bundleTotal}</span>
+                  {/* Footer & CTA */}
+                  <div className="p-6 pt-4 border-t border-sandstone bg-ivory mt-auto">
+                    <div className="flex items-baseline justify-between mb-4">
+                      <span className="text-xs text-warmStone uppercase tracking-wider">Bundle Total</span>
+                      <div className="text-right">
+                        <span className="font-serif text-2xl text-espresso font-semibold">₹{bundleTotal}</span>
+                        <span className="block text-[11px] text-warmStone">Includes all measured portions</span>
+                      </div>
+                    </div>
+
+                    <button
+                      onClick={() => handleAddBundle(bundle)}
+                      className="w-full bg-terracotta text-ivory py-3.5 px-4 rounded-xl hover:bg-terracotta/90 transition-all font-medium text-sm flex items-center justify-center gap-2 shadow-sm"
+                    >
+                      <ShoppingBag size={16} />
+                      <span>Add Complete Recipe Kit</span>
+                    </button>
                   </div>
-                  <button
-                    onClick={() => handleAddBundle(bundle)}
-                    className="flex w-full items-center justify-center gap-2 rounded-2xl bg-[#075F46] py-3.5 font-black text-white shadow-md transition hover:bg-[#064D3A] active:scale-[0.99]"
-                  >
-                    <ShoppingCart size={18} />
-                    Add Recipe Kit to Basket
-                  </button>
                 </div>
-              </div>
-            );
-          })}
-        </div>
-      )}
+              );
+            })}
+          </div>
+        )}
+      </div>
     </div>
   );
 };

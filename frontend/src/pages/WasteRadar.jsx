@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ShieldAlert, Sparkles, TrendingDown, Clock, CheckCircle2, AlertTriangle, RefreshCw, Trash2 } from 'lucide-react';
+import { ShieldAlert, Sparkles, TrendingDown, Clock, CheckCircle2, AlertTriangle, RefreshCw, Trash2, Calendar } from 'lucide-react';
 import { inventoryAPI } from '../utils/api';
 import { useToast } from '../context/ToastContext';
 
@@ -56,189 +56,201 @@ const WasteRadar = () => {
   };
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
-      {/* Header */}
-      <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-100 px-3.5 py-1 text-xs font-black text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">
-            <Sparkles size={14} />
-            Smart Grocery Differentiator
-          </span>
-          <h1 className="mt-2 text-3xl font-black text-stone-900 tracking-tight dark:text-white sm:text-4xl">
-            Freshness & Waste Reduction Center
-          </h1>
-          <p className="mt-1 text-sm font-medium text-stone-500">
-            Enforcing strict FEFO (First-Expiring-First-Out) harvest batch tracking and smart markdowns to achieve zero food waste.
-          </p>
+    <div className="min-h-screen bg-porcelain pb-24">
+      {/* Editorial Header */}
+      <section className="border-b border-sandstone bg-ivory py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
+          <div>
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-apricot/30 border border-terracotta/20 rounded-full text-xs font-semibold text-terracotta uppercase tracking-wider mb-3">
+              <Sparkles size={13} />
+              <span>FEFO Cold-Chain Governance</span>
+            </div>
+            <h1 className="font-serif text-3xl sm:text-4xl text-espresso font-semibold tracking-tight">
+              Freshness & Waste Radar
+            </h1>
+            <p className="mt-2 text-sm text-warmStone max-w-2xl leading-relaxed">
+              Real-time harvest batch monitoring. First-Expiring-First-Out (FEFO) routing dynamically discounts near-peak produce to ensure zero food waste while guaranteeing maximum freshness for customers.
+            </p>
+          </div>
+          <button
+            onClick={loadData}
+            className="self-start sm:self-auto inline-flex items-center gap-2 px-4 py-2.5 bg-porcelain hover:bg-sandstone/30 border border-sandstone rounded-xl text-xs font-semibold text-espresso uppercase tracking-wider transition-colors shadow-sm"
+          >
+            <RefreshCw size={14} />
+            <span>Sync Batches</span>
+          </button>
         </div>
-        <button
-          onClick={loadData}
-          className="flex items-center gap-2 rounded-2xl border border-emerald-900/10 bg-white px-4 py-2.5 text-sm font-bold text-stone-800 shadow-sm hover:bg-stone-50 dark:bg-stone-900 dark:border-white/10 dark:text-white"
-        >
-          <RefreshCw size={16} />
-          Sync Batches
-        </button>
-      </div>
+      </section>
 
-      {loading ? (
-        <div className="h-96 animate-pulse rounded-[2.5rem] bg-stone-200 dark:bg-stone-800" />
-      ) : (
-        <>
-          {/* Key Metric Cards */}
-          <div className="mb-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            <div className="rounded-[2rem] border border-emerald-900/10 bg-white p-6 shadow-sm dark:bg-[#14231a] dark:border-white/10">
-              <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300">
-                <CheckCircle2 size={22} />
-              </span>
-              <p className="mt-4 text-xs font-black uppercase tracking-wider text-stone-400">Total Active Batches</p>
-              <p className="mt-1 text-3xl font-black text-stone-900 dark:text-white">{radar?.totalBatches || 0}</p>
-              <p className="mt-1 text-xs font-semibold text-emerald-600">100% FEFO Compliance</p>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10">
+        {loading ? (
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+              {[1, 2, 3, 4].map((n) => (
+                <div key={n} className="h-32 bg-ivory rounded-2xl border border-sandstone animate-pulse" />
+              ))}
             </div>
-
-            <div className="rounded-[2rem] border border-amber-900/10 bg-white p-6 shadow-sm dark:bg-[#14231a] dark:border-white/10">
-              <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-300">
-                <Clock size={22} />
-              </span>
-              <p className="mt-4 text-xs font-black uppercase tracking-wider text-stone-400">Near-Expiry Radar (Next 7 Days)</p>
-              <p className="mt-1 text-3xl font-black text-amber-600">{radar?.nearExpiryCount || 0}</p>
-              <p className="mt-1 text-xs font-semibold text-amber-700 dark:text-amber-400">Eligible for Markdown Deals</p>
-            </div>
-
-            <div className="rounded-[2rem] border border-orange-900/10 bg-white p-6 shadow-sm dark:bg-[#14231a] dark:border-white/10">
-              <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-orange-100 text-orange-700 dark:bg-orange-950 dark:text-orange-300">
-                <TrendingDown size={22} />
-              </span>
-              <p className="mt-4 text-xs font-black uppercase tracking-wider text-stone-400">Rescued Inventory Value</p>
-              <p className="mt-1 text-3xl font-black text-emerald-700 dark:text-emerald-400">₹{radar?.rescuedValueEstimate || 0}</p>
-              <p className="mt-1 text-xs font-semibold text-stone-500">Saved through dynamic pricing</p>
-            </div>
-
-            <div className="rounded-[2rem] border border-red-900/10 bg-white p-6 shadow-sm dark:bg-[#14231a] dark:border-white/10">
-              <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-red-100 text-red-700 dark:bg-red-950 dark:text-red-300">
-                <ShieldAlert size={22} />
-              </span>
-              <p className="mt-4 text-xs font-black uppercase tracking-wider text-stone-400">Write-Offs / Loss Recorded</p>
-              <p className="mt-1 text-3xl font-black text-red-600">₹{radar?.totalLossRecorded || 0}</p>
-              <p className="mt-1 text-xs font-semibold text-stone-500">Direct farm damage & spillage</p>
-            </div>
+            <div className="h-96 bg-ivory rounded-2xl border border-sandstone animate-pulse" />
           </div>
+        ) : (
+          <>
+            {/* Key Metric Cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-10">
+              <div className="bg-ivory p-6 rounded-2xl border border-sandstone shadow-[0_2px_8px_rgba(39,34,31,0.04)]">
+                <div className="w-10 h-10 rounded-xl bg-porcelain border border-sandstone flex items-center justify-center text-espresso mb-4">
+                  <CheckCircle2 size={20} className="text-terracotta" />
+                </div>
+                <p className="text-[11px] font-semibold uppercase tracking-wider text-warmStone">Active Batches</p>
+                <p className="font-serif text-3xl text-espresso font-semibold mt-1">{radar?.totalBatches || 0}</p>
+                <p className="text-xs text-warmStone mt-1">100% FEFO Compliance</p>
+              </div>
 
-          {/* Near-Expiry Action Radar Table */}
-          <div className="mb-8 rounded-[2.5rem] border border-emerald-900/10 bg-white p-6 shadow-sm dark:bg-[#14231a] dark:border-white/10 sm:p-8">
-            <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-              <div>
-                <h2 className="text-xl font-black text-stone-900 dark:text-white flex items-center gap-2">
-                  <AlertTriangle className="text-amber-500" size={20} />
-                  Near-Expiry Stock Action Radar
-                </h2>
-                <p className="text-xs font-medium text-stone-500">
-                  Batches expiring soon. Apply smart markdowns to trigger customer savings before expiration.
-                </p>
+              <div className="bg-ivory p-6 rounded-2xl border border-sandstone shadow-[0_2px_8px_rgba(39,34,31,0.04)]">
+                <div className="w-10 h-10 rounded-xl bg-apricot/30 border border-terracotta/20 flex items-center justify-center text-terracotta mb-4">
+                  <Clock size={20} />
+                </div>
+                <p className="text-[11px] font-semibold uppercase tracking-wider text-warmStone">Near-Expiry (7 Days)</p>
+                <p className="font-serif text-3xl text-terracotta font-semibold mt-1">{radar?.nearExpiryCount || 0}</p>
+                <p className="text-xs text-warmStone mt-1">Eligible for flash markdown</p>
+              </div>
+
+              <div className="bg-ivory p-6 rounded-2xl border border-sandstone shadow-[0_2px_8px_rgba(39,34,31,0.04)]">
+                <div className="w-10 h-10 rounded-xl bg-porcelain border border-sandstone flex items-center justify-center text-espresso mb-4">
+                  <TrendingDown size={20} className="text-antiqueBrass" />
+                </div>
+                <p className="text-[11px] font-semibold uppercase tracking-wider text-warmStone">Rescued Inventory Value</p>
+                <p className="font-serif text-3xl text-espresso font-semibold mt-1">₹{radar?.rescuedValueEstimate || 0}</p>
+                <p className="text-xs text-warmStone mt-1">Saved via dynamic pricing</p>
+              </div>
+
+              <div className="bg-ivory p-6 rounded-2xl border border-sandstone shadow-[0_2px_8px_rgba(39,34,31,0.04)]">
+                <div className="w-10 h-10 rounded-xl bg-porcelain border border-sandstone flex items-center justify-center text-espresso mb-4">
+                  <ShieldAlert size={20} className="text-aubergine" />
+                </div>
+                <p className="text-[11px] font-semibold uppercase tracking-wider text-warmStone">Loss Recorded</p>
+                <p className="font-serif text-3xl text-aubergine font-semibold mt-1">₹{radar?.totalLossRecorded || 0}</p>
+                <p className="text-xs text-warmStone mt-1">Direct farm damage & spillage</p>
               </div>
             </div>
 
-            {radar?.nearExpiryBatches?.length === 0 ? (
-              <div className="rounded-2xl bg-emerald-50 p-6 text-center text-sm font-bold text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300">
-                All perishable stock is currently well within safe freshness windows!
+            {/* Near-Expiry Action Radar Table */}
+            <div className="bg-ivory rounded-2xl border border-sandstone shadow-[0_2px_12px_rgba(39,34,31,0.04)] p-6 sm:p-8 mb-10">
+              <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                <div>
+                  <h2 className="font-serif text-2xl text-espresso font-semibold flex items-center gap-2">
+                    <AlertTriangle className="text-terracotta" size={22} />
+                    <span>Near-Expiry Freshness Radar</span>
+                  </h2>
+                  <p className="text-xs text-warmStone mt-1">
+                    Batches approaching peak maturity. Apply targeted customer savings before expiration.
+                  </p>
+                </div>
               </div>
-            ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-sm">
-                  <thead>
-                    <tr className="border-b border-stone-200 text-xs font-black uppercase tracking-wider text-stone-400 dark:border-white/10">
-                      <th className="pb-3">Batch & Product</th>
-                      <th className="pb-3">Farm Origin</th>
-                      <th className="pb-3">Days Left</th>
-                      <th className="pb-3">Units Left</th>
-                      <th className="pb-3">Selling Price</th>
-                      <th className="pb-3">Smart Markdown</th>
-                      <th className="pb-3 text-right">Action</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-stone-100 dark:divide-white/5">
-                    {radar?.nearExpiryBatches?.map((batch) => {
-                      const daysLeft = Math.ceil((new Date(batch.expiryDate) - new Date()) / (1000 * 60 * 60 * 24));
 
-                      return (
-                        <tr key={batch._id} className="hover:bg-stone-50/70 dark:hover:bg-white/5">
-                          <td className="py-4">
-                            <p className="font-bold text-stone-900 dark:text-white">{batch.productName}</p>
-                            <p className="text-xs font-mono text-stone-500">{batch.batchNumber}</p>
-                          </td>
-                          <td className="py-4 text-xs font-semibold text-stone-600 dark:text-stone-300">
-                            {batch.farmOrigin}
-                          </td>
-                          <td className="py-4">
-                            <span className="inline-flex rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-black text-amber-800 dark:bg-amber-950 dark:text-amber-300">
-                              {daysLeft} days
-                            </span>
-                          </td>
-                          <td className="py-4 font-bold text-stone-800 dark:text-stone-200">
-                            {batch.quantityRemaining} units
-                          </td>
-                          <td className="py-4 font-black text-emerald-800 dark:text-emerald-400">
-                            ₹{batch.sellingPrice}
-                          </td>
-                          <td className="py-4">
-                            {batch.markdownApplied ? (
-                              <span className="rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-black text-emerald-800">
-                                {batch.markdownDiscount}% Markdown Active
+              {radar?.nearExpiryBatches?.length === 0 ? (
+                <div className="rounded-xl bg-porcelain border border-sandstone p-8 text-center text-sm font-medium text-warmStone">
+                  All perishable produce is currently well within safe freshness thresholds.
+                </div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-sm">
+                    <thead>
+                      <tr className="border-b border-sandstone text-[11px] font-semibold uppercase tracking-wider text-warmStone">
+                        <th className="pb-3">Batch & Product</th>
+                        <th className="pb-3">Farm Origin</th>
+                        <th className="pb-3">Days Remaining</th>
+                        <th className="pb-3">Remaining Stock</th>
+                        <th className="pb-3">Market Price</th>
+                        <th className="pb-3">Markdown Status</th>
+                        <th className="pb-3 text-right">Intervention</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-sandstone/60">
+                      {radar?.nearExpiryBatches?.map((batch) => {
+                        const daysLeft = Math.ceil((new Date(batch.expiryDate) - new Date()) / (1000 * 60 * 60 * 24));
+
+                        return (
+                          <tr key={batch._id} className="hover:bg-porcelain/60 transition-colors">
+                            <td className="py-4">
+                              <p className="font-medium text-espresso">{batch.productName}</p>
+                              <p className="text-[11px] font-mono text-warmStone">{batch.batchNumber}</p>
+                            </td>
+                            <td className="py-4 text-xs text-warmStone">
+                              {batch.farmOrigin}
+                            </td>
+                            <td className="py-4">
+                              <span className="inline-flex rounded-full bg-apricot/30 border border-terracotta/20 px-2.5 py-0.5 text-xs font-semibold text-terracotta">
+                                {daysLeft} days
                               </span>
-                            ) : (
-                              <span className="text-xs font-semibold text-stone-500">
-                                Suggested: {batch.markdownDiscount || 20}% OFF
-                              </span>
-                            )}
-                          </td>
-                          <td className="py-4 text-right">
-                            <div className="flex items-center justify-end gap-2">
-                              {!batch.markdownApplied && (
-                                <button
-                                  onClick={() => handleApplyMarkdown(batch._id, batch.markdownDiscount || 20)}
-                                  className="rounded-xl bg-[#075F46] px-3 py-1.5 text-xs font-black text-white hover:bg-[#064D3A]"
-                                >
-                                  Apply {batch.markdownDiscount || 20}% Markdown
-                                </button>
+                            </td>
+                            <td className="py-4 text-xs font-medium text-espresso">
+                              {batch.quantityRemaining} units
+                            </td>
+                            <td className="py-4 font-semibold text-espresso">
+                              ₹{batch.sellingPrice}
+                            </td>
+                            <td className="py-4">
+                              {batch.markdownApplied ? (
+                                <span className="inline-flex rounded-full bg-porcelain border border-sandstone px-2.5 py-0.5 text-xs font-semibold text-terracotta">
+                                  {batch.markdownDiscount}% Markdown Active
+                                </span>
+                              ) : (
+                                <span className="text-xs text-warmStone">
+                                  Suggested: {batch.markdownDiscount || 20}% OFF
+                                </span>
                               )}
-                              <button
-                                onClick={() => handleWriteOff(batch._id, batch.quantityRemaining, batch.costPrice)}
-                                className="rounded-xl border border-red-200 bg-red-50 p-1.5 text-red-600 hover:bg-red-100"
-                                title="Write-off damaged / spoiled units"
-                              >
-                                <Trash2 size={16} />
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </div>
+                            </td>
+                            <td className="py-4 text-right">
+                              <div className="flex items-center justify-end gap-2">
+                                {!batch.markdownApplied && (
+                                  <button
+                                    onClick={() => handleApplyMarkdown(batch._id, batch.markdownDiscount || 20)}
+                                    className="rounded-lg bg-terracotta text-ivory px-3 py-1.5 text-xs font-medium hover:bg-terracotta/90 transition-colors"
+                                  >
+                                    Apply {batch.markdownDiscount || 20}% OFF
+                                  </button>
+                                )}
+                                <button
+                                  onClick={() => handleWriteOff(batch._id, batch.quantityRemaining, batch.costPrice)}
+                                  className="rounded-lg border border-sandstone bg-porcelain p-1.5 text-warmStone hover:text-aubergine hover:border-aubergine/40 transition-colors"
+                                  title="Write-off damaged / spoiled units"
+                                >
+                                  <Trash2 size={15} />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
 
-          {/* Audit Log / Write-Off Ledger */}
-          <div className="rounded-[2.5rem] border border-emerald-900/10 bg-white p-6 shadow-sm dark:bg-[#14231a] dark:border-white/10 sm:p-8">
-            <h2 className="mb-4 text-xl font-black text-stone-900 dark:text-white">Write-Off & Audit History</h2>
-            {wasteLogs.length === 0 ? (
-              <p className="text-sm font-medium text-stone-500">No write-offs logged yet. Inventory health is optimal.</p>
-            ) : (
-              <div className="space-y-3">
-                {wasteLogs.map((log) => (
-                  <div key={log._id} className="flex items-center justify-between rounded-2xl bg-stone-50 p-4 dark:bg-stone-900">
-                    <div>
-                      <p className="text-sm font-bold text-stone-900 dark:text-white">{log.productName} ({log.quantity} units)</p>
-                      <p className="text-xs text-stone-500">Reason: {log.reason} · {new Date(log.createdAt).toLocaleDateString()}</p>
+            {/* Audit Log / Write-Off Ledger */}
+            <div className="bg-ivory rounded-2xl border border-sandstone shadow-[0_2px_12px_rgba(39,34,31,0.04)] p-6 sm:p-8">
+              <h2 className="font-serif text-2xl text-espresso font-semibold mb-2">Write-Off & Audit History</h2>
+              <p className="text-xs text-warmStone mb-6">Traceable ledger of spoiled or damaged produce removed from circulation.</p>
+              {wasteLogs.length === 0 ? (
+                <p className="text-xs text-warmStone italic">No write-offs logged yet. Inventory health is optimal.</p>
+              ) : (
+                <div className="space-y-2.5">
+                  {wasteLogs.map((log) => (
+                    <div key={log._id} className="flex items-center justify-between p-3.5 rounded-xl bg-porcelain border border-sandstone/60">
+                      <div>
+                        <p className="text-xs font-semibold text-espresso">{log.productName} ({log.quantity} units)</p>
+                        <p className="text-[11px] text-warmStone">Reason: {log.reason} &bull; {new Date(log.createdAt).toLocaleDateString()}</p>
+                      </div>
+                      <span className="text-xs font-semibold text-terracotta">Loss: ₹{log.financialLoss}</span>
                     </div>
-                    <span className="text-sm font-black text-red-600">Loss: ₹{log.financialLoss}</span>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        </>
-      )}
+                  ))}
+                </div>
+              )}
+            </div>
+          </>
+        )}
+      </div>
     </div>
   );
 };

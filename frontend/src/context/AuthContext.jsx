@@ -47,8 +47,12 @@ export const AuthProvider = ({ children }) => {
         navigate('/signin', { replace: true, state: { from, sessionExpired: true } });
       }
     };
+    window.addEventListener('grocerystore:session-expired', expired);
     window.addEventListener('greenbasket:session-expired', expired);
-    return () => window.removeEventListener('greenbasket:session-expired', expired);
+    return () => {
+      window.removeEventListener('grocerystore:session-expired', expired);
+      window.removeEventListener('greenbasket:session-expired', expired);
+    };
   }, [location, navigate]);
 
   useEffect(() => {

@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Heart } from 'lucide-react';
+import { Heart, ArrowRight } from 'lucide-react';
 import ProductCard from '../components/ProductCard';
 import { useWatchlist } from '../context/WatchlistContext';
 import { useToast } from '../context/ToastContext';
@@ -10,18 +10,26 @@ const Watchlist = () => {
 
   const handleClear = () => {
     clearWatchlist();
-    showToast('Watchlist cleared', 'info');
+    showToast('Saved list cleared');
   };
 
   if (watchlist.length === 0) {
     return (
-      <div className="min-h-screen px-4 py-12">
-        <div className="mx-auto flex max-w-3xl flex-col items-center rounded-3xl border border-slate-200 bg-white px-6 py-16 text-center shadow-sm">
-          <Heart size={72} className="mb-6 text-slate-300" />
-          <h1 className="mb-3 text-3xl font-bold text-slate-950">Your watchlist is empty</h1>
-          <p className="mb-8 max-w-md text-slate-600">Save groceries you buy often and find them quickly when you shop again.</p>
-          <Link to="/" className="rounded-xl bg-emerald-600 px-6 py-3 font-semibold text-white hover:bg-emerald-700">
-            Browse Products
+      <div className="min-h-screen bg-porcelain flex items-center justify-center py-16 px-4 sm:px-6">
+        <div className="max-w-md w-full bg-ivory rounded-2xl border border-sandstone shadow-[0_2px_12px_rgba(39,34,31,0.04)] p-8 text-center">
+          <div className="w-16 h-16 mx-auto rounded-full bg-porcelain border border-sandstone flex items-center justify-center text-warmStone/60 mb-4">
+            <Heart size={28} />
+          </div>
+          <h1 className="font-serif text-2xl sm:text-3xl text-espresso font-semibold mb-2">Your wishlist is empty</h1>
+          <p className="text-xs sm:text-sm text-warmStone mb-6 leading-relaxed">
+            Save seasonal produce, artisan staples, and household favorites to quickly assemble your basket anytime.
+          </p>
+          <Link
+            to="/shop"
+            className="inline-flex items-center justify-center gap-2 w-full px-6 py-3.5 bg-terracotta text-ivory text-xs font-semibold uppercase tracking-wider rounded-xl hover:bg-terracotta/90 transition-colors shadow-sm"
+          >
+            <span>Explore Market Catalog</span>
+            <ArrowRight size={14} />
           </Link>
         </div>
       </div>
@@ -29,19 +37,31 @@ const Watchlist = () => {
   }
 
   return (
-    <div className="px-4 py-8 sm:py-12">
-      <div className="mx-auto max-w-7xl">
-        <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+    <div className="min-h-screen bg-porcelain pb-24">
+      {/* Editorial Header */}
+      <section className="border-b border-sandstone bg-ivory py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <p className="mb-2 text-sm font-semibold uppercase tracking-wide text-emerald-700">Saved Products</p>
-            <h1 className="text-3xl font-bold text-slate-950 sm:text-4xl">Watchlist</h1>
-            <p className="mt-2 text-slate-600">{watchlist.length} item{watchlist.length > 1 ? 's' : ''} saved for later.</p>
+            <span className="text-xs font-semibold uppercase tracking-wider text-terracotta">Curated Favorites</span>
+            <h1 className="font-serif text-3xl sm:text-4xl text-espresso font-semibold tracking-tight mt-1">
+              Your Wishlist
+            </h1>
+            <p className="mt-1 text-xs sm:text-sm text-warmStone">
+              {watchlist.length} saved {watchlist.length === 1 ? 'essential' : 'essentials'} curated for your household pantry.
+            </p>
           </div>
-          <button type="button" onClick={handleClear} className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50">
-            Clear Watchlist
+          <button
+            type="button"
+            onClick={handleClear}
+            className="self-start sm:self-auto px-4 py-2 border border-sandstone bg-porcelain text-xs font-medium text-warmStone hover:text-espresso rounded-xl transition-colors"
+          >
+            Clear Wishlist
           </button>
         </div>
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      </section>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {watchlist.map((product) => (
             <ProductCard key={product._id} product={product} />
           ))}
