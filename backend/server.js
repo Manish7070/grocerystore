@@ -5,6 +5,11 @@ const cors = require('cors');
 const authRoutes = require('./routes/auth');
 const productRoutes = require('./routes/products');
 const orderRoutes = require('./routes/orders');
+const couponRoutes = require('./routes/coupons');
+const inventoryRoutes = require('./routes/inventory');
+const deliveryRoutes = require('./routes/delivery');
+const adminRoutes = require('./routes/admin');
+const reviewRoutes = require('./routes/reviews');
 const dns = require('node:dns')
 
 dns.setServers(["8.8.8.8" , "8.8.4.4"])
@@ -84,6 +89,11 @@ app.get('/api/health', (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/orders', orderRoutes);
+app.use('/api/coupons', couponRoutes);
+app.use('/api/inventory', inventoryRoutes);
+app.use('/api/delivery', deliveryRoutes);
+app.use('/api/admin', adminRoutes);
+app.use('/api/reviews', reviewRoutes);
 
 app.use((req, res) => {
   res.status(404).json({ message: 'API route not found' });

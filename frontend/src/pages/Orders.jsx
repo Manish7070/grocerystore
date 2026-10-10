@@ -110,17 +110,25 @@ const Orders = () => {
               const PaymentIcon = isCod ? Banknote : CreditCard;
               return (
                 <article key={order._id} className="overflow-hidden rounded-[2rem] border border-emerald-900/10 bg-white shadow-[0_18px_50px_rgba(38,58,34,0.07)]">
-                  <div className="flex flex-col gap-4 border-b border-stone-100 bg-stone-50/70 p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6">
+                  <div className="flex flex-col gap-4 border-b border-stone-100 bg-stone-50/70 p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6 dark:bg-stone-900/50 dark:border-white/5">
                     <div>
-                      <p className="text-xs font-black uppercase tracking-[0.18em] text-stone-400">Order #{order._id.slice(-6)}</p>
-                      <p className="mt-1 text-sm font-semibold text-stone-600">Placed {new Date(order.createdAt).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })}</p>
+                      <p className="text-xs font-black uppercase tracking-[0.18em] text-stone-400">
+                        {order.orderNumber ? order.orderNumber : `Order #${order._id.slice(-6)}`}
+                      </p>
+                      <p className="mt-1 text-sm font-semibold text-stone-600 dark:text-stone-300">Placed {new Date(order.createdAt).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })}</p>
                     </div>
                     <div className="flex flex-wrap items-center gap-2 sm:justify-end">
-                      <span className="inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-xs font-black text-stone-700 ring-1 ring-stone-200">
+                      <Link
+                        to={`/track/${order.orderNumber || order._id}`}
+                        className="rounded-xl bg-[#075F46] px-3.5 py-1.5 text-xs font-black text-white hover:bg-[#064D3A] transition shadow-sm"
+                      >
+                        Track Live
+                      </Link>
+                      <span className="inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-xs font-black text-stone-700 ring-1 ring-stone-200 dark:bg-stone-800 dark:text-stone-200 dark:ring-white/10">
                         <PaymentIcon size={14} /> {isCod ? 'Cash on Delivery' : 'Razorpay'}
                       </span>
                       <span className={`rounded-full px-3 py-1.5 text-xs font-black capitalize ring-1 ${statusStyles[order.deliveryStatus] || statusStyles.pending}`}>
-                        Delivery: {order.deliveryStatus}
+                        Delivery: {order.deliveryStatus?.replace(/_/g, ' ')}
                       </span>
                       <span className={`rounded-full px-3 py-1.5 text-xs font-black capitalize ring-1 ${statusStyles[order.paymentStatus] || statusStyles.pending}`}>
                         Payment: {isCod && order.paymentStatus === 'pending' ? 'due on delivery' : order.paymentStatus}

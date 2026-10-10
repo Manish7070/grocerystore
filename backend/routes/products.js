@@ -1,4 +1,4 @@
-﻿const express = require('express');
+const express = require('express');
 const Product = require('../models/Product');
 const asyncHandler = require('../middleware/asyncHandler');
 const router = express.Router();
@@ -54,6 +54,69 @@ router.get('/', asyncHandler(async (req, res) => {
   }
 
   res.json(products);
+}));
+
+router.get('/bundles', asyncHandler(async (req, res) => {
+  const products = await getPublicProducts();
+  const findByName = (term) => products.find((p) => p.name.toLowerCase().includes(term.toLowerCase()));
+
+  const bundles = [
+    {
+      id: 'bundle-palak-paneer',
+      title: 'Desi Palak Paneer Kit',
+      subtitle: 'Farm fresh baby spinach, tender paneer blocks & authentic ground spices',
+      servings: 'Serves 3-4',
+      timeToCook: '25 mins',
+      chefTip: 'Blanch spinach in ice water for 30 seconds to lock vibrant green color.',
+      savingsText: 'Save ₹45 vs buying separately',
+      items: [
+        findByName('Baby Spinach') || { name: 'Fresh Baby Spinach', price: 30, unit: '250g' },
+        findByName('Paneer') || { name: 'Paneer (Cottage Cheese)', price: 95, unit: '200g' },
+        findByName('Roma Tomatoes') || { name: 'Fresh Roma Tomatoes', price: 40, unit: '1kg' },
+        findByName('Red Onions') || { name: 'Organic Red Onions', price: 35, unit: '1kg' },
+      ].filter(Boolean),
+    },
+    {
+      id: 'bundle-biryani',
+      title: 'Royal Dum Biryani Essentials',
+      subtitle: 'Aged long-grain basmati, golden ghee, fragrant cloves & royal whole spices',
+      servings: 'Serves 4-5',
+      timeToCook: '40 mins',
+      chefTip: 'Parboil rice to 70% before layering for long separated grains.',
+      savingsText: 'Save ₹80 vs buying separately',
+      items: [
+        findByName('Basmati Rice') || { name: 'Premium Basmati Rice', price: 180, unit: '1kg' },
+        findByName('Clarified Butter (Ghee)') || { name: 'Pure Cow Ghee', price: 650, unit: '1L' },
+        findByName('Organic Red Onions') || { name: 'Organic Red Onions', price: 35, unit: '1kg' },
+        findByName('Ginger Root') || { name: 'Ginger Root', price: 25, unit: '100g' },
+      ].filter(Boolean),
+    },
+    {
+      id: 'bundle-breakfast',
+      title: 'Morning Energy & Smoothie Kit',
+      subtitle: 'Avena oats, chia seeds, fresh bananas, pure honey & almond milk',
+      servings: 'Serves 2',
+      timeToCook: '5 mins',
+      chefTip: 'Blend chia seeds overnight with milk for creamy rich texture.',
+      savingsText: 'Save ₹35 on morning basket',
+      items: [
+        findByName('Cavendish Bananas') || { name: 'Fresh Cavendish Bananas', price: 60, unit: '1 dozen' },
+        findByName('Full Cream Fresh Milk') || { name: 'Full Cream Fresh Milk', price: 65, unit: '1L' },
+        findByName('Greek Plain Yogurt') || { name: 'Greek Plain Yogurt', price: 45, unit: '200g' },
+      ].filter(Boolean),
+    },
+  ];
+
+  res.json(bundles);
+}));
+
+router.get('/deals', asyncHandler(async (req, res) => {
+  const products = await getPublicProducts();
+  const deals = products
+    .filter((p) => p.discount >= 10 || p.price < 100)
+    .sort((a, b) => (b.discount || 0) - (a.discount || 0))
+    .slice(0, 16);
+  res.json(deals);
 }));
 
 router.get('/categories', (req, res) => {

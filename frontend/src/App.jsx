@@ -6,6 +6,13 @@ import { WatchlistProvider } from './context/WatchlistContext';
 import { ThemeProvider } from './context/ThemeContext';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
+import Shop from './pages/Shop';
+import RecipeBundles from './pages/RecipeBundles';
+import WasteRadar from './pages/WasteRadar';
+import OrderTracking from './pages/OrderTracking';
+import OrderSuccess from './pages/OrderSuccess';
+import AdminDashboard from './pages/AdminDashboard';
+import DeliveryPortal from './pages/DeliveryPortal';
 import ProductDetail from './pages/ProductDetail';
 import Cart from './pages/Cart';
 import Checkout from './pages/Checkout';
@@ -25,6 +32,14 @@ function AppContent() {
       <main className="flex-1">
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/shop" element={<Shop />} />
+          <Route path="/bundles" element={<RecipeBundles />} />
+          <Route path="/waste-center" element={<WasteRadar />} />
+          <Route path="/track" element={<OrderTracking />} />
+          <Route path="/track/:orderNumber" element={<OrderTracking />} />
+          <Route path="/order-success/:id" element={<OrderSuccess />} />
+          <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/delivery" element={<DeliveryPortal />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/watchlist" element={<Watchlist />} />
@@ -41,6 +56,7 @@ function AppContent() {
     </div>
   );
 }
+
 function App() {
   return (
     <ThemeProvider>
@@ -58,4 +74,5 @@ function App() {
     </ThemeProvider>
   );
 }
+
 export default App;

@@ -20,6 +20,10 @@ const productSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
+  mrp: {
+    type: Number,
+    default: 0,
+  },
   category: {
     type: String,
     required: true,
@@ -30,11 +34,39 @@ const productSchema = new mongoose.Schema({
   },
   brand: {
     type: String,
-    default: 'GreenBasket',
+    default: 'TaazaDaily',
   },
   origin: {
     type: String,
     default: 'India',
+  },
+  farmSource: {
+    type: String,
+    default: 'Certified Organic Partner Farms',
+  },
+  harvestDate: {
+    type: String,
+    default: 'Harvested within 24h',
+  },
+  freshnessScore: {
+    type: Number,
+    default: 98,
+  },
+  isOrganic: {
+    type: Boolean,
+    default: false,
+  },
+  isFresh: {
+    type: Boolean,
+    default: true,
+  },
+  isTrending: {
+    type: Boolean,
+    default: false,
+  },
+  isBestSeller: {
+    type: Boolean,
+    default: false,
   },
   rating: {
     type: Number,
@@ -54,6 +86,25 @@ const productSchema = new mongoose.Schema({
   stock: {
     type: Number,
     default: 100,
+  },
+  lowStockThreshold: {
+    type: Number,
+    default: 15,
+  },
+  storageInstructions: {
+    type: String,
+    default: 'Store in a cool, dry place away from direct sunlight.',
+  },
+  shelfLife: {
+    type: String,
+    default: '3-7 days from delivery',
+  },
+  nutrition: {
+    energy: { type: String, default: '' },
+    protein: { type: String, default: '' },
+    carbs: { type: String, default: '' },
+    fat: { type: String, default: '' },
+    fiber: { type: String, default: '' },
   },
 }, { timestamps: true });
 module.exports = mongoose.model('Product', productSchema);

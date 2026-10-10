@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { ArrowRight, Search, Sparkles, Truck } from 'lucide-react';
-import { useLocation, useSearchParams } from 'react-router-dom';
+import { Link, useLocation, useSearchParams } from 'react-router-dom';
 import ProductCard from '../components/ProductCard';
 import { catalogPage, pageNumbers } from '../utils/catalog';
 import { productsAPI } from '../utils/api';
@@ -90,13 +90,13 @@ const Home = () => {
             <div className="max-w-2xl">
               <p className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/15 px-4 py-2 text-sm font-bold text-emerald-50 backdrop-blur">
                 <Sparkles size={16} />
-                GreenBasket / handpicked daily
+                TaazaDaily • Farm Harvested Daily
               </p>
               <h1 className="max-w-2xl text-4xl font-black leading-tight tracking-tight text-white sm:text-5xl lg:text-6xl">
                 Real freshness. Right at your door.
               </h1>
               <p className="mt-5 max-w-xl text-base leading-7 text-emerald-50 sm:text-lg">
-                Handpicked produce, trusted everyday staples, and simple doorstep delivery—everything your home needs in one beautiful basket.
+                Handpicked farm produce, trusted everyday staples, and smart zero-waste grocery delivery—everything your home needs in one beautiful basket.
               </p>
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
                 <button
@@ -104,16 +104,15 @@ const Home = () => {
                   onClick={() => handleCategorySelect('Vegetables')}
                   className="inline-flex items-center justify-center gap-2 rounded-full bg-white px-7 py-4 font-black text-emerald-800 shadow-xl shadow-stone-950/20 transition hover:-translate-y-1 hover:bg-emerald-50"
                 >
-                  Shop Now
+                  Shop Produce
                   <ArrowRight size={18} />
                 </button>
-                <button
-                  type="button"
-                  onClick={() => handleCategorySelect('Fruits')}
+                <Link
+                  to="/bundles"
                   className="inline-flex items-center justify-center gap-2 rounded-full border border-white/30 bg-white/10 px-7 py-4 font-black text-white backdrop-blur transition hover:-translate-y-1 hover:bg-white/20"
                 >
-                  View Offers
-                </button>
+                  Explore Recipe Kits
+                </Link>
               </div>
               <div className="mt-8 grid max-w-lg grid-cols-3 gap-3 text-white">
                 <div className="rounded-2xl border border-white/15 bg-white/10 p-3 backdrop-blur">

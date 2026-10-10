@@ -1,203 +1,216 @@
-import { ArrowRight, BadgePercent, Clock, PackageCheck, ShieldCheck, ShoppingBasket, Truck } from 'lucide-react';
+import { ArrowRight, BadgePercent, Clock, ShieldCheck, ShoppingBasket, Truck, Sparkles, ChefHat, Leaf, HeartHandshake } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
 import ProductCard from './ProductCard';
 import ProductArtwork from './ProductArtwork';
 
 const categoryCards = [
-  {
-    name: 'Fruits',
-    title: 'Fresh Fruits',
-    accent: 'text-orange-700',
-  },
-  {
-    name: 'Vegetables',
-    title: 'Fresh Vegetables',
-    accent: 'text-emerald-700',
-  },
-  {
-    name: 'Dairy',
-    title: 'Dairy Essentials',
-    accent: 'text-sky-700',
-  },
-  {
-    name: 'Beverages',
-    title: 'Cold Beverages',
-    accent: 'text-cyan-700',
-  },
-  {
-    name: 'Snacks',
-    title: 'Healthy Snacks',
-    accent: 'text-amber-700',
-  },
-  {
-    name: 'Rice',
-    title: 'Rice & Grains',
-    accent: 'text-stone-700',
-  },
+  { name: 'Fruits', title: 'Fresh Fruits', accent: 'text-orange-700' },
+  { name: 'Vegetables', title: 'Fresh Vegetables', accent: 'text-emerald-700' },
+  { name: 'Dairy', title: 'Dairy Essentials', accent: 'text-sky-700' },
+  { name: 'Beverages', title: 'Cold Beverages', accent: 'text-cyan-700' },
+  { name: 'Snacks', title: 'Healthy Snacks', accent: 'text-amber-700' },
+  { name: 'Rice', title: 'Rice & Grains', accent: 'text-stone-700' },
 ];
 
 const promises = [
-  { icon: Truck, title: 'Quick delivery', text: 'Fresh slots daily' },
-  { icon: PackageCheck, title: 'Quality packed', text: 'Checked produce' },
-  { icon: BadgePercent, title: 'Daily savings', text: 'Smart basket deals' },
-  { icon: ShieldCheck, title: 'Flexible payment', text: 'COD or Razorpay' },
+  { icon: Truck, title: 'Express Delivery', text: '30-45 min doorstep slots' },
+  { icon: Leaf, title: 'Farm Harvested', text: 'Daily checked produce' },
+  { icon: BadgePercent, title: 'Zero Food Waste', text: 'Smart expiry markdowns' },
+  { icon: ShieldCheck, title: 'Verified Payment', text: 'COD or Razorpay' },
 ];
 
 const shoppingSteps = [
-  { icon: ShoppingBasket, number: '01', title: 'Fill your basket', text: 'Search or browse 16 everyday categories.' },
-  { icon: Clock, number: '02', title: 'Choose your slot', text: 'Use your saved delivery preference at checkout.' },
-  { icon: Truck, number: '03', title: 'Receive it fresh', text: 'Track every order from placed to delivered.' },
+  { icon: ShoppingBasket, number: '01', title: 'Fill your basket', text: 'Browse 240+ certified organic produce & pantry staples.' },
+  { icon: Clock, number: '02', title: 'Select slot & OTP', text: 'Choose express 30–45 min delivery or scheduled morning slots.' },
+  { icon: Truck, number: '03', title: 'Doorstep handover', text: 'Verify your 4-digit security OTP with our delivery partner.' },
 ];
 
-const miniBanners = [
-  {
-    title: 'Organic produce',
-    text: 'Fresh greens, seasonal fruits, and crisp vegetables.',
-    category: 'Vegetables',
-  },
-  {
-    title: 'Breakfast essentials',
-    text: 'Milk, bread, cereal, dry fruits, and pantry picks.',
-    category: 'Breakfast',
-  },
-];
-
-const SectionRow = ({ title, subtitle, products }) => {
-  if (!products.length) return null;
-
-  return (
-    <section className="mb-12">
-      <div className="mb-5 flex items-end justify-between gap-4">
-        <div>
-          <p className="text-sm font-black uppercase tracking-[0.2em] text-orange-500">Featured</p>
-          <h2 className="mt-1 text-2xl font-black tracking-tight text-stone-950 sm:text-3xl">{title}</h2>
-          <p className="mt-1 text-sm font-semibold text-stone-500">{subtitle}</p>
-        </div>
-      </div>
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        {products.slice(0, 4).map((product) => (
-          <ProductCard key={product._id} product={product} />
-        ))}
-      </div>
-    </section>
-  );
-};
-
-const HomeSections = ({ products, onCategorySelect }) => {
-  const offers = products.filter((product) => product.discount >= 10).slice(0, 4);
+const HomeSections = ({ products = [], onCategorySelect }) => {
+  const navigate = useNavigate();
+  const offers = products.filter((p) => p.discount >= 10).slice(0, 4);
 
   return (
     <>
-      <section className="mb-12 grid gap-4 md:grid-cols-4">
+      {/* 4 Pillars Trust Strip */}
+      <section className="mb-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {promises.map(({ icon: Icon, title, text }) => (
-          <div key={title} className="flex items-center gap-4 rounded-[1.5rem] border border-emerald-900/10 bg-white/90 p-4 shadow-[0_14px_40px_rgba(38,58,34,0.06)] transition hover:-translate-y-1 hover:shadow-[0_18px_50px_rgba(38,58,34,0.1)]">
-            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-700">
+          <div key={title} className="flex items-center gap-4 rounded-[1.75rem] border border-emerald-900/10 bg-white p-5 shadow-[0_12px_35px_rgba(38,58,34,0.05)] transition hover:-translate-y-1 hover:shadow-md dark:bg-[#14231a] dark:border-white/10">
+            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">
               <Icon size={22} />
             </span>
             <div>
-              <p className="font-black text-stone-950">{title}</p>
-              <p className="text-sm font-semibold text-stone-500">{text}</p>
+              <p className="font-black text-stone-900 dark:text-white text-base">{title}</p>
+              <p className="text-xs font-semibold text-stone-500">{text}</p>
             </div>
           </div>
         ))}
       </section>
 
-      <section className="mb-12 overflow-hidden rounded-[2rem] border border-emerald-900/10 bg-emerald-950 px-5 py-8 text-white shadow-2xl shadow-emerald-950/15 sm:px-8">
-        <div className="mb-7 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+      {/* Differentiator Highlight Banner: Freshness & Waste Reduction */}
+      <section className="mb-12 overflow-hidden rounded-[2.5rem] bg-gradient-to-br from-[#075F46] via-[#0b4d37] to-[#127552] p-8 text-white shadow-xl lg:p-12">
+        <div className="grid gap-8 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
           <div>
-            <p className="text-xs font-black uppercase tracking-[0.24em] text-emerald-300">Simple by design</p>
-            <h2 className="mt-2 text-2xl font-black tracking-tight sm:text-3xl">From shelf to doorstep in three steps</h2>
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-white/20 px-3.5 py-1 text-xs font-black tracking-wider uppercase text-emerald-100 backdrop-blur">
+              <Sparkles size={14} />
+              What Makes Us Truly Different?
+            </span>
+            <h2 className="mt-4 text-3xl font-black tracking-tight sm:text-4xl">
+              Freshness Radar & Zero-Waste Guarantee
+            </h2>
+            <p className="mt-3 max-w-xl text-sm font-medium leading-relaxed text-emerald-100">
+              Normal supermarkets discard expiring food. At TaazaDaily, our intelligent batch management system tracks harvest expiry dates and offers automatic smart markdown discounts—saving you money while reducing food waste to zero.
+            </p>
+            <div className="mt-6 flex flex-wrap gap-4">
+              <Link
+                to="/waste-center"
+                className="inline-flex items-center gap-2 rounded-2xl bg-white px-6 py-3.5 text-sm font-black text-emerald-900 shadow-md transition hover:-translate-y-0.5 hover:bg-emerald-50"
+              >
+                Inspect Freshness Radar
+                <ArrowRight size={17} />
+              </Link>
+              <Link
+                to="/bundles"
+                className="inline-flex items-center gap-2 rounded-2xl border border-white/30 bg-white/10 px-6 py-3.5 text-sm font-black text-white backdrop-blur transition hover:bg-white/20"
+              >
+                <ChefHat size={17} />
+                Explore 1-Click Recipe Kits
+              </Link>
+            </div>
           </div>
-          <p className="max-w-md text-sm font-medium leading-6 text-stone-300">Less tapping, clearer choices, and a checkout that works with Cash on Delivery too.</p>
+
+          <div className="rounded-[2rem] border border-white/20 bg-white/10 p-6 backdrop-blur-md">
+            <h3 className="text-lg font-black text-white mb-3 flex items-center gap-2">
+              <HeartHandshake className="text-emerald-300" size={20} />
+              Direct Farm Transparency
+            </h3>
+            <ul className="space-y-3 text-xs font-semibold text-emerald-100">
+              <li className="flex items-start gap-2">
+                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-400 text-emerald-950 font-black">✓</span>
+                <span>Harvested within 24 hours from partner orchards in Nashik & Himachal.</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-400 text-emerald-950 font-black">✓</span>
+                <span>Zero chemical ripening — natural cold-chain preservation.</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-400 text-emerald-950 font-black">✓</span>
+                <span>Real doorstep security OTP verification with delivery executive.</span>
+              </li>
+            </ul>
+          </div>
         </div>
-        <div className="grid gap-3 md:grid-cols-3">
+      </section>
+
+      {/* 3 Step Shopping Journey */}
+      <section className="mb-12 overflow-hidden rounded-[2.5rem] border border-emerald-900/10 bg-[#075F46] px-6 py-10 text-white shadow-xl sm:px-10">
+        <div className="mb-8 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <p className="text-xs font-black uppercase tracking-[0.24em] text-emerald-300">Effortless Commerce</p>
+            <h2 className="mt-2 text-2xl font-black tracking-tight sm:text-3xl">From harvest soil to your kitchen in 3 steps</h2>
+          </div>
+          <p className="max-w-md text-xs font-medium leading-relaxed text-stone-200">
+            Fewer taps, transparent Indian Rupee pricing, and a checkout that works with Cash on Delivery or Razorpay.
+          </p>
+        </div>
+        <div className="grid gap-4 md:grid-cols-3">
           {shoppingSteps.map(({ icon: Icon, number, title, text }) => (
-            <div key={number} className="rounded-[1.5rem] border border-white/10 bg-white/[0.07] p-5">
+            <div key={number} className="rounded-[1.75rem] border border-white/10 bg-white/[0.08] p-6 backdrop-blur">
               <div className="mb-5 flex items-center justify-between">
-                <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-400 text-stone-950"><Icon size={21} /></span>
+                <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-400 text-stone-950">
+                  <Icon size={22} />
+                </span>
                 <span className="text-sm font-black tracking-[0.2em] text-white/30">{number}</span>
               </div>
-              <h3 className="font-black">{title}</h3>
-              <p className="mt-2 text-sm font-medium leading-6 text-stone-300">{text}</p>
+              <h3 className="text-lg font-black text-white">{title}</h3>
+              <p className="mt-2 text-xs font-medium leading-relaxed text-stone-300">{text}</p>
             </div>
           ))}
         </div>
       </section>
 
-      <section className="mb-12 grid gap-5 lg:grid-cols-2">
-        {miniBanners.map((banner) => (
-          <button
-            key={banner.title}
-            type="button"
-            onClick={() => onCategorySelect(banner.category)}
-            className="group relative min-h-72 overflow-hidden rounded-[2rem] text-left shadow-2xl shadow-emerald-950/10"
-          >
-            <ProductArtwork product={{ name: banner.title, category: banner.category }} className="absolute inset-0 h-full w-full transition duration-700 group-hover:scale-105" />
-            <div className="absolute inset-0 bg-gradient-to-r from-stone-950/90 via-stone-950/55 to-stone-950/10" />
-            <div className="relative flex h-full min-h-72 flex-col justify-end p-6 sm:p-8">
-              <p className="mb-2 inline-flex w-fit items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-sm font-bold text-white backdrop-blur">
-                <ShoppingBasket size={16} />
-                Fresh offer
-              </p>
-              <h3 className="max-w-sm text-3xl font-black text-white">{banner.title}</h3>
-              <p className="mt-2 max-w-md text-sm font-semibold leading-6 text-stone-100">{banner.text}</p>
-              <span className="mt-5 inline-flex w-fit items-center gap-2 rounded-full bg-white px-5 py-3 font-black text-emerald-800 transition group-hover:-translate-y-1">
-                Shop collection
-                <ArrowRight size={17} />
-              </span>
-            </div>
-          </button>
-        ))}
-      </section>
-
-      <section className="mb-12 overflow-hidden rounded-[2rem] border border-emerald-900/10 bg-emerald-800 text-white shadow-2xl shadow-emerald-950/10">
-        <div className="grid gap-6 p-6 md:grid-cols-[1fr_auto] md:items-center md:p-8">
-          <div>
-            <p className="mb-2 flex items-center gap-2 text-sm font-black text-emerald-100"><Clock size={16} /> Curated weekly basket</p>
-            <h2 className="text-3xl font-black tracking-tight">Build your grocery list in minutes</h2>
-            <p className="mt-2 max-w-2xl font-medium leading-7 text-emerald-50">Shop staples, produce, dairy, breakfast, snacks, and drinks in one balanced storefront.</p>
-          </div>
-          <button type="button" onClick={() => onCategorySelect('Rice')} className="inline-flex items-center justify-center gap-2 rounded-full bg-white px-6 py-4 font-black text-emerald-800 transition hover:-translate-y-1 hover:bg-emerald-50">
-            Shop staples
-            <ArrowRight size={18} />
-          </button>
-        </div>
-      </section>
-
-      <section className="mb-16 rounded-[2.5rem] bg-[#fbfdf9] px-4 py-12 shadow-[0_18px_55px_rgba(20,92,53,0.06)] sm:px-8 lg:px-12">
+      {/* Shop by Category Grid */}
+      <section className="mb-16 rounded-[2.5rem] bg-white p-6 shadow-sm border border-emerald-900/10 dark:bg-[#14231a] dark:border-white/10 sm:p-10">
         <div className="mx-auto mb-10 max-w-2xl text-center">
-          <p className="text-xs font-black uppercase tracking-[0.28em] text-orange-500"></p>
-          <h2 className="mt-3 text-3xl font-black uppercase tracking-wide text-stone-900 sm:text-4xl">Shop by Category</h2>
-          <div className="mx-auto mt-4 h-px w-24 bg-orange-300" />
-          <p className="mx-auto mt-4 max-w-xl text-sm font-medium leading-6 text-stone-500">
-            Choose from fresh everyday essentials, thoughtfully arranged with room to breathe.
+          <span className="text-xs font-black uppercase tracking-[0.28em] text-orange-500">Curated Aisles</span>
+          <h2 className="mt-2 text-3xl font-black tracking-tight text-stone-900 dark:text-white sm:text-4xl">
+            Shop by Fresh Category
+          </h2>
+          <div className="mx-auto mt-3 h-1 w-16 rounded-full bg-emerald-600" />
+          <p className="mx-auto mt-3 max-w-xl text-sm font-medium text-stone-500">
+            Carefully curated daily staples and farm picks organized for effortless discovery.
           </p>
         </div>
 
-        <div className="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3 lg:grid-cols-6">
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
           {categoryCards.map((category) => (
             <button
               key={category.name}
               type="button"
-              onClick={() => onCategorySelect(category.name)}
-              className="group text-center outline-none"
+              onClick={() => {
+                if (onCategorySelect) onCategorySelect(category.name);
+                else navigate(`/shop?category=${encodeURIComponent(category.name)}`);
+              }}
+              className="group text-center outline-none p-3 rounded-2xl transition hover:bg-stone-50 dark:hover:bg-white/5"
             >
-              <span className="mx-auto block aspect-square w-full max-w-40 overflow-hidden rounded-sm bg-stone-100 shadow-[0_12px_35px_rgba(38,58,34,0.08)] transition-all duration-300 group-hover:-translate-y-2 group-hover:shadow-[0_18px_45px_rgba(38,58,34,0.14)]">
+              <span className="mx-auto block aspect-square w-full max-w-36 overflow-hidden rounded-2xl bg-stone-100 shadow-sm transition-all duration-300 group-hover:-translate-y-2 group-hover:shadow-md">
                 <ProductArtwork
                   product={{ name: category.title, category: category.name }}
-                  className="h-full w-full object-cover transition duration-700 group-hover:scale-110"
+                  className="h-full w-full object-cover transition duration-500 group-hover:scale-110"
                 />
               </span>
-              <span className={`mt-4 block text-sm font-bold ${category.accent}`}>{category.title}</span>
-              <span className="mt-2 inline-flex items-center justify-center gap-1 text-xs font-bold text-stone-500 transition group-hover:text-emerald-700">
-                Explore
-                <ArrowRight size={12} />
+              <span className={`mt-3 block text-sm font-black ${category.accent}`}>{category.title}</span>
+              <span className="mt-1 inline-flex items-center justify-center gap-1 text-[11px] font-bold text-stone-400 group-hover:text-emerald-700">
+                Explore Aisle
+                <ArrowRight size={11} />
               </span>
             </button>
           ))}
         </div>
       </section>
 
-      <SectionRow title="Top deals today" subtitle="Discounted grocery essentials for your basket." products={offers} />
+      {/* First Order Offer Banner */}
+      <section className="mb-14 rounded-[2.5rem] bg-amber-50 p-6 sm:p-10 border border-amber-200/60 dark:bg-amber-950/30 dark:border-amber-800/40">
+        <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+          <div>
+            <span className="text-xs font-black uppercase tracking-widest text-amber-800 dark:text-amber-300">Welcome Gift</span>
+            <h2 className="mt-1 text-2xl font-black text-stone-900 tracking-tight dark:text-white sm:text-3xl">
+              Get ₹50 OFF Your First Grocery Basket!
+            </h2>
+            <p className="mt-1 text-sm font-medium text-stone-600 dark:text-stone-300">
+              Use code <strong className="font-mono text-emerald-800 dark:text-emerald-400 font-black">WELCOME50</strong> during checkout on orders above ₹199.
+            </p>
+          </div>
+          <Link
+            to="/shop"
+            className="inline-flex items-center justify-center gap-2 rounded-2xl bg-[#075F46] px-8 py-3.5 text-sm font-black text-white hover:bg-[#064D3A] transition shadow-md shrink-0"
+          >
+            Claim Offer & Shop Now
+            <ArrowRight size={16} />
+          </Link>
+        </div>
+      </section>
+
+      {/* Featured Deals Row */}
+      {offers.length > 0 && (
+        <section className="mb-12">
+          <div className="mb-6 flex items-end justify-between">
+            <div>
+              <span className="text-xs font-black uppercase tracking-widest text-orange-500">Limited-Time Markdown</span>
+              <h2 className="mt-1 text-2xl font-black text-stone-900 tracking-tight dark:text-white sm:text-3xl">
+                Fresh Deals of the Day
+              </h2>
+            </div>
+            <Link to="/shop?sort=discount" className="text-xs font-bold text-emerald-800 dark:text-emerald-400 hover:underline flex items-center gap-1">
+              View All Deals <ArrowRight size={12} />
+            </Link>
+          </div>
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {offers.map((product) => (
+              <ProductCard key={product._id} product={product} />
+            ))}
+          </div>
+        </section>
+      )}
     </>
   );
 };

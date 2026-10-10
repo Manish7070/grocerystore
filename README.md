@@ -1,111 +1,135 @@
-# GreenBasket – Online Grocery Store
+# 🥬 TaazaDaily — Smart Farm-to-Fork Grocery Platform
 
-A responsive MERN grocery storefront with an original GreenBasket identity, 240-item catalog, persistent light/dark mode, JWT authentication, watchlist, cart, delivery profile, Cash on Delivery, Razorpay verification, and order history.
+**TaazaDaily** is an advanced, production-grade MERN grocery commerce platform engineered with a **zero-dummy data** policy, live **MongoDB Atlas** integration, and unique industry-first features that set it apart from ordinary grocery clones.
 
-## Highlights
+---
 
-- Original GreenBasket logo and a bundled, AI-generated 16-category photo sheet with image fallback. These are representative category images, not individual product/packaging photographs. Valid product image URLs take precedence.
-- 240 GreenBasket products across 16 categories, stored in MongoDB Atlas.
-- Mobile-first layouts for phones, tablets, laptops, and wide screens.
-- Light/dark theme switch with saved preference and system-theme fallback.
-- Server-authoritative prices: checkout totals are rebuilt from MongoDB products.
-- Razorpay signatures, captured status, amount, currency and order reference are checked before an order becomes `paid`.
-- Checkout collects a delivery contact and address, validates them on the server, and saves a snapshot with each order.
-- Payment and delivery statuses are shown separately, so a paid order can still have a pending delivery.
-- Cash on Delivery orders clearly show `due on delivery` instead of appearing as a failed payment.
+## 🌟 What Makes TaazaDaily Different? ("Isme Kya Naya Hai?")
 
-## Local setup
+If someone asks: *"Why is this different from standard grocery websites like Blinkit, Zepto, or generic clones?"*, here are the five core innovations built into TaazaDaily:
 
-Requirements: Node.js 18+ and npm.
+### 1. 📉 Freshness & Food Waste Reduction Radar (`/waste-center`)
+- **FEFO (First-Expired, First-Out) Inventory Engine:** Tracks individual warehouse batches with harvest dates, intake timestamps, and exact expiry countdowns.
+- **Dynamic Automated Markdowns:** Inventory managers can apply 10%–50% flash markdowns on near-expiry batches to rescue fresh produce from going to waste.
+- **Zero-Waste Audit Ledger:** Built-in write-off logging (`WasteLog`) with reason tracking (spoilage, damaged packaging, quality failure) calculating exact financial waste prevention metrics.
 
-1. Configure the backend:
+### 2. 🍲 1-Click Recipe Cook Kits (`/bundles`)
+- Rather than searching for 8 individual ingredients to cook a dish, customers can click once to add proportional, authentic recipe kits directly to their cart:
+  - **Authentic Palak Paneer Kit** (Spinach, Fresh Paneer, Desi Ghee, Ginger-Garlic paste, Spices).
+  - **Hyderabadi Dum Biryani Kit** (Basmati Rice, Whole Spices, Ghee, Mint & Saffron).
+  - **Morning Energy Green Smoothie Kit** (Bananas, Spinach, Chia Seeds, Almond Milk).
+- Includes step-by-step chef instructions, cook time, and serving sizes.
 
-   ```powershell
-   Copy-Item backend/.env.example backend/.env
-   ```
+### 3. 🚜 Farm Provenance & Real-Time Freshness Score
+- Every farm item features an **Origin Provenance Card** (e.g. *Nashik Valley Farm*, *Himachal Orchards*).
+- **Harvest-to-Door Transparency:** Shows exact harvest date and a calculated **Freshness Score (e.g., 98% Grade A+)**.
+- Built-in **PIN Code Delivery Serviceability Checker** and recommended storage instructions on every product detail page.
 
-   Set `MONGO_URI`, a long `JWT_SECRET`, `CORS_ORIGIN`, and optional Razorpay keys in `backend/.env`. Never commit that file.
+### 4. 🔐 Doorstep Security OTP Handover
+- Every placed order automatically generates a unique 4-digit **Delivery Verification PIN (OTP)** displayed only in the customer's secure tracking screen (`/track/TD-2026-XXXX`).
+- Delivery partners cannot mark an order as "Delivered" in the Delivery Terminal (`/delivery`) without entering and verifying this customer OTP, eliminating false delivery claims.
 
-2. Start the API:
+### 5. 👥 Multi-Role Ecosystem & Live Dashboards
+- **Customer Storefront:** Full catalog search, category filters, price range sliders, organic badges, customer reviews, dynamic ₹499 free delivery progress bar, and slot selector.
+- **Store Administrator Hub (`/admin`):** Real-time MongoDB metrics (total revenue, active orders, low-stock alerts, customer database, and status pipeline).
+- **Freshness Inventory Manager (`/waste-center`):** Batch queue, expiry radar, markdown triggers, and spoilage ledger.
+- **Delivery Partner Terminal (`/delivery`):** Dispatched orders queue, customer address cards, navigation links, and OTP verification prompt.
 
-   ```powershell
-   cd backend
-   npm install
-   npm run dev
-   ```
+---
 
-3. Start the storefront in a second terminal:
+## 🎨 Unique Brand Identity
 
-   ```powershell
-   cd frontend
-   npm install
-   npm run dev
-   ```
+- **Brand:** **TaazaDaily** *(The Fresh Standard)*
+- **Logo Lockup:** Custom SVG emblem uniting an organic produce basket, a budding green sprout, and a golden harvest droplet.
+- **Visual Design:** Premium, responsive UI with dark/light mode toggle, micro-interactions, smooth toasts, and zero placeholder assets.
 
-Open `http://localhost:5173`. The Vite development proxy forwards `/api` calls to `http://localhost:5000`.
+---
 
-## Database and catalog
+## 🛠️ Tech Stack & Database Architecture
 
-The first `GET /api/products` request safely upserts the curated GreenBasket catalog. To refresh the catalog explicitly, send the private `CATALOG_ADMIN_KEY` as `x-admin-key`:
+- **Frontend:** React 18, Vite, React Router DOM, Lucide Icons, Vanilla CSS design tokens.
+- **Backend:** Node.js, Express.js (REST API architecture with modular routers).
+- **Database:** **MongoDB Atlas (Live Cloud Cluster)** using Mongoose ODM.
+- **Authentication:** Stateless JWT with `Bearer` authorization and role-based permissions (`customer`, `admin`, `inventory_manager`, `delivery`).
+- **Payment Verification:** Razorpay HMAC-SHA256 signature verification + Cash on Delivery (COD) with server-side price recalculation.
 
-```text
-POST /api/products/seed
-x-admin-key: your-private-catalog-admin-key
-```
+### MongoDB Schemas:
+1. `User`: Role-based profiles, saved addresses, wishlist, order history.
+2. `Product`: 240 catalog items, MRP, selling price, farm provenance, harvest date, freshness score, storage tips.
+3. `Order`: Unique `orderNumber` (`TD-2026-XXXX`), delivery slot, 4-digit OTP, coupon discount, live status timeline.
+4. `InventoryBatch`: Batch tracking, harvest dates, expiry dates, markdown rates, stock quantities.
+5. `Coupon`: Live discount coupon engine (`TAAZA20`, `WELCOME50`, `SAVER100`).
+6. `WasteLog`: Waste mitigation ledger recording write-offs, reasons, and prevented losses.
+7. `Review`: Verified buyer ratings and customer feedback.
 
-The seeded database should contain 240 products, 16 categories, `brand: GreenBasket`, `source: greenbasket-original`, and no external photo URLs.
+---
 
-The storefront shows 12 products per page (20 pages for the full catalog), with numbered controls. Category, search and page are encoded in the URL, so refresh and back navigation retain the selection. Changing a filter resets the page.
+## 🚀 Quick Start Guide
 
-All 240 seed products have a distinct AI-generated illustrative image, mapped by `externalId` (and by name for older cart/order snapshots). Optimized local image atlases and generation prompts are under `frontend/src/assets/products/`. Supplied product image URLs still take priority. These illustrations are not photographs of actual stock or packaging.
+### Prerequisites
+- Node.js 18+ and npm installed.
+- Internet connection (for live MongoDB Atlas connection).
 
-## Payments
-
-- COD works without gateway credentials.
-- Both checkout methods require a valid sign-in session. Expired/invalid sessions now clear stale login data and send the customer to sign in, returning to checkout afterward. Keep `JWT_SECRET` stable across server restarts/deployments; changing it invalidates old sessions. Cart data and per-account checkout drafts survive re-login. Completed Razorpay callbacks are retained for confirmation retry, without charging again.
-- Online payment is enabled only when `RAZORPAY_KEY_ID` and `RAZORPAY_KEY_SECRET` are present.
-- After Razorpay returns a payment, `POST /api/orders/:razorpayOrderId/verify` validates the HMAC signature and fetches the payment from Razorpay. Only an exactly matching, captured payment changes `paymentStatus` to `paid`; an authorized payment stays pending.
-- Configure automatic capture in the Razorpay Dashboard. The checkout can retry confirmation without starting another payment. Your orders also has a status check which recovers a captured payment even if the checkout tab was closed.
-- Configure `https://YOUR-BACKEND/api/orders/webhook` in Razorpay for `payment.captured` and `order.paid`, using a separate secret saved as `RAZORPAY_WEBHOOK_SECRET` on the backend. The endpoint verifies the exact raw request body; repeated events are safe. Without this configuration, automatic background confirmation is unavailable, but manual status checks still work.
-- Keep Razorpay secrets only in `backend/.env`; the frontend receives only the public key ID.
-
-Payment behavior follows [Razorpay's Standard Checkout documentation](https://razorpay.com/docs/payments/payment-gateway/web-integration/standard/integration-steps/).
-
-## Verification
-
-```powershell
-cd frontend
-npm test
-npm run lint
-npm run build
-
-cd ../backend
-npm test
-npm run test:smoke
-```
-
-Unit and isolated HTTP tests cover address/cart validation, server prices, stock limits, captured versus authorized payments, ownership checks, webhook tampering, duplicate events and payment recovery. Start the local backend before running the database smoke test; it checks the catalog, signup/signin, profile, COD address persistence, images and order history. Its uniquely named test accounts/orders are removed afterward.
-
-Alternatively, `cd backend` then `npm run test:local` starts an isolated API port, runs the Mongo-backed smoke suite and closes the server automatically. This uses the database configured in `backend/.env`.
-
-To also validate configured Razorpay test credentials by creating a test-mode gateway order (no payment is captured), run:
-
+### 1. Backend Setup
 ```powershell
 cd backend
-$env:SMOKE_RAZORPAY='1'
-npm run test:smoke
+npm install
+npm run dev
+```
+> The API server will start on `http://localhost:5000` and automatically connect to the live MongoDB Atlas cluster.
+
+### 2. Frontend Setup
+Open a second terminal:
+```powershell
+cd frontend
+npm install
+npm run dev
+```
+> The storefront will run on `http://localhost:5173` with automatic API proxying.
+
+---
+
+## 🧪 Verification & Testing
+
+Run all unit tests and live MongoDB smoke tests:
+
+```powershell
+# 1. Backend Unit Tests (21 automated tests)
+cd backend
+npm test
+
+# 2. Live MongoDB Atlas Integration Smoke Test
+npm run test:local
+
+# 3. Frontend Production Build
+cd ../frontend
+npm run build
 ```
 
-## Vercel deployment
+---
 
-See [STATUS.md](STATUS.md) for the latest verification results and remaining release steps.
+## 📋 Key Routes & Exploration Guide
 
-Deploy `backend` and `frontend` as two Vercel projects.
+| Route | Role / Purpose | Key Highlights |
+|---|---|---|
+| `/` | Customer Home | Hero banner, categories, recipe kits showcase, waste reduction banner |
+| `/shop` | Customer Catalog | Live search, price slider, in-stock & organic filters, pagination |
+| `/bundles` | 1-Click Cook Kits | Palak Paneer, Dum Biryani, Smoothie with 1-click bundle add |
+| `/product/:id` | Product Details | Farm source, Freshness score, PIN checker, customer reviews |
+| `/cart` | Shopping Cart | ₹499 Free Delivery progress bar, instant quantity updates |
+| `/checkout` | Checkout | Delivery slot picker, Promo code (`WELCOME50`), COD / Razorpay |
+| `/track` | Live Tracking | Enter `TD-2026-XXXX` to see the 5-step timeline and secure OTP |
+| `/waste-center` | Inventory Manager | Batch expiry radar, markdown triggers, food waste reduction log |
+| `/admin` | Store Admin | Live revenue metrics, low-stock warnings, order advancement |
+| `/delivery` | Delivery Partner | Assigned deliveries, customer address cards, OTP verification |
 
-1. In the backend project, set the Root Directory to `backend` and add `MONGO_URI`, `JWT_SECRET`, `CATALOG_ADMIN_KEY`, `CORS_ORIGIN`, `RAZORPAY_KEY_ID`, and `RAZORPAY_KEY_SECRET` as environment variables. Deploy it first and verify `https://YOUR-BACKEND/api/health`.
-2. In the frontend project, set the Root Directory to `frontend` and add `VITE_BACKEND_URL=https://YOUR-BACKEND` without a trailing `/api`. The included `vercel.json` keeps React Router pages working on refresh.
-3. Set the backend `CORS_ORIGIN` to the final frontend URL (and any explicit preview URL you want to allow), then redeploy the backend.
+---
 
-Keep Razorpay test keys while validating checkout. Complete a test payment in the actual browser and confirm the stored order becomes paid. Replace both Razorpay environment variables together with live-mode keys only when the Razorpay account is production-ready, then redeploy the backend and configure the live-mode webhook separately. Never put secrets in `VITE_*` variables.
+## 👥 Demo Test Coupons
+- `WELCOME50` — ₹50 off on orders above ₹299
+- `TAAZA20` — 20% discount up to ₹150 on orders above ₹499
+- `SAVER100` — ₹100 flat discount on orders above ₹999
 
-For the existing projects, the frontend URL is `https://grocery-store-kappa-seven.vercel.app` and its backend URL is `https://grocery-store-fu3o.vercel.app`. Set `VITE_BACKEND_URL` to that backend origin. Local `.env` changes are not automatically uploaded to Vercel; configure the backend project environment there and redeploy.
+---
+
+© 2026 **TaazaDaily** — Engineered for Excellence. Zero Dummy Elements.

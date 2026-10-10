@@ -17,6 +17,35 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  role: {
+    type: String,
+    enum: ['customer', 'admin', 'inventory_manager', 'delivery'],
+    default: 'customer',
+  },
+  phone: {
+    type: String,
+    default: '',
+  },
+  addresses: [{
+    label: { type: String, default: 'Home' },
+    name: String,
+    phone: String,
+    address: String,
+    city: String,
+    pincode: String,
+    isDefault: { type: Boolean, default: false },
+  }],
+  wishlist: [{
+    type: String,
+  }],
+  savedLists: [{
+    name: String,
+    items: [{
+      productId: String,
+      name: String,
+      quantity: Number,
+    }],
+  }],
   deliveryProfile: {
     address: {
       type: String,

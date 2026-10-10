@@ -68,24 +68,31 @@ const ProductCard = ({ product }) => {
             {product.description || 'Freshly packed grocery essential for your daily basket.'}
           </p>
 
-          <div className="mt-auto pt-5">
-            <div className="mb-4 flex items-end justify-between">
+          <div className="mt-auto pt-4">
+            <div className="mb-3 flex items-end justify-between">
               <div>
-                <p className="text-xs font-black uppercase tracking-[0.16em] text-stone-400">Price</p>
-                <p className="text-2xl font-black text-emerald-800">₹{product.price}</p>
+                <p className="text-[10px] font-black uppercase tracking-[0.16em] text-stone-400">Price</p>
+                <div className="flex items-baseline gap-2">
+                  <span className="text-2xl font-black text-emerald-800 dark:text-emerald-400">₹{product.price}</span>
+                  {product.discount > 0 && (
+                    <span className="text-xs font-semibold text-stone-400 line-through">
+                      ₹{Math.round(product.price * (1 + product.discount / 100))}
+                    </span>
+                  )}
+                </div>
               </div>
-              <p className={`rounded-full px-3 py-1 text-xs font-black ${(product.stock ?? 1) > 0 ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-600'}`}>
+              <p className={`rounded-full px-2.5 py-0.5 text-xs font-black ${(product.stock ?? 1) > 0 ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300' : 'bg-red-50 text-red-600'}`}>
                 {(product.stock ?? 1) > 0 ? (product.stock == null ? 'In stock' : `${product.stock} in stock`) : 'Out of stock'}
               </p>
             </div>
             <button
               onClick={() => setQuantityOpen(true)}
               disabled={(product.stock ?? 1) <= 0}
-              className="flex w-full items-center justify-center gap-2 rounded-2xl bg-emerald-900 px-4 py-3.5 font-black text-white shadow-lg shadow-emerald-950/15 transition-all hover:-translate-y-0.5 hover:bg-emerald-700 hover:shadow-emerald-900/20 disabled:cursor-not-allowed disabled:bg-stone-300 disabled:shadow-none"
+              className="flex w-full items-center justify-center gap-2 rounded-2xl bg-[#075F46] px-4 py-3 font-black text-white shadow-md shadow-emerald-950/15 transition-all hover:-translate-y-0.5 hover:bg-[#064D3A] disabled:cursor-not-allowed disabled:bg-stone-300 disabled:shadow-none"
             >
-              <ShoppingCart size={18} />
+              <ShoppingCart size={17} />
               {(product.stock ?? 1) > 0 ? 'Add to Cart' : 'Unavailable'}
-              <Plus size={16} />
+              <Plus size={15} />
             </button>
           </div>
         </div>

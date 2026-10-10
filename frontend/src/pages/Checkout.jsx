@@ -2,9 +2,9 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
-import { authAPI, ordersAPI } from '../utils/api';
+import { authAPI, ordersAPI, couponsAPI } from '../utils/api';
 import { initiatePayment } from '../utils/razorpay';
-import { CreditCard, CheckCircle } from 'lucide-react';
+import { CreditCard, CheckCircle, Tag, Truck } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
 import { readAddressDraft, readPendingPayment, savePendingPayment, cartFingerprint } from '../utils/checkoutSession';
 
@@ -15,6 +15,12 @@ const Checkout = () => {
   const [loading, setLoading] = useState(false);
   const [paymentSuccess, setPaymentSuccess] = useState(false);
   const [completedPaymentMethod, setCompletedPaymentMethod] = useState('');
+  const [placedOrder, setPlacedOrder] = useState(null);
+  const [deliverySlot, setDeliverySlot] = useState('Express Delivery (30-45 mins)');
+  const [couponInput, setCouponInput] = useState('');
+  const [appliedCoupon, setAppliedCoupon] = useState('');
+  const [couponDiscount, setCouponDiscount] = useState(0);
+  const [couponLoading, setCouponLoading] = useState(false);
   const [pendingPayment, setPendingPayment] = useState(() => readPendingPayment(sessionStorage, user?._id));
   const [paymentMethod, setPaymentMethod] = useState(() => pendingPayment ? 'razorpay' : 'cod');
   const [paymentConfigured, setPaymentConfigured] = useState(null);
@@ -23,6 +29,23 @@ const Checkout = () => {
   const [deliveryAddress, setDeliveryAddress] = useState(() => readAddressDraft(sessionStorage, user));
   const submitting = useRef(false);
   const navigate = useNavigate();
+
+  const handleApplyCoupon = async (e) => {
+    e?.preventDefault();
+    if (!couponInput.trim()) return;
+    setCouponLoading(true);
+    try {
+      const res = await couponsAPI.apply(couponInput.trim(), total);
+      setAppliedCoupon(res.data.code);
+      setCouponDiscount(res.data.discount);
+      showToast(res.data.message, 'success');
+    } catch (err) {
+      showToast(err.response?.data?.message || 'Invalid coupon code', 'error');
+    } finally {
+      setCouponLoading(false);
+    }
+  };
+
   useEffect(() => {
     if (authLoading || paymentSuccess) return;
     if (!user) navigate('/signin', { replace: true, state: { from: '/checkout' } });
@@ -59,6 +82,9 @@ const Checkout = () => {
       await authAPI.profile();
       const orderData = {
         deliveryAddress,
+        deliverySlot,
+        couponCode: appliedCoupon,
+        couponDiscount,
         items: cart.map(item => ({
           productId: item._id,
           name: item.name,
@@ -68,9 +94,10 @@ const Checkout = () => {
       };
 
       if (paymentMethod === 'cod') {
-        await ordersAPI.createCodOrder(orderData);
+        const res = await ordersAPI.createCodOrder(orderData);
         clearCart();
         setCompletedPaymentMethod('cod');
+        setPlacedOrder(res.data.order);
         setPaymentSuccess(true);
         showToast('Cash on Delivery order placed successfully.');
         return;
@@ -82,7 +109,7 @@ const Checkout = () => {
         const paymentKey = res.data.keyId;
         if (!paymentKey) throw new Error('Online payment is currently unavailable');
         const paymentResponse = await initiatePayment(paymentKey, res.data, { ...user, phone: deliveryAddress.phone });
-        confirmation = { id: res.data.id, response: paymentResponse, cartFingerprint: cartFingerprint(cart) };
+        confirmation = { id: res.data.id, response: paymentResponse, cartFingerprint: cartFingerprint(cart), orderNumber: res.data.orderNumber };
         // Save before verification: a session expiry or refresh must not ask for a second payment.
         savePendingPayment(sessionStorage, user._id, confirmation);
         setPendingPayment(confirmation);
@@ -97,6 +124,7 @@ const Checkout = () => {
       // A resumed receipt must not empty a different basket added since the payment.
       if (confirmation.cartFingerprint === cartFingerprint(cart)) clearCart();
       setCompletedPaymentMethod('razorpay');
+      setPlacedOrder({ orderNumber: confirmation.orderNumber || 'TD-Verified', totalAmount: Math.max(total - couponDiscount, 1), deliverySlot });
       setPaymentSuccess(true);
       showToast('Payment successful. Your order has been placed.');
     } catch (error) {
@@ -111,23 +139,44 @@ const Checkout = () => {
   };
   if (paymentSuccess) {
     return (
-      <div className="min-h-screen py-12 px-4 bg-slate-50 flex items-center justify-center">
-        <div className="text-center max-w-md">
-          <CheckCircle size={96} className="mx-auto text-emerald-600 mb-8" />
-          <h2 className="text-4xl font-bold text-slate-950 mb-4">
-            {completedPaymentMethod === 'cod' ? 'Order Placed!' : 'Payment Successful!'}
+      <div className="min-h-screen py-12 px-4 flex items-center justify-center">
+        <div className="text-center max-w-md rounded-[2.5rem] bg-white p-8 border border-emerald-900/10 shadow-xl dark:bg-[#14231a] dark:border-white/10">
+          <CheckCircle size={80} className="mx-auto text-emerald-600 mb-6" />
+          <h2 className="text-3xl font-black text-stone-900 mb-2 dark:text-white">
+            {completedPaymentMethod === 'cod' ? 'Order Confirmed!' : 'Payment Verified & Placed!'}
           </h2>
-          <p className="text-xl text-slate-600 mb-8">
+          <p className="text-sm font-medium text-stone-600 mb-4 dark:text-stone-300">
             {completedPaymentMethod === 'cod'
-              ? 'Pay with cash when your groceries are delivered.'
-              : 'Your order has been placed.'}
+              ? 'Pay with cash upon doorstep delivery.'
+              : 'Payment captured securely. Fulfillment center preparing your produce.'}
           </p>
-          <button
-            onClick={() => navigate('/orders')}
-            className="bg-emerald-600 text-white px-8 py-4 rounded-xl text-lg font-semibold hover:bg-emerald-700 transition-all"
-          >
-            View Orders
-          </button>
+          {placedOrder?.orderNumber && (
+            <div className="mb-6 rounded-2xl bg-emerald-50 p-4 border border-emerald-200 dark:bg-emerald-950/60 dark:border-emerald-800">
+              <span className="text-[10px] font-black uppercase text-emerald-700 dark:text-emerald-300">Order ID</span>
+              <p className="text-xl font-black text-emerald-900 dark:text-emerald-100">{placedOrder.orderNumber}</p>
+              {placedOrder.deliveryOtp && (
+                <p className="mt-1 text-xs font-bold text-emerald-700 dark:text-emerald-300">
+                  Doorstep OTP: <span className="font-mono text-base">{placedOrder.deliveryOtp}</span>
+                </p>
+              )}
+            </div>
+          )}
+          <div className="flex flex-col gap-2.5">
+            {placedOrder?.orderNumber && (
+              <button
+                onClick={() => navigate(`/track/${placedOrder.orderNumber}`)}
+                className="w-full bg-[#075F46] text-white py-3.5 rounded-2xl font-black hover:bg-[#064D3A] transition shadow-md"
+              >
+                Track Delivery Live
+              </button>
+            )}
+            <button
+              onClick={() => navigate('/orders')}
+              className="w-full border border-stone-200 bg-white text-stone-800 py-3 rounded-2xl font-bold hover:bg-stone-50 transition dark:bg-stone-800 dark:border-white/10 dark:text-white"
+            >
+              View Order History
+            </button>
+          </div>
         </div>
       </div>
     );
@@ -135,20 +184,95 @@ const Checkout = () => {
   return (
     <form onSubmit={handleCheckout} className="py-8 px-4 sm:py-12">
       <div className="max-w-4xl mx-auto grid gap-6 md:grid-cols-2">
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 sm:p-8">
-          <h2 className="text-2xl font-bold text-slate-950 mb-6">Order Summary</h2>
-          <div className="space-y-4 mb-8">
+        <div className="bg-white rounded-[2rem] border border-emerald-900/10 shadow-sm p-6 sm:p-8 dark:bg-[#14231a] dark:border-white/10">
+          <h2 className="text-2xl font-black text-stone-900 mb-6 dark:text-white">Order Summary</h2>
+          <div className="space-y-3 mb-6 max-h-56 overflow-y-auto pr-1">
             {cart.map(item => (
-              <div key={item._id} className="flex justify-between py-2">
-                <span>{item.name} x{item.quantity}</span>
-                <span>₹{(item.price * item.quantity).toFixed(0)}</span>
+              <div key={item._id} className="flex justify-between items-center py-2 text-sm">
+                <span className="font-semibold text-stone-800 dark:text-stone-200 truncate">{item.name} ×{item.quantity}</span>
+                <span className="font-black text-emerald-800 dark:text-emerald-400 shrink-0 ml-2">₹{(item.price * item.quantity).toFixed(0)}</span>
               </div>
             ))}
           </div>
-          <div className="border-t pt-6">
-            <div className="flex justify-between text-xl font-bold mb-6">
-              <span>Total</span>
+
+          {/* Coupon Code Section */}
+          <div className="mb-6 rounded-2xl bg-stone-50 p-4 border border-stone-200/60 dark:bg-stone-900 dark:border-white/5">
+            <span className="text-xs font-black uppercase tracking-wider text-stone-400 flex items-center gap-1.5 mb-2">
+              <Tag size={14} className="text-emerald-700" />
+              Promo Coupon
+            </span>
+            <div className="flex gap-2">
+              <input
+                type="text"
+                placeholder="e.g. TAAZA20, WELCOME50"
+                value={couponInput}
+                onChange={(e) => setCouponInput(e.target.value.toUpperCase())}
+                className="flex-1 bg-white px-3 py-2 rounded-xl text-xs font-bold border border-stone-200 uppercase outline-none dark:bg-stone-800 dark:border-white/10 dark:text-white"
+              />
+              <button
+                type="button"
+                onClick={handleApplyCoupon}
+                disabled={couponLoading || !couponInput.trim()}
+                className="rounded-xl bg-[#075F46] px-4 py-2 text-xs font-black text-white hover:bg-[#064D3A] disabled:opacity-40"
+              >
+                {couponLoading ? '...' : 'Apply'}
+              </button>
+            </div>
+            {appliedCoupon && (
+              <p className="mt-2 text-xs font-bold text-emerald-700">
+                Applied: {appliedCoupon} (-₹{couponDiscount})
+              </p>
+            )}
+          </div>
+
+          <div className="border-t border-stone-100 pt-4 dark:border-white/5 space-y-2">
+            <div className="flex justify-between text-sm text-stone-500">
+              <span>Subtotal</span>
               <span>₹{total.toFixed(0)}</span>
+            </div>
+            {couponDiscount > 0 && (
+              <div className="flex justify-between text-sm font-bold text-emerald-700">
+                <span>Coupon Savings</span>
+                <span>-₹{couponDiscount}</span>
+              </div>
+            )}
+            <div className="flex justify-between text-xl font-black pt-2 text-stone-900 dark:text-white border-t border-stone-100 dark:border-white/5">
+              <span>Final Total</span>
+              <span className="text-emerald-800 dark:text-emerald-400">₹{Math.max(total - couponDiscount, 1).toFixed(0)}</span>
+            </div>
+          </div>
+
+          {/* Delivery Slot Selector */}
+          <div className="mt-6 border-t border-stone-100 pt-6 dark:border-white/5">
+            <h3 className="text-sm font-black uppercase tracking-wider text-stone-400 flex items-center gap-1.5 mb-3">
+              <Truck size={16} className="text-emerald-700" />
+              Choose Delivery Slot
+            </h3>
+            <div className="space-y-2">
+              {[
+                'Express Delivery (30-45 mins)',
+                'Morning Slot (7:00 AM - 10:00 AM)',
+                'Evening Slot (5:00 PM - 8:00 PM)',
+              ].map((slot) => (
+                <label
+                  key={slot}
+                  className={`flex items-center gap-3 rounded-xl border p-3 cursor-pointer text-xs font-bold transition ${
+                    deliverySlot === slot
+                      ? 'border-emerald-600 bg-emerald-50 text-emerald-900 dark:bg-emerald-950 dark:text-emerald-200'
+                      : 'border-stone-200 text-stone-700 hover:bg-stone-50 dark:border-white/10 dark:text-stone-300 dark:hover:bg-white/5'
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    name="deliverySlot"
+                    value={slot}
+                    checked={deliverySlot === slot}
+                    onChange={() => setDeliverySlot(slot)}
+                    className="accent-[#075F46]"
+                  />
+                  <span>{slot}</span>
+                </label>
+              ))}
             </div>
           </div>
           <fieldset disabled={loading || Boolean(pendingPayment)} className="space-y-4 border-t pt-6">

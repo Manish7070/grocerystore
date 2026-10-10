@@ -56,8 +56,24 @@ const Cart = () => {
             </div>
           </div>
 
-          <aside className="h-fit rounded-[2rem] border border-emerald-900/10 bg-white p-5 shadow-[0_18px_50px_rgba(38,58,34,0.07)] sm:p-6">
-            <h2 className="text-xl font-black text-stone-950">Order summary</h2>
+          <aside className="h-fit rounded-[2rem] border border-emerald-900/10 bg-white p-5 shadow-[0_18px_50px_rgba(38,58,34,0.07)] sm:p-6 dark:bg-[#14231a] dark:border-white/10">
+            {/* Free Delivery Meter */}
+            <div className="mb-5 rounded-2xl bg-emerald-50 p-4 border border-emerald-100 dark:bg-emerald-950/60 dark:border-emerald-800">
+              <div className="flex items-center justify-between text-xs font-bold mb-1.5">
+                <span className="text-emerald-900 dark:text-emerald-200">
+                  {total >= 499 ? '🎉 Free Delivery Unlocked!' : `Add ₹${Math.max(499 - total, 0).toFixed(0)} more for FREE Delivery`}
+                </span>
+                <span className="text-emerald-700 dark:text-emerald-400 font-black">{Math.min(Math.round((total / 499) * 100), 100)}%</span>
+              </div>
+              <div className="h-2 w-full rounded-full bg-emerald-200/60 dark:bg-emerald-900 overflow-hidden">
+                <div
+                  className="h-full rounded-full bg-emerald-600 transition-all duration-500"
+                  style={{ width: `${Math.min((total / 499) * 100, 100)}%` }}
+                />
+              </div>
+            </div>
+
+            <h2 className="text-xl font-black text-stone-900 dark:text-white">Order summary</h2>
             <div className="mt-5 space-y-3 text-sm font-semibold text-stone-500">
               <div className="flex justify-between">
                 <span>Subtotal</span>

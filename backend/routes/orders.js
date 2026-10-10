@@ -1,4 +1,5 @@
 const express = require('express');
+const mongoose = require('mongoose');
 const Razorpay = require('razorpay');
 const { protect } = require('../middleware/auth');
 const Order = require('../models/Order');
@@ -106,6 +107,9 @@ router.post('/:id/sync', protect, async (req, res) => {
   }
 });
 
+const generateOrderNumber = () => `TD-${new Date().getFullYear()}-${Math.floor(100000 + Math.random() * 900000)}`;
+const generateOtp = () => String(Math.floor(1000 + Math.random() * 9000));
+
 router.post('/', protect, async (req, res) => {
   try {
     if (!isRazorpayConfigured()) {
@@ -117,21 +121,41 @@ router.post('/', protect, async (req, res) => {
 
     const deliveryAddress = validateDelivery(req.body.deliveryAddress);
     const { orderItems, totalAmount, amountInPaise } = await buildOrderDetails(req.body.items);
+    const orderNumber = generateOrderNumber();
+    const deliveryOtp = generateOtp();
+    const deliverySlot = req.body.deliverySlot || 'Express Delivery (30-45 mins)';
+    const couponCode = req.body.couponCode || '';
+    const couponDiscount = Number(req.body.couponDiscount) || 0;
+    const finalAmount = Math.max(totalAmount - couponDiscount, 1);
+    const finalAmountInPaise = Math.round(finalAmount * 100);
 
     const razorpay = getRazorpayClient();
     const razorpayOrder = await razorpay.orders.create({
-      amount: amountInPaise,
+      amount: finalAmountInPaise,
       currency: 'INR',
       receipt: `receipt_${Date.now()}`,
-      notes: { userId: String(req.user._id) },
+      notes: { userId: String(req.user._id), orderNumber },
     });
+
     const order = await Order.create({
       userId: req.user._id,
+      orderNumber,
       items: orderItems,
-      totalAmount,
+      subtotal: totalAmount,
+      couponCode,
+      couponDiscount,
+      totalAmount: finalAmount,
       deliveryAddress,
+      deliverySlot,
+      deliveryOtp,
       paymentMethod: 'razorpay',
       razorpayOrderId: razorpayOrder.id,
+      statusTimeline: [{
+        status: 'placed',
+        title: 'Order Placed',
+        timestamp: new Date(),
+        note: 'Order initiated with Razorpay secure gateway',
+      }],
     });
 
     return res.status(201).json({
@@ -140,6 +164,7 @@ router.post('/', protect, async (req, res) => {
       currency: razorpayOrder.currency,
       keyId: process.env.RAZORPAY_KEY_ID,
       localOrderId: order._id,
+      orderNumber,
     });
   } catch (error) {
     console.error('Razorpay order creation failed:', error.statusCode || 502);
@@ -153,13 +178,42 @@ router.post('/cod', protect, async (req, res) => {
   try {
     const deliveryAddress = validateDelivery(req.body.deliveryAddress);
     const { orderItems, totalAmount } = await buildOrderDetails(req.body.items);
+    const orderNumber = generateOrderNumber();
+    const deliveryOtp = generateOtp();
+    const deliverySlot = req.body.deliverySlot || 'Express Delivery (30-45 mins)';
+    const couponCode = req.body.couponCode || '';
+    const couponDiscount = Number(req.body.couponDiscount) || 0;
+    const finalAmount = Math.max(totalAmount - couponDiscount, 0);
+
+    // Atomically decrement stock when MongoDB is connected
+    if (mongoose.connection.readyState === 1) {
+      for (const item of orderItems) {
+        await Product.findByIdAndUpdate(item.productId, {
+          $inc: { stock: -item.quantity },
+        });
+      }
+    }
+
     const order = await Order.create({
       userId: req.user._id,
+      orderNumber,
       items: orderItems,
-      totalAmount,
+      subtotal: totalAmount,
+      couponCode,
+      couponDiscount,
+      totalAmount: finalAmount,
       deliveryAddress,
+      deliverySlot,
+      deliveryOtp,
       paymentMethod: 'cod',
       paymentStatus: 'pending',
+      deliveryStatus: 'confirmed',
+      statusTimeline: [{
+        status: 'confirmed',
+        title: 'Order Confirmed',
+        timestamp: new Date(),
+        note: 'Cash on Delivery confirmed. Scheduled for packing.',
+      }],
     });
 
     return res.status(201).json({
@@ -227,14 +281,98 @@ router.post('/:id/verify', protect, async (req, res) => {
     }
 
     order.paymentStatus = 'paid';
+    order.deliveryStatus = 'confirmed';
     order.razorpayPaymentId = razorpayPaymentId;
     order.paidAt = new Date();
+    order.statusTimeline.push({
+      status: 'confirmed',
+      title: 'Payment Confirmed',
+      timestamp: new Date(),
+      note: 'Payment successfully captured via Razorpay. Order dispatched to fulfillment center.',
+    });
+
+    // Atomically decrement stock upon verified online payment
+    if (mongoose.connection.readyState === 1) {
+      for (const item of order.items) {
+        if (item.productId) {
+          await Product.findByIdAndUpdate(item.productId, {
+            $inc: { stock: -item.quantity },
+          });
+        }
+      }
+    }
+
     await order.save();
     return res.json({ success: true, paymentStatus: 'paid', orderId: order._id });
   } catch (error) {
     console.error('Payment verification failed:', error.statusCode || 500);
     return res.status(500).json({ message: 'Unable to verify payment' });
   }
+});
+
+// GET /api/orders/track/:orderNumber - Visual tracking by orderNumber
+router.get('/track/:orderNumber', async (req, res) => {
+  const order = await Order.findOne({ orderNumber: req.params.orderNumber });
+  if (!order) {
+    return res.status(404).json({ message: 'Order number not found' });
+  }
+  res.json({
+    orderNumber: order.orderNumber,
+    deliveryStatus: order.deliveryStatus,
+    paymentStatus: order.paymentStatus,
+    paymentMethod: order.paymentMethod,
+    deliverySlot: order.deliverySlot,
+    deliveryOtp: order.deliveryOtp,
+    deliveryAddress: {
+      name: order.deliveryAddress?.name,
+      city: order.deliveryAddress?.city,
+      pincode: order.deliveryAddress?.pincode,
+    },
+    items: order.items,
+    totalAmount: order.totalAmount,
+    statusTimeline: order.statusTimeline,
+    createdAt: order.createdAt,
+  });
+});
+
+// POST /api/orders/:id/cancel - Customer eligible order cancellation with stock restore
+router.post('/:id/cancel', protect, async (req, res) => {
+  const { reason } = req.body;
+  const order = await Order.findOne({ _id: req.params.id, userId: req.user._id });
+  if (!order) {
+    return res.status(404).json({ message: 'Order not found' });
+  }
+
+  if (['shipped', 'out_for_delivery', 'delivered'].includes(order.deliveryStatus)) {
+    return res.status(400).json({ message: 'Order has already been dispatched and cannot be cancelled.' });
+  }
+
+  if (order.deliveryStatus === 'cancelled') {
+    return res.status(400).json({ message: 'Order is already cancelled' });
+  }
+
+  // Restore inventory
+  if (mongoose.connection.readyState === 1) {
+    for (const item of order.items) {
+      if (item.productId) {
+        await Product.findByIdAndUpdate(item.productId, {
+          $inc: { stock: item.quantity },
+        });
+      }
+    }
+  }
+
+  order.deliveryStatus = 'cancelled';
+  order.cancellationReason = reason || 'Cancelled by customer';
+  order.statusTimeline.push({
+    status: 'cancelled',
+    title: 'Order Cancelled',
+    timestamp: new Date(),
+    note: order.cancellationReason,
+  });
+
+  await order.save();
+  res.json({ success: true, message: 'Order cancelled successfully and inventory restored.', order });
 });
 
 router.get('/', protect, async (req, res, next) => {
@@ -247,3 +385,4 @@ router.get('/', protect, async (req, res, next) => {
 });
 
 module.exports = router;
+

@@ -16,6 +16,7 @@ import {
   Trash2,
   User,
   Sun,
+  Truck,
   X,
 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
@@ -88,39 +89,42 @@ const Navbar = () => {
   };
 
   const profileLinks = [
-    { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { to: '/orders', label: 'Orders', icon: Package },
-    { to: '/watchlist', label: 'Watchlist', icon: Heart },
-    { to: '/settings', label: 'Settings', icon: Settings },
+    { to: '/dashboard', label: 'Customer Overview', icon: LayoutDashboard },
+    { to: '/orders', label: 'My Orders', icon: Package },
+    { to: '/track', label: 'Track Delivery', icon: Truck },
+    { to: '/watchlist', label: 'Saved Watchlist', icon: Heart },
+    { to: '/admin', label: 'Store Admin Console', icon: LayoutDashboard },
+    { to: '/delivery', label: 'Delivery Terminal', icon: Truck },
+    { to: '/waste-center', label: 'Waste Reduction Radar', icon: SlidersHorizontal },
+    { to: '/settings', label: 'Account Settings', icon: Settings },
   ];
 
   return (
-    <nav className="sticky top-0 z-50 border-b border-emerald-900/5 bg-[#fbfdf9]/90 shadow-[0_10px_30px_rgba(20,92,53,0.06)] backdrop-blur-xl">
+    <nav className="sticky top-0 z-50 border-b border-emerald-900/5 bg-[#fbfdf9]/90 shadow-[0_10px_30px_rgba(20,92,53,0.06)] backdrop-blur-xl dark:bg-[#0c1712]/95 dark:border-white/5">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <div className="flex min-h-20 items-center justify-between gap-3">
           <Brand compact onClick={closeMenus} />
 
-          <form onSubmit={submitSearch} className="hidden min-w-0 flex-1 items-center gap-2 rounded-full border border-emerald-900/10 bg-white/90 px-3 py-2 shadow-sm lg:flex">
-            <Search size={19} className="ml-1 text-stone-400" />
+          <form onSubmit={submitSearch} className="hidden min-w-0 flex-1 max-w-md items-center gap-2 rounded-full border border-emerald-900/10 bg-white/90 px-3 py-2 shadow-sm lg:flex dark:bg-stone-900 dark:border-white/10">
+            <Search size={18} className="ml-1 text-stone-400" />
             <input
               type="text"
               value={navSearch}
               onChange={(event) => setNavSearch(event.target.value)}
-              placeholder="Search fruits, milk, rice..."
-              className="min-w-0 flex-1 bg-transparent text-sm font-medium text-stone-800 outline-none placeholder:text-stone-400"
+              placeholder="Search farm vegetables, milk, basmati..."
+              className="min-w-0 flex-1 bg-transparent text-sm font-medium text-stone-800 outline-none placeholder:text-stone-400 dark:text-white"
             />
-            <button type="submit" className="rounded-full bg-emerald-700 px-4 py-2 text-sm font-bold text-white transition hover:bg-emerald-800">
+            <button type="submit" className="rounded-full bg-[#075F46] px-4 py-2 text-xs font-bold text-white transition hover:bg-[#064D3A]">
               Search
             </button>
           </form>
 
           <div className="hidden items-center gap-1 md:flex">
             <NavLink to="/" className={navLinkClass}>Home</NavLink>
-            <button type="button" onClick={() => { navigate('/#shop'); setTimeout(() => document.getElementById('shop')?.scrollIntoView({ behavior: 'smooth' }), 50); }} className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold text-stone-600 transition hover:bg-white hover:text-emerald-800 hover:shadow-sm">
-              <SlidersHorizontal size={16} />
-              Categories
-            </button>
-            <NavLink to="/watchlist" className={navLinkClass}>Watchlist</NavLink>
+            <NavLink to="/shop" className={navLinkClass}>Shop</NavLink>
+            <NavLink to="/bundles" className={navLinkClass}>Recipe Kits</NavLink>
+            <NavLink to="/waste-center" className={navLinkClass}>Waste Radar</NavLink>
+            <NavLink to="/track" className={navLinkClass}>Track Order</NavLink>
           </div>
 
           <div className="flex items-center gap-2">
