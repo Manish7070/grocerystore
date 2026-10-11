@@ -1,34 +1,44 @@
 import { useState } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { authAPI } from '../utils/api';
 import { Brand } from '../components/Brand';
-import { ArrowRight, ShieldCheck, HeartHandshake, Sparkles, Eye, EyeOff } from 'lucide-react';
+import { ArrowRight, Eye, EyeOff, Lock, Mail, User } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
 
 const Signup = () => {
-  const [formData, setFormData] = useState({ name: '', email: '', password: '' });
+  const [formData, setFormData] = useState({ name: '', email: '', password: '', confirmPassword: '' });
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
-  const location = useLocation();
-  const requestedPath = location.state?.from;
-  const returnTo = typeof requestedPath === 'string' && requestedPath.startsWith('/') && !requestedPath.startsWith('//') && !requestedPath.includes('\\') ? requestedPath : '/';
   const { login } = useAuth();
   const { showToast } = useToast();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (formData.password !== formData.confirmPassword) {
+      setError('Passwords do not match');
+      return;
+    }
+    if (formData.password.length < 6) {
+      setError('Password must be at least 6 characters');
+      return;
+    }
+
     setLoading(true);
     setError('');
     try {
-      const res = await authAPI.signup(formData);
+      const res = await authAPI.signup({
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+      });
       login(res.data);
       showToast('Welcome to GroceryStore! Your account has been created.');
-      navigate(returnTo, { replace: true });
+      navigate('/');
     } catch (err) {
-      const message = err.response?.data?.message || 'Registration failed';
+      const message = err.response?.data?.message || 'Registration failed. Please check your details.';
       setError(message);
       showToast(message, 'error');
     } finally {
@@ -37,159 +47,173 @@ const Signup = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#F6F0E5] flex flex-col lg:flex-row dark:bg-[#121817]">
-      {/* Editorial Visual Column (Left on Desktop) */}
-      <div className="lg:w-1/2 relative bg-[#192D2A] text-white flex flex-col justify-between p-8 sm:p-12 lg:p-16 overflow-hidden">
-        {/* Background Atmosphere Image */}
-        <img
-          src="https://images.unsplash.com/photo-1543083477-4f785aeafaa9?auto=format&fit=crop&w=1600&q=80"
-          alt="GroceryStore Artisan Bakery and Produce"
-          className="absolute inset-0 w-full h-full object-cover opacity-35 mix-blend-luminosity"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#192D2A] via-[#192D2A]/85 to-[#192D2A]/60" />
-
-        <div className="relative z-10">
-          <Link to="/" className="inline-block">
-            <Brand variant="stacked" inverted={true} className="items-start" />
-          </Link>
-          <div className="mt-8 inline-flex items-center gap-2 px-3 py-1 bg-white/10 border border-white/20 rounded-full text-xs text-[#D9A441] tracking-wider uppercase font-semibold">
-            <span>Client Registry</span>
-            <span>•</span>
-            <span>New Patron Registration</span>
+    <div className="min-h-screen bg-[#FDFBF7] dark:bg-[#0F1215] flex items-center justify-center p-4 sm:p-6 lg:p-10">
+      <div className="w-full max-w-4xl overflow-hidden rounded-3xl border border-[#DDD5C8] bg-white shadow-xl dark:bg-[#181B20] dark:border-white/10 grid lg:grid-cols-2">
+        {/* Left Side: Rich Artisanal Bakery & Produce Food Photography */}
+        <div className="relative hidden lg:flex flex-col justify-between overflow-hidden bg-[#122421] p-10 text-white">
+          <div className="absolute inset-0">
+            <img
+              src="https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=1000&q=80"
+              alt="Artisan bakery and wholesome provisions"
+              className="h-full w-full object-cover opacity-50 mix-blend-overlay"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0A1614] via-[#0F231F]/80 to-[#0A1614]/60" />
           </div>
-        </div>
 
-        <div className="relative z-10 my-10 max-w-md">
-          <p className="font-serif text-3xl sm:text-4xl text-white leading-tight mb-4">
-            &ldquo;Join our culinary table. Discover everyday essentials elevated.&rdquo;
-          </p>
-          <p className="text-[#E7E2D9] text-sm leading-relaxed">
-            Create an account to save household restocking lists, access exclusive pre-harvest releases, and enjoy complimentary cold-chain dispatch on qualifying orders.
-          </p>
+          <div className="relative z-10">
+            <Brand inverted stacked={false} />
+            <div className="mt-8 inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-xs font-semibold backdrop-blur border border-white/20">
+              <span className="h-2 w-2 rounded-full bg-[#10B981] animate-pulse" />
+              Member-only freshness radar & discounts
+            </div>
+          </div>
 
-          <div className="grid grid-cols-3 gap-4 mt-8 pt-8 border-t border-white/20">
-            <div>
-              <div className="flex items-center gap-1.5 text-[#D9A441] mb-1">
-                <Sparkles size={16} />
-                <span className="text-xs font-semibold text-white">Welcome Benefit</span>
+          <div className="relative z-10 space-y-4">
+            <blockquote className="font-serif text-2xl font-light italic leading-snug text-white/95">
+              &ldquo;Experience farm-gate transparency, stone-ground flours, and harvest fruits picked at true ripeness.&rdquo;
+            </blockquote>
+            <div className="flex items-center gap-6 pt-4 border-t border-white/15 text-xs text-white/80">
+              <div>
+                <p className="font-serif text-lg font-bold text-white">Zero</p>
+                <p className="text-[11px] uppercase tracking-wider text-white/60">Chemical Ripening</p>
               </div>
-              <span className="text-[11px] text-[#E7E2D9]/80">₹50 off first order</span>
-            </div>
-            <div>
-              <div className="flex items-center gap-1.5 text-[#D9A441] mb-1">
-                <HeartHandshake size={16} />
-                <span className="text-xs font-semibold text-white">Direct Source</span>
+              <div className="h-7 w-px bg-white/20" />
+              <div>
+                <p className="font-serif text-lg font-bold text-white">Cold-Chain</p>
+                <p className="text-[11px] uppercase tracking-wider text-white/60">Insulated Delivery</p>
               </div>
-              <span className="text-[11px] text-[#E7E2D9]/80">Fair farm margins</span>
-            </div>
-            <div>
-              <div className="flex items-center gap-1.5 text-[#D9A441] mb-1">
-                <ShieldCheck size={16} />
-                <span className="text-xs font-semibold text-white">Secure Vault</span>
-              </div>
-              <span className="text-[11px] text-[#E7E2D9]/80">Encrypted records</span>
             </div>
           </div>
         </div>
 
-        <div className="relative z-10 text-xs text-[#E7E2D9]/70 flex items-center justify-between">
-          <span>&copy; {new Date().getFullYear()} GroceryStore Ltd.</span>
-          <span>Security Protocol TLS 1.3</span>
-        </div>
-      </div>
+        {/* Right Side: Registration Form */}
+        <div className="p-6 sm:p-10 flex flex-col justify-center">
+          {/* Mobile Food Banner */}
+          <div className="relative mb-6 -mx-6 -mt-6 h-36 overflow-hidden lg:hidden">
+            <img
+              src="https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=800&q=80"
+              alt="Artisan food provisions"
+              className="h-full w-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-white dark:from-[#181B20] via-black/40 to-transparent" />
+            <div className="absolute bottom-3 left-6">
+              <Brand compact />
+            </div>
+          </div>
 
-      {/* Interactive Form Column (Right on Desktop) */}
-      <div className="lg:w-1/2 flex items-center justify-center p-6 sm:p-12 lg:p-16">
-        <div className="w-full max-w-md bg-white rounded-2xl border border-[#E9DDCA] shadow-sm p-8 sm:p-10 dark:bg-[#1A2322] dark:border-white/10">
-          <div className="mb-8">
-            <span className="text-xs font-semibold uppercase tracking-wider text-[#C66B42]">New Patron</span>
-            <h1 className="font-serif text-3xl text-[#242321] font-semibold mt-1 mb-2 dark:text-white">Create Account</h1>
-            <p className="text-[#55524E] text-sm dark:text-[#E7E2D9]/80">
-              Register with GroceryStore for personalized pantry orders and live dispatch tracking.
+          <div className="mb-6">
+            <h1 className="font-serif text-2xl sm:text-3xl font-semibold text-[#192D2A] dark:text-white">
+              Create an Account
+            </h1>
+            <p className="mt-1.5 text-xs sm:text-sm text-[#625F59] dark:text-gray-400">
+              Join GroceryStore for fresh daily deliveries and smart pantry reorders.
             </p>
           </div>
 
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-900 px-4 py-3 rounded-xl mb-6 text-xs leading-relaxed">
+            <div className="mb-5 rounded-xl border border-red-200 bg-red-50 p-3 text-xs font-semibold text-red-700 dark:bg-red-950/40 dark:border-red-900/60 dark:text-red-400">
               {error}
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-xs font-semibold text-[#242321] uppercase tracking-wider mb-2 dark:text-white">
+              <label className="block text-xs font-bold uppercase tracking-wider text-[#192D2A] mb-1.5 dark:text-white">
                 Full Name
               </label>
-              <input
-                type="text"
-                value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                placeholder="Eleanor Vance"
-                className="w-full px-4 py-3 bg-[#F6F0E5]/60 border border-[#E9DDCA] rounded-xl text-[#242321] text-sm focus:outline-none focus:ring-2 focus:ring-[#C66B42]/30 focus:border-[#C66B42] transition-colors dark:bg-white/5 dark:border-white/15 dark:text-white"
-                required
-              />
+              <div className="relative">
+                <User size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#625F59] dark:text-gray-400" />
+                <input
+                  type="text"
+                  required
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  placeholder="Your Name"
+                  className="w-full rounded-xl border border-[#DDD5C8] bg-[#FDFBF7] py-2.5 pl-10 pr-3 text-sm text-[#192D2A] outline-none placeholder:text-[#625F59]/60 focus:border-[#17745A] focus:ring-1 focus:ring-[#17745A] dark:bg-[#12141A] dark:border-white/10 dark:text-white"
+                />
+              </div>
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-[#242321] uppercase tracking-wider mb-2 dark:text-white">
+              <label className="block text-xs font-bold uppercase tracking-wider text-[#192D2A] mb-1.5 dark:text-white">
                 Email Address
               </label>
-              <input
-                type="email"
-                value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                placeholder="name@example.com"
-                className="w-full px-4 py-3 bg-[#F6F0E5]/60 border border-[#E9DDCA] rounded-xl text-[#242321] text-sm focus:outline-none focus:ring-2 focus:ring-[#C66B42]/30 focus:border-[#C66B42] transition-colors dark:bg-white/5 dark:border-white/15 dark:text-white"
-                required
-              />
+              <div className="relative">
+                <Mail size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#625F59] dark:text-gray-400" />
+                <input
+                  type="email"
+                  required
+                  value={formData.email}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  placeholder="name@example.com"
+                  className="w-full rounded-xl border border-[#DDD5C8] bg-[#FDFBF7] py-2.5 pl-10 pr-3 text-sm text-[#192D2A] outline-none placeholder:text-[#625F59]/60 focus:border-[#17745A] focus:ring-1 focus:ring-[#17745A] dark:bg-[#12141A] dark:border-white/10 dark:text-white"
+                />
+              </div>
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-[#242321] uppercase tracking-wider mb-2 dark:text-white">
-                Create Password
+              <label className="block text-xs font-bold uppercase tracking-wider text-[#192D2A] mb-1.5 dark:text-white">
+                Password
               </label>
               <div className="relative">
+                <Lock size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#625F59] dark:text-gray-400" />
                 <input
                   type={showPassword ? 'text' : 'password'}
+                  required
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                  placeholder="Minimum 6 characters"
-                  minLength={6}
-                  className="w-full px-4 py-3 bg-[#F6F0E5]/60 border border-[#E9DDCA] rounded-xl text-[#242321] text-sm focus:outline-none focus:ring-2 focus:ring-[#C66B42]/30 focus:border-[#C66B42] transition-colors dark:bg-white/5 dark:border-white/15 dark:text-white pr-10"
-                  required
+                  placeholder="••••••••"
+                  className="w-full rounded-xl border border-[#DDD5C8] bg-[#FDFBF7] py-2.5 pl-10 pr-10 text-sm text-[#192D2A] outline-none placeholder:text-[#625F59]/60 focus:border-[#17745A] focus:ring-1 focus:ring-[#17745A] dark:bg-[#12141A] dark:border-white/10 dark:text-white"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-500 hover:text-stone-800 dark:text-stone-400 dark:hover:text-stone-200"
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#625F59] hover:text-[#192D2A] dark:text-gray-400 dark:hover:text-white"
                   aria-label={showPassword ? 'Hide password' : 'Show password'}
                 >
-                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold uppercase tracking-wider text-[#192D2A] mb-1.5 dark:text-white">
+                Confirm Password
+              </label>
+              <div className="relative">
+                <Lock size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#625F59] dark:text-gray-400" />
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  required
+                  value={formData.confirmPassword}
+                  onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                  placeholder="••••••••"
+                  className="w-full rounded-xl border border-[#DDD5C8] bg-[#FDFBF7] py-2.5 pl-10 pr-3 text-sm text-[#192D2A] outline-none placeholder:text-[#625F59]/60 focus:border-[#17745A] focus:ring-1 focus:ring-[#17745A] dark:bg-[#12141A] dark:border-white/10 dark:text-white"
+                />
               </div>
             </div>
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-[#C66B42] text-white py-3.5 px-6 rounded-xl hover:bg-[#B9583D] font-bold text-xs uppercase tracking-wider transition-all shadow-sm hover:shadow flex items-center justify-center gap-2 disabled:opacity-50"
+              className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-[#17745A] py-3.5 text-xs font-bold uppercase tracking-wider text-white shadow-sm transition hover:bg-[#135E49] active:scale-[0.98] disabled:opacity-50"
             >
-              <span>{loading ? 'Creating Account...' : 'Complete Registration'}</span>
-              {!loading && <ArrowRight size={16} />}
+              {loading ? 'Creating Account...' : 'Complete Registration'}
+              <ArrowRight size={14} />
             </button>
           </form>
 
-          <div className="mt-8 pt-6 border-t border-[#E9DDCA] text-center dark:border-white/10">
-            <p className="text-xs text-[#55524E] dark:text-[#E7E2D9]/80">
-              Already have an account?{' '}
-              <Link
-                to="/signin"
-                state={{ from: returnTo }}
-                className="font-bold text-[#C66B42] hover:underline ml-1"
-              >
-                Sign in
-              </Link>
-            </p>
+          <div className="mt-6 text-center text-xs text-[#55524E] dark:text-gray-400">
+            Already have an account?{' '}
+            <Link to="/signin" className="font-bold text-[#17745A] hover:underline dark:text-[#10B981]">
+              Sign in here
+            </Link>
+          </div>
+
+          <div className="mt-4 text-center">
+            <Link to="/" className="text-xs font-semibold text-[#625F59] hover:text-[#192D2A] dark:text-gray-400 dark:hover:text-white">
+              &larr; Return to Market Storefront
+            </Link>
           </div>
         </div>
       </div>

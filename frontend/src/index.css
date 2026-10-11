@@ -31,7 +31,7 @@ html {
 body {
   margin: 0;
   min-width: 320px;
-  background-color: #F1E8D8;
+  background-color: #FDFBF7;
   color: #192D2A;
   font-family: 'Manrope', system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -39,15 +39,15 @@ body {
 }
 
 html.dark body {
-  background-color: #192D2A;
-  color: #F1E8D8;
+  background-color: #0F1215;
+  color: #F3F4F6;
 }
 
-html.dark ::-webkit-scrollbar-track { background: #192D2A; }
-html.dark ::-webkit-scrollbar-thumb { background: #292724; }
+html.dark ::-webkit-scrollbar-track { background: #0F1215; }
+html.dark ::-webkit-scrollbar-thumb { background: #262B33; }
 
 ::selection {
-  background: #C66B42;
+  background: #17745A;
   color: #FFFFFF;
 }
 
@@ -64,13 +64,13 @@ html.dark ::-webkit-scrollbar-thumb { background: #292724; }
 }
 
 html.dark .editorial-border {
-  border-color: rgba(221, 213, 200, 0.15);
+  border-color: rgba(255, 255, 255, 0.12);
 }
 
 @layer components {
   /* Global Button System */
   .btn-primary {
-    @apply bg-copper text-surface hover:bg-[#B05932] active:scale-[0.99] transition-all duration-200 font-semibold shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-copper/40;
+    @apply bg-[#17745A] text-white hover:bg-[#135E49] active:scale-[0.99] transition-all duration-200 font-semibold shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#17745A]/40;
   }
   .btn-secondary {
     @apply bg-surface border border-sandstoneBorder text-forest hover:bg-oat active:scale-[0.99] transition-all duration-200 font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-forest/20;

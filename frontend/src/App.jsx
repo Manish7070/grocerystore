@@ -1,4 +1,5 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
 import { ToastProvider } from './context/ToastContext';
@@ -7,8 +8,9 @@ import { ThemeProvider } from './context/ThemeContext';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import Shop from './pages/Shop';
+import FreshMarket from './pages/FreshMarket';
 import RecipeBundles from './pages/RecipeBundles';
-import WasteRadar from './pages/WasteRadar';
+import SmartSavings from './pages/SmartSavings';
 import OrderTracking from './pages/OrderTracking';
 import OrderSuccess from './pages/OrderSuccess';
 import AdminDashboard from './pages/AdminDashboard';
@@ -24,18 +26,39 @@ import Footer from './components/Footer';
 import Settings from './pages/Settings';
 import Watchlist from './pages/Watchlist';
 import NotFound from './pages/NotFound';
-import LogoConceptsShowcase from './components/LogoConceptsShowcase';
+
+/**
+ * ScrollToTop ensures every page navigation scrolls smoothly to the top of the window,
+ * solving previous scroll state persistence issues.
+ */
+function ScrollToTop() {
+  const { pathname, search } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: 'instant',
+    });
+  }, [pathname, search]);
+
+  return null;
+}
 
 function AppContent() {
   return (
-    <div className="min-h-screen bg-[#f8fbf5] flex flex-col text-stone-900 transition-colors duration-300 dark:bg-[#0b1510] dark:text-stone-100">
+    <div className="min-h-screen bg-[#FDFBF7] flex flex-col text-[#192D2A] transition-colors duration-300 dark:bg-[#0E1A18] dark:text-[#F8F3EA]">
+      <ScrollToTop />
       <Navbar />
       <main className="flex-1">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/shop" element={<Shop />} />
+          <Route path="/fresh-market" element={<FreshMarket />} />
           <Route path="/bundles" element={<RecipeBundles />} />
-          <Route path="/waste-center" element={<WasteRadar />} />
+          <Route path="/smart-savings" element={<SmartSavings />} />
+          <Route path="/waste-center" element={<SmartSavings />} />
+          <Route path="/waste-radar" element={<SmartSavings />} />
           <Route path="/track" element={<OrderTracking />} />
           <Route path="/track/:orderNumber" element={<OrderTracking />} />
           <Route path="/order-success/:id" element={<OrderSuccess />} />
@@ -50,7 +73,6 @@ function AppContent() {
           <Route path="/cart" element={<Cart />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/orders" element={<Orders />} />
-          <Route path="/brand-identity" element={<LogoConceptsShowcase />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>

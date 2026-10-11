@@ -94,21 +94,21 @@ const ProductCard = ({ product }) => {
           </div>
 
           {/* Description */}
-          <p className="line-clamp-2 text-xs leading-relaxed text-mutedStone mb-4 dark:text-surface/65">
+          <p className="line-clamp-2 text-xs sm:text-sm leading-relaxed text-[#55524E] mb-4 dark:text-[#E7E2D9]/80">
             {product.description || 'Carefully graded daily harvest essential, preserved in cold-chain conditions.'}
           </p>
 
           {/* Price & Action Section */}
-          <div className="mt-auto pt-3 border-t border-sandstoneBorder/60 dark:border-white/5">
+          <div className="mt-auto pt-3 border-t border-[#DDD5C8]/60 dark:border-white/5">
             <div className="mb-3 flex items-baseline justify-between">
               <div>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-mutedStone block dark:text-surface/50">Market Price</span>
+                <span className="text-[10px] font-bold uppercase tracking-wider text-[#625F59] block dark:text-[#E7E2D9]/60">Market Price</span>
                 <div className="flex items-baseline gap-2">
-                  <span className="font-serif text-2xl font-bold text-forest dark:text-surface">
+                  <span className="font-serif text-2xl font-bold text-[#192D2A] dark:text-white">
                     ₹{product.price}
                   </span>
                   {product.discount > 0 && (
-                    <span className="text-xs text-mutedStone line-through font-mono dark:text-surface/50">
+                    <span className="text-xs text-[#625F59] line-through font-mono dark:text-[#E7E2D9]/60">
                       ₹{Math.round(product.price * (1 + product.discount / 100))}
                     </span>
                   )}
@@ -119,23 +119,23 @@ const ProductCard = ({ product }) => {
               <span
                 className={`rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${
                   isOutOfStock
-                    ? 'bg-red-50 text-errorRed border border-red-200 dark:bg-red-950/40 dark:border-red-900'
-                    : 'bg-oat text-forest border border-sandstoneBorder dark:bg-forest dark:text-ochre dark:border-white/10'
+                    ? 'bg-red-50 text-red-700 border border-red-200 dark:bg-red-950/40 dark:border-red-900'
+                    : 'bg-[#F7F4EE] text-[#192D2A] border border-[#DDD5C8] dark:bg-[#132220] dark:text-[#D9A441] dark:border-white/10'
                 }`}
               >
                 {isOutOfStock ? 'Sold Out' : 'Available'}
               </span>
             </div>
 
-            {/* Primary Action Button — Burnt Copper with micro-interaction */}
+            {/* Primary Action Button */}
             <button
               type="button"
               onClick={() => setQuantityOpen(true)}
               disabled={isOutOfStock}
               className={`flex w-full items-center justify-center gap-2 rounded-xl py-3 px-4 text-xs font-bold uppercase tracking-wider transition-all duration-200 shadow-sm active:scale-[0.98] ${
                 addedAnimation
-                  ? 'bg-forest text-surface'
-                  : 'bg-copper text-surface hover:bg-[#B05932] disabled:cursor-not-allowed disabled:bg-sandstoneBorder disabled:text-mutedStone'
+                  ? 'bg-[#192D2A] text-white dark:bg-white dark:text-[#192D2A]'
+                  : 'bg-[#17745A] text-white hover:bg-[#135E49] disabled:cursor-not-allowed disabled:bg-[#DDD5C8] disabled:text-[#625F59] dark:bg-[#17745A] dark:hover:bg-[#135E49]'
               }`}
             >
               {addedAnimation ? (

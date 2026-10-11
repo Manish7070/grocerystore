@@ -1,11 +1,31 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Package } from 'lucide-react';
-import { getProductLiveImage } from '../utils/remoteProductImages';
+import { getProductLiveImage, categoryLiveImages } from '../utils/remoteProductImages';
 
 const ProductArtwork = ({ product = {}, className = '', showLabel = false }) => {
   const liveImageUrl = getProductLiveImage(product);
+  const categoryFallback = categoryLiveImages[product.category] || 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=700&q=80';
+  const [imgSrc, setImgSrc] = useState(liveImageUrl);
+  const [triedFallback, setTriedFallback] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState(false);
+
+  useEffect(() => {
+    const nextUrl = getProductLiveImage(product);
+    setImgSrc(nextUrl);
+    setTriedFallback(false);
+    setError(false);
+    setLoaded(false);
+  }, [product?._id, product?.id, product?.name, product?.image]);
+
+  const handleImageError = () => {
+    if (!triedFallback && imgSrc !== categoryFallback) {
+      setTriedFallback(true);
+      setImgSrc(categoryFallback);
+    } else {
+      setError(true);
+    }
+  };
 
   return (
     <div
@@ -21,12 +41,12 @@ const ProductArtwork = ({ product = {}, className = '', showLabel = false }) => 
       {/* Verified Live Remote Photography */}
       {!error ? (
         <img
-          src={liveImageUrl}
+          src={imgSrc}
           alt={product.name || 'Grocery product'}
           loading="lazy"
           decoding="async"
           onLoad={() => setLoaded(true)}
-          onError={() => setError(true)}
+          onError={handleImageError}
           className={`absolute inset-0 h-full w-full object-cover transition-all duration-700 ease-out group-hover:scale-105 ${
             loaded ? 'opacity-100' : 'opacity-0'
           }`}

@@ -21,14 +21,50 @@ const getRazorpayClient = () => new Razorpay({
 const buildOrderDetails = async (items) => {
   const quantities = validateItems(items);
 
-  const products = await Product.find({ _id: { $in: [...quantities.keys()] } });
+  let products = await Product.find({ _id: { $in: [...quantities.keys()] } });
+
   if (products.length !== quantities.size) {
-    throw badRequest('One or more cart products are no longer available');
+    const foundIds = new Set(products.map((p) => String(p._id).toLowerCase()));
+    const missingKeys = [...quantities.keys()].filter((k) => !foundIds.has(k.toLowerCase()));
+
+    if (missingKeys.length > 0) {
+      const missingNames = items
+        .filter((i) => missingKeys.includes(String(i.productId || '').toLowerCase()))
+        .map((i) => i.name)
+        .filter(Boolean);
+
+      const recovered = await Product.find({
+        $or: [
+          { externalId: { $in: missingKeys } },
+          { name: { $in: missingNames } },
+        ],
+      });
+
+      for (const prod of recovered) {
+        const prodIdLower = String(prod._id).toLowerCase();
+        if (!foundIds.has(prodIdLower)) {
+          const origKey = missingKeys.find((k) => k === prod.externalId?.toLowerCase())
+            || items.find((i) => i.name?.toLowerCase() === prod.name?.toLowerCase())?.productId?.toLowerCase();
+          if (origKey && quantities.has(origKey)) {
+            quantities.set(prodIdLower, quantities.get(origKey));
+            quantities.delete(origKey);
+            products.push(prod);
+            foundIds.add(prodIdLower);
+          }
+        }
+      }
+    }
+  }
+
+  if (products.length !== quantities.size) {
+    throw badRequest('One or more cart products are no longer available in the active catalog. Please refresh your basket.');
   }
 
   for (const product of products) {
-    if (product.stock < quantities.get(String(product._id))) {
-      throw badRequest(`${product.name} has only ${product.stock} available`);
+    const requestedQty = quantities.get(String(product._id).toLowerCase()) || 1;
+    const availableStock = typeof product.stock === 'number' ? product.stock : 100;
+    if (availableStock < requestedQty) {
+      throw badRequest(`${product.name} has only ${availableStock} available`);
     }
     if (!Number.isFinite(product.price) || product.price <= 0) {
       throw badRequest('A product price is unavailable. Please refresh your cart.');
@@ -41,7 +77,7 @@ const buildOrderDetails = async (items) => {
     externalId: product.externalId,
     category: product.category,
     price: product.price,
-    quantity: quantities.get(String(product._id)),
+    quantity: quantities.get(String(product._id).toLowerCase()) || 1,
     image: product.image,
   }));
   const totalAmount = orderItems.reduce(

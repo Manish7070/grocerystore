@@ -35,7 +35,7 @@ const Footer = () => (
             <li><Link to="/shop?category=Vegetables" className="hover:text-[#D9A441] transition">Daily Farm Vegetables</Link></li>
             <li><Link to="/shop?category=Fruits" className="hover:text-[#D9A441] transition">Seasonal Fruits & Orchards</Link></li>
             <li><Link to="/bundles" className="hover:text-[#D9A441] transition">1-Click Recipe Cook Kits</Link></li>
-            <li><Link to="/waste-center" className="hover:text-[#D9A441] transition">Smart Savings (Less Waste)</Link></li>
+            <li><Link to="/smart-savings" className="hover:text-[#D9A441] transition">Smart Savings (Less Waste)</Link></li>
             <li><Link to="/watchlist" className="hover:text-[#D9A441] transition">Saved Kitchen Essentials</Link></li>
           </ul>
         </div>

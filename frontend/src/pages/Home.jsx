@@ -1,11 +1,27 @@
 import { useState, useEffect } from 'react';
-import { ArrowRight, Sparkles, ChefHat, Clock, ShieldCheck, Heart, Truck, Award, Leaf, CheckCircle2, Star, BookOpen } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
+import {
+  ArrowRight,
+  Sparkles,
+  ChefHat,
+  Clock,
+  ShieldCheck,
+  Heart,
+  Truck,
+  Award,
+  Leaf,
+  CheckCircle2,
+  Star,
+  BookOpen,
+  TrendingDown,
+  Lock,
+  RotateCcw,
+  Package,
+} from 'lucide-react';
+import { Link } from 'react-router-dom';
 import ProductCard from '../components/ProductCard';
 import { productsAPI } from '../utils/api';
 import { useCart } from '../context/CartContext';
 import { useToast } from '../context/ToastContext';
-import LogoConceptsShowcase from '../components/LogoConceptsShowcase';
 
 // Curated Category Tiles with High-Definition Live Imagery
 const curatedCategories = [
@@ -13,102 +29,74 @@ const curatedCategories = [
     name: 'Farm Vegetables',
     slug: 'Vegetables',
     image: 'https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=800&q=80',
-    tagline: 'Harvested daily from Pune & Nashik mandis',
-    count: '32 Items',
+    tagline: 'Harvested daily from partner farms',
+    count: '15 Varieties',
   },
   {
     name: 'Artisan Bakery',
     slug: 'Bakery',
     image: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=600&q=80',
     tagline: 'Naturally fermented sourdough & rolls',
-    count: '18 Items',
+    count: '15 Varieties',
   },
   {
-    name: 'Dairy & Breakfast',
+    name: 'Dairy & Essentials',
     slug: 'Dairy',
     image: 'https://images.unsplash.com/photo-1550583724-b2692b85b150?auto=format&fit=crop&w=600&q=80',
-    tagline: 'A2 Desi milk, cultured ghee & butter',
-    count: '24 Items',
+    tagline: 'Fresh whole milk, cultured ghee & butter',
+    count: '15 Varieties',
   },
   {
     name: 'Heirloom Grains & Rice',
     slug: 'Rice',
     image: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&w=600&q=80',
-    tagline: 'Aged basmati & stoneground wholewheat',
-    count: '42 Items',
+    tagline: 'Aged basmati & stoneground grains',
+    count: '15 Varieties',
   },
   {
     name: 'Cold-Pressed Oils & Spices',
     slug: 'Oils',
     image: 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?auto=format&fit=crop&w=600&q=80',
-    tagline: 'Single-estate virgin extraction',
-    count: '28 Items',
+    tagline: 'Virgin extractions & whole aromatics',
+    count: '15 Varieties',
   },
   {
     name: 'Orchard Fresh Fruits',
     slug: 'Fruits',
     image: 'https://images.unsplash.com/photo-1619566636858-adf3ef46400b?auto=format&fit=crop&w=600&q=80',
-    tagline: 'Himachal & Kashmir seasonal harvest',
-    count: '26 Items',
+    tagline: 'Peak-harvest orchard selection',
+    count: '15 Varieties',
   },
 ];
 
-// Occasions for "Shop by Occasion"
-const occasions = [
-  {
-    title: 'The Morning Table',
-    desc: 'Cultured milk, stoneground muesli, organic berries, and raw forest honey.',
-    category: 'Breakfast',
-    image: 'https://images.unsplash.com/photo-1525351484163-7529414344d8?auto=format&fit=crop&w=600&q=80',
-  },
-  {
-    title: 'Weeknight Cooking',
-    desc: 'Crisp green beans, tender paneer, aromatic whole spices, and aged grains.',
-    category: 'Vegetables',
-    image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600&q=80',
-  },
-  {
-    title: 'Artisan Pantry Restock',
-    desc: 'Cold-pressed virgin oils, stone-milled flours, and unpolished heirloom lentils.',
-    category: 'Rice',
-    image: 'https://images.unsplash.com/photo-1515543237350-b3eea1ec8082?auto=format&fit=crop&w=600&q=80',
-  },
-  {
-    title: 'Tea & Hearth Rituals',
-    desc: 'Single-origin Assam leaves, green cardamom pods, and roasted dry fruits.',
-    category: 'Beverages',
-    image: 'https://images.unsplash.com/photo-1576092768241-dec231879fc3?auto=format&fit=crop&w=600&q=80',
-  },
-];
-
-// Featured Recipe Kits preview
+// Curated Recipe Kits Preview
 const recipeKitsPreview = [
   {
-    title: 'Authentic Palak Paneer Basket',
+    title: 'Desi Palak Paneer Kit',
     prepTime: '25 mins',
     servings: '3–4',
-    price: 195,
-    tag: 'Classic North Indian',
+    price: 200,
+    tag: 'Farm-Fresh Classic',
     image: 'https://images.unsplash.com/photo-1631452180519-c014fe946bc7?auto=format&fit=crop&w=600&q=80',
-    desc: 'Tender baby spinach, fresh artisanal paneer, desi ghee, garlic bulbs & whole garam masala.',
+    desc: 'Tender baby spinach, fresh artisanal paneer, cold-pressed ghee, garlic bulbs & whole aromatic spices.',
   },
   {
-    title: 'Royal Fragrant Dum Biryani Kit',
-    prepTime: '45 mins',
+    title: 'Royal Dum Biryani Essentials',
+    prepTime: '40 mins',
     servings: '4–5',
-    price: 345,
-    tag: 'Heritage Festive',
+    price: 890,
+    tag: 'Heritage Kitchen',
     image: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=600&q=80',
-    desc: 'Aged long-grain Dehradun Basmati, whole spices, pure ghee, fried brown onions & fresh mint.',
+    desc: 'Aged long-grain basmati rice, pure cow ghee, red onions, ginger root, and royal whole spices.',
   },
   {
-    title: 'Morning Vitality Green Smoothie',
-    prepTime: '10 mins',
+    title: 'Morning Energy & Smoothie Kit',
+    prepTime: '5 mins',
     servings: '2',
-    price: 165,
-    tag: 'Energizing Blend',
-    image: 'https://images.unsplash.com/photo-1610970881699-44a5587cabec?auto=format&fit=crop&w=600&q=80',
-    desc: 'Organic bananas, tender baby spinach, chia seeds, cold-pressed almond milk & raw honey.',
+    price: 170,
+    tag: 'Quick Breakfast',
+    image: 'https://images.unsplash.com/photo-1553530666-ba11a7da3888?auto=format&fit=crop&w=600&q=80',
+    desc: 'Fresh Cavendish bananas, chilled whole milk, and rich probiotic Greek yogurt.',
   },
 ];
 
@@ -116,14 +104,12 @@ const Home = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeCategoryFilter, setActiveCategoryFilter] = useState('All');
-  const navigate = useNavigate();
-  const { addItem } = useCart();
-  const { showToast } = useToast();
 
   useEffect(() => {
     let active = true;
     setLoading(true);
-    productsAPI.getAll()
+    productsAPI
+      .getAll()
       .then((res) => {
         if (!active) return;
         setProducts(res.data || []);
@@ -133,92 +119,95 @@ const Home = () => {
         if (!active) return;
         setLoading(false);
       });
-    return () => { active = false; };
+    return () => {
+      active = false;
+    };
   }, []);
 
   // Filter curated products for "This Week's Market Edit" (8 items)
-  const filteredEditProducts = products.filter((p) => {
-    if (activeCategoryFilter === 'All') return true;
-    return p.category === activeCategoryFilter;
-  }).slice(0, 8);
+  const filteredEditProducts = products
+    .filter((p) => {
+      if (activeCategoryFilter === 'All') return true;
+      return p.category === activeCategoryFilter;
+    })
+    .slice(0, 8);
 
   return (
-    <div className="min-h-screen bg-[#F6F0E5] text-[#242321] dark:bg-[#121817] dark:text-[#F8F3EA]">
+    <div className="min-h-screen bg-[#FDFBF7] text-[#192D2A] dark:bg-[#0E1A18] dark:text-[#F8F3EA]">
       {/* =========================================================================
-          SECTION 01 — CINEMATIC EDITORIAL HERO (Deep Forest Background)
+          SECTION 01 — CINEMATIC EDITORIAL HERO (Deep Forest Canvas #192D2A)
           ========================================================================= */}
-      <section className="relative overflow-hidden bg-[#192D2A] text-white px-4 py-12 sm:px-6 sm:py-16 lg:py-20">
-        <div className="mx-auto max-w-7xl">
-          <div className="grid items-center gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:gap-14">
+      <section className="relative overflow-hidden bg-[#192D2A] text-white px-4 py-16 sm:px-6 sm:py-20 lg:py-24">
+        {/* Subtle decorative glow */}
+        <div className="pointer-events-none absolute -top-40 -left-40 h-96 w-96 rounded-full bg-[#254641] opacity-50 blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-40 -right-40 h-96 w-96 rounded-full bg-[#2B403B] opacity-50 blur-3xl" />
+
+        <div className="mx-auto max-w-7xl relative z-10">
+          <div className="grid items-center gap-12 lg:grid-cols-[1.15fr_0.85fr] lg:gap-16">
             {/* Left Narrative */}
             <div className="max-w-2xl">
-              <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3.5 py-1 text-xs font-bold uppercase tracking-[0.2em] text-[#D9A441] backdrop-blur-md">
-                <Sparkles size={13} />
-                <span>Fine Provisions • Daily Harvest</span>
-              </div>
-
-              <h1 className="font-serif text-3xl font-normal tracking-tight text-white sm:text-5xl lg:text-[54px] lg:leading-[1.12]">
+              <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-normal tracking-tight text-white leading-[1.12]">
                 Good food.<br />
                 <span className="italic font-normal text-[#D9A441]">Beautifully</span> everyday.
               </h1>
 
-              <p className="mt-4 text-sm font-normal leading-relaxed text-[#E7E2D9] sm:text-base max-w-lg">
+              <p className="mt-6 text-base sm:text-lg font-normal leading-relaxed text-[#F4EFE6] max-w-xl">
                 Carefully selected farm produce, pantry essentials, and artisanal ingredients — delivered directly to your doorstep with uncompromising cold-chain freshness.
               </p>
 
-              <div className="mt-7 flex flex-col gap-3.5 sm:flex-row">
+              <div className="mt-8 flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
                 <Link
                   to="/shop"
-                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#C66B42] px-7 py-3 text-xs font-bold uppercase tracking-wider text-white shadow-md transition-all duration-200 hover:bg-[#B9583D] active:scale-[0.99]"
+                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#17745A] px-8 py-3.5 text-sm font-semibold tracking-wide text-white shadow-md transition-all duration-200 hover:bg-[#135E49] active:scale-[0.99]"
                 >
                   Explore The Market
-                  <ArrowRight size={15} />
+                  <ArrowRight size={16} />
                 </Link>
                 <Link
                   to="/bundles"
-                  className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/25 bg-white/10 px-7 py-3 text-xs font-bold uppercase tracking-wider text-white transition-all duration-200 hover:bg-white/20 active:scale-[0.99] backdrop-blur-sm"
+                  className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/30 bg-white/10 px-8 py-3.5 text-sm font-semibold tracking-wide text-white transition-all duration-200 hover:bg-white/20 active:scale-[0.99] backdrop-blur-sm"
                 >
                   Shop Recipe Kits
                 </Link>
               </div>
 
               {/* Editorial Trust Accents */}
-              <div className="mt-9 grid grid-cols-3 gap-4 border-t border-white/15 pt-6">
+              <div className="mt-12 grid grid-cols-3 gap-6 border-t border-white/15 pt-8">
                 <div>
-                  <p className="font-serif text-2xl font-bold text-white">40+</p>
-                  <p className="mt-0.5 text-xs font-medium text-[#E7E2D9]/80">Partner Orchards</p>
+                  <p className="font-serif text-2xl sm:text-3xl font-bold text-white">40+</p>
+                  <p className="mt-1 text-xs sm:text-sm font-medium text-[#E7E2D9]/85">Partner Orchards</p>
                 </div>
                 <div>
-                  <p className="font-serif text-2xl font-bold text-white">0%</p>
-                  <p className="mt-0.5 text-xs font-medium text-[#E7E2D9]/80">Gas Preservatives</p>
+                  <p className="font-serif text-2xl sm:text-3xl font-bold text-[#D9A441]">Zero</p>
+                  <p className="mt-1 text-xs sm:text-sm font-medium text-[#E7E2D9]/85">Synthetic Preservatives</p>
                 </div>
                 <div>
-                  <p className="font-serif text-2xl font-bold text-white">2 Hr</p>
-                  <p className="mt-0.5 text-xs font-medium text-[#E7E2D9]/80">Sealed Delivery</p>
+                  <p className="font-serif text-2xl sm:text-3xl font-bold text-white">2 Hr</p>
+                  <p className="mt-1 text-xs sm:text-sm font-medium text-[#E7E2D9]/85">Direct Cold-Chain</p>
                 </div>
               </div>
             </div>
 
-            {/* Right Fresh Food Still Life */}
+            {/* Right Fresh Produce Photography */}
             <div className="relative">
-              <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl border border-white/15 shadow-2xl">
+              <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl border border-white/20 shadow-2xl">
                 <img
                   src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=1200&q=85"
                   alt="Curated fresh organic produce, sourdough bread, and virgin olive oil on rustic board"
                   className="h-full w-full object-cover transition-transform duration-700 hover:scale-105"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#192D2A]/60 via-transparent to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#192D2A]/70 via-transparent to-transparent" />
               </div>
 
               {/* Floating Provenance Badge */}
-              <div className="absolute -bottom-4 -left-4 hidden rounded-xl border border-white/20 bg-[#192D2A]/95 p-3.5 shadow-xl backdrop-blur-md sm:block">
+              <div className="absolute -bottom-4 -left-4 hidden rounded-xl border border-white/25 bg-[#192D2A]/95 p-4 shadow-xl backdrop-blur-md sm:block">
                 <div className="flex items-center gap-3">
-                  <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#C66B42]/20 text-[#D9A441]">
-                    <Leaf size={18} />
+                  <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#17745A]/30 text-[#D9A441]">
+                    <Leaf size={20} />
                   </span>
                   <div>
                     <p className="text-xs font-bold text-white">Daily Harvest Intake</p>
-                    <p className="text-[11px] font-medium text-[#E7E2D9]">Nashik Valley & Pune Mandis</p>
+                    <p className="text-[11px] text-[#E7E2D9]/80">Evaluated at sunrise &bull; Grade A+</p>
                   </div>
                 </div>
               </div>
@@ -228,29 +217,55 @@ const Home = () => {
       </section>
 
       {/* =========================================================================
-          SECTION 02 — THREE CORE PRINCIPLES (Warm Oat Background)
+          SECTION 02 — THREE CORE HIGHLIGHTS (Redesigned with Icons & High Contrast)
           ========================================================================= */}
-      <section className="border-b border-[#E9DDCA] bg-[#E9DDCA]/50 px-4 py-10 sm:px-6 dark:bg-[#1A2322] dark:border-white/10">
+      <section className="border-b border-[#DDD5C8]/80 bg-[#F7F4EE] px-4 py-12 sm:px-6 lg:py-16 dark:bg-[#132220] dark:border-white/10">
         <div className="mx-auto max-w-7xl">
-          <div className="grid gap-6 md:grid-cols-3 md:divide-x md:divide-[#192D2A]/10 dark:md:divide-white/10">
-            <div className="space-y-1.5 md:pr-6">
-              <span className="text-[11px] font-bold uppercase tracking-widest text-[#C66B42]">01 • Source</span>
-              <h3 className="font-serif text-base font-semibold text-[#242321] dark:text-white">Carefully Selected</h3>
-              <p className="text-xs leading-relaxed text-[#55524E] dark:text-[#E7E2D9]/80">
+          <div className="grid gap-8 md:grid-cols-3">
+            {/* 01 Source */}
+            <div className="rounded-2xl border border-[#DDD5C8] bg-white p-6 sm:p-8 shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-1 dark:bg-[#1A2826] dark:border-white/10">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#192D2A]/10 text-[#192D2A] dark:bg-white/10 dark:text-[#D9A441] mb-5">
+                <Leaf size={24} />
+              </div>
+              <span className="text-xs font-bold uppercase tracking-widest text-[#17745A] dark:text-[#D9A441]">
+                01 &bull; Source
+              </span>
+              <h3 className="font-serif text-xl sm:text-2xl font-semibold text-[#192D2A] mt-2 mb-3 dark:text-white">
+                Carefully Selected
+              </h3>
+              <p className="text-sm sm:text-base leading-relaxed text-[#55524E] dark:text-[#E7E2D9]/85">
                 Every batch of produce is evaluated at sunrise. We partner directly with verified independent farmers and artisan millers, cutting out multi-tier wholesale depots.
               </p>
             </div>
-            <div className="space-y-1.5 md:px-6">
-              <span className="text-[11px] font-bold uppercase tracking-widest text-[#C66B42]">02 • Delivery</span>
-              <h3 className="font-serif text-base font-semibold text-[#242321] dark:text-white">Delivered with Care</h3>
-              <p className="text-xs leading-relaxed text-[#55524E] dark:text-[#E7E2D9]/80">
+
+            {/* 02 Delivery */}
+            <div className="rounded-2xl border border-[#DDD5C8] bg-white p-6 sm:p-8 shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-1 dark:bg-[#1A2826] dark:border-white/10">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#192D2A]/10 text-[#192D2A] dark:bg-white/10 dark:text-[#D9A441] mb-5">
+                <ShieldCheck size={24} />
+              </div>
+              <span className="text-xs font-bold uppercase tracking-widest text-[#17745A] dark:text-[#D9A441]">
+                02 &bull; Delivery
+              </span>
+              <h3 className="font-serif text-xl sm:text-2xl font-semibold text-[#192D2A] mt-2 mb-3 dark:text-white">
+                Delivered with Care
+              </h3>
+              <p className="text-sm sm:text-base leading-relaxed text-[#55524E] dark:text-[#E7E2D9]/85">
                 Packed in breathable, temperature-sealed crates. Handed over with a unique 4-digit security PIN for verified doorstep assurance.
               </p>
             </div>
-            <div className="space-y-1.5 md:pl-6">
-              <span className="text-[11px] font-bold uppercase tracking-widest text-[#C66B42]">03 • Value</span>
-              <h3 className="font-serif text-base font-semibold text-[#242321] dark:text-white">Everyday Value</h3>
-              <p className="text-xs leading-relaxed text-[#55524E] dark:text-[#E7E2D9]/80">
+
+            {/* 03 Value */}
+            <div className="rounded-2xl border border-[#DDD5C8] bg-white p-6 sm:p-8 shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-1 dark:bg-[#1A2826] dark:border-white/10">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#192D2A]/10 text-[#192D2A] dark:bg-white/10 dark:text-[#D9A441] mb-5">
+                <TrendingDown size={24} />
+              </div>
+              <span className="text-xs font-bold uppercase tracking-widest text-[#17745A] dark:text-[#D9A441]">
+                03 &bull; Value
+              </span>
+              <h3 className="font-serif text-xl sm:text-2xl font-semibold text-[#192D2A] mt-2 mb-3 dark:text-white">
+                Everyday Value
+              </h3>
+              <p className="text-sm sm:text-base leading-relaxed text-[#55524E] dark:text-[#E7E2D9]/85">
                 Fair farmgate pricing paired with our zero-waste radar. Rescued near-expiry produce receives smart discounts, making mindful cooking accessible and sustainable.
               </p>
             </div>
@@ -259,47 +274,48 @@ const Home = () => {
       </section>
 
       {/* =========================================================================
-          SECTION 03 — CURATED MARKET CATEGORIES (Varied Editorial Tiles)
+          SECTION 03 — CURATED MARKET CATEGORIES
           ========================================================================= */}
-      <section className="border-b border-[#E9DDCA] px-4 py-12 sm:px-6 lg:py-16 bg-[#F6F0E5] dark:bg-[#121817] dark:border-white/10">
+      <section className="border-b border-[#DDD5C8]/80 px-4 py-12 sm:px-6 lg:py-16 bg-[#FDFBF7] dark:bg-[#0E1A18] dark:border-white/10">
         <div className="mx-auto max-w-7xl">
           <div className="mb-8 flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
             <div>
-              <p className="text-xs font-bold uppercase tracking-widest text-[#C66B42]">The Aisles</p>
-              <h2 className="mt-1 font-serif text-2xl font-normal text-[#242321] sm:text-3xl dark:text-white">
+              <p className="text-xs font-bold uppercase tracking-widest text-[#17745A] dark:text-[#D9A441]">The Aisles</p>
+              <h2 className="mt-1 font-serif text-3xl font-semibold text-[#192D2A] dark:text-white">
                 Curated Market Departments
               </h2>
             </div>
             <Link
               to="/shop"
-              className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#C66B42] hover:underline"
+              className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#17745A] hover:underline dark:text-[#D9A441]"
             >
-              Browse All 16 Categories →
+              Browse All Aisles →
             </Link>
           </div>
 
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {curatedCategories.map((cat) => (
               <Link
                 key={cat.name}
                 to={`/shop?category=${encodeURIComponent(cat.slug)}`}
-                className="group relative flex h-64 flex-col justify-end overflow-hidden rounded-2xl border border-[#E9DDCA] p-6 shadow-sm transition-all duration-500 hover:border-[#C66B42] hover:shadow-md dark:border-white/10"
+                className="group relative flex flex-col overflow-hidden rounded-2xl border border-[#DDD5C8] bg-white shadow-sm transition-all duration-300 hover:shadow-card hover:-translate-y-1 dark:bg-[#162522] dark:border-white/10"
               >
-                <img
-                  src={cat.image}
-                  alt={cat.name}
-                  className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-                />
-                {/* 100% High Contrast Gradient Over Image */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
-                <div className="relative z-10">
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-[#D9A441]">
+                <div className="relative aspect-[16/10] overflow-hidden bg-sandstone/20">
+                  <img
+                    src={cat.image}
+                    alt={cat.name}
+                    className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#192D2A]/80 via-transparent to-transparent" />
+                  <span className="absolute bottom-3 left-4 rounded-md bg-white/90 backdrop-blur-sm px-2.5 py-1 text-[11px] font-bold text-[#192D2A]">
                     {cat.count}
                   </span>
-                  <h3 className="font-serif text-xl font-normal text-white mt-1">
+                </div>
+                <div className="p-5">
+                  <h3 className="font-serif text-lg font-bold text-[#192D2A] transition-colors group-hover:text-[#17745A] dark:text-white dark:group-hover:text-[#D9A441]">
                     {cat.name}
                   </h3>
-                  <p className="text-xs text-[#E7E2D9] mt-1 font-sans">
+                  <p className="mt-1 text-xs text-[#55524E] leading-relaxed dark:text-[#E7E2D9]/75">
                     {cat.tagline}
                   </p>
                 </div>
@@ -310,32 +326,28 @@ const Home = () => {
       </section>
 
       {/* =========================================================================
-          SECTION 04 — THIS WEEK'S MARKET EDIT (Clean White Merchandising Surface)
+          SECTION 04 — THIS WEEK'S MARKET EDIT (Products Grid)
           ========================================================================= */}
-      <section id="shop" className="border-b border-[#E9DDCA] bg-white px-4 py-12 sm:px-6 lg:py-16 dark:bg-[#161F1E] dark:border-white/10">
+      <section className="border-b border-[#DDD5C8]/80 px-4 py-12 sm:px-6 lg:py-16 bg-[#F7F4EE] dark:bg-[#132220] dark:border-white/10">
         <div className="mx-auto max-w-7xl">
-          <div className="mb-8 flex flex-col justify-between gap-4 lg:flex-row lg:items-end">
+          <div className="mb-8 flex flex-col justify-between gap-4 md:flex-row md:items-end">
             <div>
-              <p className="text-xs font-bold uppercase tracking-widest text-[#C66B42]">This Week's Edit</p>
-              <h2 className="mt-1 font-serif text-2xl font-normal text-[#242321] sm:text-3xl dark:text-white">
-                Fresh Market Selection & Provisions
+              <p className="text-xs font-bold uppercase tracking-widest text-[#17745A] dark:text-[#D9A441]">The Edit</p>
+              <h2 className="mt-1 font-serif text-3xl font-semibold text-[#192D2A] dark:text-white">
+                This Week's Market Provisions
               </h2>
-              <p className="mt-1 text-xs text-[#55524E] dark:text-[#E7E2D9]/70">
-                Carefully inspected batches arriving directly from Mandi auctions and organic farms this morning.
-              </p>
             </div>
 
             {/* Category Filter Pills */}
             <div className="flex flex-wrap gap-2">
-              {['All', 'Vegetables', 'Fruits', 'Dairy', 'Bakery', 'Rice'].map((cat) => (
+              {['All', 'Vegetables', 'Fruits', 'Bakery', 'Dairy', 'Rice'].map((cat) => (
                 <button
                   key={cat}
-                  type="button"
                   onClick={() => setActiveCategoryFilter(cat)}
-                  className={`rounded-lg px-3 py-1.5 text-xs font-bold uppercase tracking-wider transition-all ${
+                  className={`rounded-xl px-3.5 py-1.5 text-xs font-semibold transition ${
                     activeCategoryFilter === cat
-                      ? 'bg-[#C66B42] text-white shadow-sm'
-                      : 'border border-[#E9DDCA] bg-[#F6F0E5] text-[#55524E] hover:border-[#242321] hover:text-[#242321] dark:bg-white/5 dark:border-white/10 dark:text-[#E7E2D9]'
+                      ? 'bg-[#192D2A] text-white shadow-sm dark:bg-[#17745A]'
+                      : 'border border-[#DDD5C8] bg-white text-[#55524E] hover:border-[#192D2A] dark:bg-[#1A2826] dark:text-[#E7E2D9] dark:border-white/10'
                   }`}
                 >
                   {cat}
@@ -344,26 +356,25 @@ const Home = () => {
             </div>
           </div>
 
-          {/* Product Grid */}
+          {/* Products Grid */}
           {loading ? (
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-              {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-                <div key={i} className="h-80 animate-pulse rounded-2xl bg-[#E9DDCA]/40 dark:bg-white/5" />
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+              {[1, 2, 3, 4, 5, 6, 7, 8].map((n) => (
+                <div key={n} className="h-80 rounded-2xl bg-white border border-[#DDD5C8] animate-pulse dark:bg-[#1A2826]" />
               ))}
             </div>
           ) : (
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
               {filteredEditProducts.map((product) => (
                 <ProductCard key={product._id} product={product} />
               ))}
             </div>
           )}
 
-          {/* Direct CTA to full shop catalog */}
           <div className="mt-10 text-center">
             <Link
               to="/shop"
-              className="inline-flex items-center gap-2 rounded-xl bg-[#242321] px-7 py-3 text-xs font-bold uppercase tracking-wider text-white transition hover:bg-[#192D2A] dark:bg-white dark:text-[#242321] dark:hover:bg-[#E9DDCA]"
+              className="inline-flex items-center gap-2 rounded-xl bg-[#192D2A] px-8 py-3 text-xs font-bold uppercase tracking-wider text-white transition hover:bg-[#253D39] dark:bg-[#17745A] dark:hover:bg-[#135E49]"
             >
               View Complete 240+ Item Catalog
               <ArrowRight size={15} />
@@ -373,12 +384,12 @@ const Home = () => {
       </section>
 
       {/* =========================================================================
-          SECTION 05 — SOURCING STORY (High-Contrast Deep Forest Canvas)
+          SECTION 05 — SOURCING STORY (High-Contrast Editorial Storytelling)
           ========================================================================= */}
-      <section id="story" className="border-b border-white/10 bg-[#192D2A] text-white px-4 py-14 sm:px-6 lg:py-18">
+      <section id="story" className="border-b border-white/10 bg-[#192D2A] text-white px-4 py-16 sm:px-6 lg:py-20">
         <div className="mx-auto max-w-7xl">
-          <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
-            <div className="relative aspect-square w-full overflow-hidden rounded-2xl border border-white/15 shadow-xl">
+          <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
+            <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl border border-white/15 shadow-2xl">
               <img
                 src="https://images.unsplash.com/photo-1500937386664-56d1dfef3854?auto=format&fit=crop&w=1000&q=80"
                 alt="Early morning agricultural harvest in valley orchard"
@@ -387,26 +398,29 @@ const Home = () => {
               <div className="absolute inset-0 bg-gradient-to-t from-[#192D2A]/60 via-transparent to-transparent" />
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-5">
               <span className="text-xs font-bold uppercase tracking-widest text-[#D9A441]">Our Sourcing Story</span>
-              <h2 className="font-serif text-2xl font-normal leading-tight text-white sm:text-4xl">
+              <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-normal leading-tight text-white">
                 The everyday shop,<br />thoughtfully done.
               </h2>
-              <p className="text-xs sm:text-sm font-normal leading-relaxed text-[#E7E2D9]">
+              <p className="text-sm sm:text-base font-normal leading-relaxed text-[#F4EFE6]">
                 Most modern groceries travel through multiple holding warehouses, enduring gas-ripening and weeks of chemical preservation before reaching your shelf.
               </p>
-              <p className="text-xs sm:text-sm font-normal leading-relaxed text-[#E7E2D9]">
-                GroceryStore was built on a different covenant: we work with independent orchards in Himachal, organic vegetable growers in Pune and Nashik, and traditional cold-press millers. When produce is ordered, it is dispatched from fresh daily intakes, not stale freezer stacks.
+              <p className="text-sm sm:text-base font-normal leading-relaxed text-[#F4EFE6]">
+                GroceryStore was built on a different covenant: we work directly with independent orchards in Himachal, organic vegetable growers in Pune and Nashik, and traditional cold-press millers. When produce is ordered, it is dispatched from fresh daily intakes, not stale freezer stacks.
               </p>
-              <div className="pt-2 flex items-center gap-6">
-                <div>
-                  <p className="font-serif text-2xl font-bold text-[#D9A441]">100%</p>
-                  <p className="text-xs font-semibold text-[#E7E2D9]">Traceable Provenance</p>
+
+              {/* High-visibility statistics cards */}
+              <div className="pt-4 grid grid-cols-2 gap-4">
+                <div className="rounded-xl border border-white/20 bg-white/10 p-4 backdrop-blur-sm">
+                  <p className="font-serif text-3xl sm:text-4xl font-bold text-[#D9A441]">100%</p>
+                  <p className="mt-1 text-xs sm:text-sm font-semibold text-white">Traceable Provenance</p>
+                  <p className="text-[11px] text-[#E7E2D9]/75 mt-0.5">Direct farmer relationships</p>
                 </div>
-                <div className="h-8 w-[1px] bg-white/20" />
-                <div>
-                  <p className="font-serif text-2xl font-bold text-[#D9A441]">Zero</p>
-                  <p className="text-xs font-semibold text-[#E7E2D9]">Synthetic Preservatives</p>
+                <div className="rounded-xl border border-white/20 bg-white/10 p-4 backdrop-blur-sm">
+                  <p className="font-serif text-3xl sm:text-4xl font-bold text-[#D9A441]">Zero</p>
+                  <p className="mt-1 text-xs sm:text-sm font-semibold text-white">Synthetic Preservatives</p>
+                  <p className="text-[11px] text-[#E7E2D9]/75 mt-0.5">No artificial ripening gases</p>
                 </div>
               </div>
             </div>
@@ -415,108 +429,22 @@ const Home = () => {
       </section>
 
       {/* =========================================================================
-          SECTION 06 — SEASONAL HARVEST CAMPAIGN (Burnt Copper Canvas)
+          SECTION 06 — 1-CLICK RECIPE COOK KITS PREVIEW
           ========================================================================= */}
-      <section className="border-b border-[#E9DDCA] bg-[#C66B42] text-white px-4 py-14 sm:px-6 lg:py-18">
-        <div className="mx-auto max-w-7xl">
-          <div className="grid items-center gap-8 lg:grid-cols-[1.2fr_0.8fr]">
-            <div className="space-y-3">
-              <span className="inline-block rounded-full bg-white/20 px-3 py-1 text-xs font-bold uppercase tracking-widest text-white backdrop-blur-sm">
-                Autumn Harvest Release
-              </span>
-              <h2 className="font-serif text-2xl font-normal leading-tight sm:text-4xl text-white">
-                From the season.<br />For your family's table.
-              </h2>
-              <p className="text-xs sm:text-sm font-normal leading-relaxed text-white/90 max-w-xl">
-                Crisp Royal Gala apples from Kinnaur, sweet winter carrots, and aromatic cold-pressed mustard oil. Handpicked at peak sugar balance and dispatched within 24 hours of harvest.
-              </p>
-              <div className="pt-2">
-                <Link
-                  to="/shop?category=Fruits"
-                  className="inline-flex items-center gap-2 rounded-xl bg-[#242321] px-7 py-3 text-xs font-bold uppercase tracking-wider text-white hover:bg-black transition shadow-md"
-                >
-                  Shop Seasonal Arrivals
-                  <ArrowRight size={15} />
-                </Link>
-              </div>
-            </div>
-            <div className="relative aspect-[4/3] overflow-hidden rounded-2xl border border-white/25 shadow-xl">
-              <img
-                src="https://images.unsplash.com/photo-1610832958506-aa56368176cf?auto=format&fit=crop&w=800&q=80"
-                alt="Autumn citrus and seasonal harvest"
-                className="h-full w-full object-cover"
-              />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* =========================================================================
-          SECTION 07 — SHOP BY OCCASION (Warm Oat Background)
-          ========================================================================= */}
-      <section className="border-b border-[#E9DDCA] px-4 py-12 sm:px-6 lg:py-16 bg-[#F6F0E5] dark:bg-[#121817] dark:border-white/10">
-        <div className="mx-auto max-w-7xl">
-          <div className="mb-8 text-center max-w-xl mx-auto">
-            <p className="text-xs font-bold uppercase tracking-widest text-[#C66B42]">Curated Moments</p>
-            <h2 className="mt-1 font-serif text-2xl font-normal text-[#242321] sm:text-3xl dark:text-white">
-              Shop by Kitchen Occasion
-            </h2>
-            <p className="mt-1 text-xs text-[#55524E] dark:text-[#E7E2D9]/70">
-              Thoughtfully curated ingredient baskets tailored to your daily cooking rituals.
-            </p>
-          </div>
-
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {occasions.map((occ) => (
-              <Link
-                key={occ.title}
-                to={`/shop?category=${encodeURIComponent(occ.category)}`}
-                className="group flex flex-col overflow-hidden rounded-2xl border border-[#E9DDCA] bg-white shadow-sm transition-all duration-300 hover:border-[#C66B42] hover:shadow-md dark:bg-[#1A2322] dark:border-white/10"
-              >
-                <div className="relative aspect-[16/10] overflow-hidden bg-sandstone/30">
-                  <img
-                    src={occ.image}
-                    alt={occ.title}
-                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                  />
-                </div>
-                <div className="flex flex-1 flex-col p-4">
-                  <h3 className="font-serif text-sm font-semibold text-[#242321] dark:text-white">
-                    {occ.title}
-                  </h3>
-                  <p className="mt-1 text-xs text-[#55524E] leading-relaxed dark:text-[#E7E2D9]/70">
-                    {occ.desc}
-                  </p>
-                  <span className="mt-auto pt-3 text-[11px] font-bold text-[#C66B42] group-hover:underline">
-                    Shop Collection →
-                  </span>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* =========================================================================
-          SECTION 08 — RECIPE KIT EXPERIENCE (White Merchandising Surface)
-          ========================================================================= */}
-      <section className="border-b border-[#E9DDCA] bg-white px-4 py-12 sm:px-6 lg:py-16 dark:bg-[#161F1E] dark:border-white/10">
+      <section className="border-b border-[#DDD5C8]/80 px-4 py-12 sm:px-6 lg:py-16 bg-[#FDFBF7] dark:bg-[#0E1A18] dark:border-white/10">
         <div className="mx-auto max-w-7xl">
           <div className="mb-8 flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
             <div>
-              <p className="text-xs font-bold uppercase tracking-widest text-[#C66B42]">Culinary Discovery</p>
-              <h2 className="mt-1 font-serif text-2xl font-normal text-[#242321] sm:text-3xl dark:text-white">
-                Tonight's Dinner, Thought Through.
+              <p className="text-xs font-bold uppercase tracking-widest text-[#17745A] dark:text-[#D9A441]">Culinary Studio</p>
+              <h2 className="mt-1 font-serif text-3xl font-semibold text-[#192D2A] dark:text-white">
+                1-Click Recipe Cook Kits
               </h2>
-              <p className="mt-1 text-xs text-[#55524E] dark:text-[#E7E2D9]/70">
-                Choose a recipe. We bundle all proportional farm ingredients together for 1-click addition.
-              </p>
             </div>
             <Link
               to="/bundles"
-              className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#C66B42] hover:underline"
+              className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#17745A] hover:underline dark:text-[#D9A441]"
             >
-              Explore All Cook Kits →
+              Explore All Recipe Kits →
             </Link>
           </div>
 
@@ -524,39 +452,45 @@ const Home = () => {
             {recipeKitsPreview.map((kit) => (
               <div
                 key={kit.title}
-                className="group flex flex-col overflow-hidden rounded-2xl border border-[#E9DDCA] bg-[#F6F0E5] shadow-sm transition-all duration-300 hover:border-[#C66B42] hover:shadow-md dark:bg-[#1A2322] dark:border-white/10"
+                className="group flex flex-col overflow-hidden rounded-2xl border border-[#DDD5C8] bg-white shadow-sm transition-all duration-300 hover:shadow-card hover:-translate-y-1 dark:bg-[#162522] dark:border-white/10"
               >
-                <div className="relative aspect-[16/10] overflow-hidden bg-sandstone/30">
+                <div className="relative aspect-[16/10] overflow-hidden bg-sandstone/20">
                   <img
                     src={kit.image}
                     alt={kit.title}
-                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                   />
-                  <span className="absolute left-3 top-3 rounded-md bg-white/95 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[#242321] dark:bg-[#121817] dark:text-white shadow-sm">
+                  <div className="absolute top-3 left-3 flex gap-2">
+                    <span className="rounded-md bg-white/95 backdrop-blur px-2.5 py-1 text-[11px] font-semibold text-[#192D2A] flex items-center gap-1 shadow-sm">
+                      <Clock size={12} className="text-[#17745A]" />
+                      {kit.prepTime}
+                    </span>
+                    <span className="rounded-md bg-white/95 backdrop-blur px-2.5 py-1 text-[11px] font-semibold text-[#192D2A] shadow-sm">
+                      {kit.servings}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="flex flex-1 flex-col p-5">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-[#17745A] dark:text-[#D9A441]">
                     {kit.tag}
                   </span>
-                </div>
-                <div className="flex flex-1 flex-col p-4">
-                  <div className="flex items-center gap-3 text-[11px] font-semibold text-[#55524E] dark:text-[#E7E2D9]/70 mb-1.5">
-                    <span className="flex items-center gap-1"><Clock size={12} /> {kit.prepTime}</span>
-                    <span>•</span>
-                    <span>Serves {kit.servings}</span>
-                  </div>
-                  <h3 className="font-serif text-sm font-semibold text-[#242321] dark:text-white">
+                  <h3 className="font-serif text-lg font-semibold text-[#192D2A] mt-1 dark:text-white">
                     {kit.title}
                   </h3>
-                  <p className="mt-1 text-xs text-[#55524E] leading-relaxed line-clamp-2 dark:text-[#E7E2D9]/70">
+                  <p className="mt-2 text-xs sm:text-sm text-[#55524E] leading-relaxed dark:text-[#E7E2D9]/80">
                     {kit.desc}
                   </p>
-                  <div className="mt-auto pt-4 flex items-center justify-between border-t border-[#E9DDCA] dark:border-white/10">
-                    <span className="font-serif text-base font-bold text-[#242321] dark:text-white">
+
+                  <div className="mt-auto pt-4 flex items-center justify-between border-t border-[#DDD5C8]/60 dark:border-white/10">
+                    <span className="font-serif text-lg font-bold text-[#192D2A] dark:text-white">
                       ₹{kit.price}
                     </span>
                     <Link
                       to="/bundles"
-                      className="rounded-lg bg-[#C66B42] px-3.5 py-1.5 text-xs font-bold text-white hover:bg-[#B9583D] transition shadow-sm"
+                      className="rounded-xl bg-[#192D2A] px-4 py-2 text-xs font-semibold text-white hover:bg-[#253D39] transition dark:bg-[#17745A] dark:hover:bg-[#135E49]"
                     >
-                      Shop Kit
+                      View Recipe Kit
                     </Link>
                   </div>
                 </div>
@@ -567,38 +501,44 @@ const Home = () => {
       </section>
 
       {/* =========================================================================
-          SECTION 09 — SMART SAVINGS & WASTE REDUCTION (Warm Oat Canvas)
+          SECTION 07 — SMART SAVINGS & FRESHNESS RADAR PREVIEW (Clear, High Value)
           ========================================================================= */}
-      <section className="border-b border-[#E9DDCA] px-4 py-12 sm:px-6 lg:py-16 bg-[#F6F0E5] dark:bg-[#121817] dark:border-white/10">
+      <section className="border-b border-[#DDD5C8]/80 px-4 py-12 sm:px-6 lg:py-16 bg-[#F7F4EE] dark:bg-[#132220] dark:border-white/10">
         <div className="mx-auto max-w-7xl">
-          <div className="rounded-2xl border border-[#E9DDCA] bg-white p-6 sm:p-10 shadow-sm dark:bg-[#1A2322] dark:border-white/10">
-            <div className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
+          <div className="rounded-2xl border border-[#DDD5C8] bg-white p-6 sm:p-10 shadow-sm dark:bg-[#1A2826] dark:border-white/10">
+            <div className="grid gap-8 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
               <div>
-                <span className="text-xs font-bold uppercase tracking-widest text-[#C66B42]">Responsible Sourcing</span>
-                <h2 className="mt-1 font-serif text-2xl font-normal text-[#242321] sm:text-3xl dark:text-white">
+                <span className="text-xs font-bold uppercase tracking-widest text-[#17745A] dark:text-[#D9A441]">
+                  Responsible Sourcing
+                </span>
+                <h2 className="mt-2 font-serif text-2xl sm:text-3xl lg:text-4xl font-semibold text-[#192D2A] dark:text-white">
                   Less Waste. More Everyday Value.
                 </h2>
-                <p className="mt-2 text-xs leading-relaxed text-[#55524E] max-w-xl dark:text-[#E7E2D9]/70">
-                  Every grocery store deals with near-expiry stock. Instead of quietly dumping nutritious food, our intelligent Freshness Radar applies transparent 15% to 40% automated markdowns on eligible safe batches. You save more, and less food goes to landfill.
+                <p className="mt-3 text-sm sm:text-base leading-relaxed text-[#55524E] max-w-xl dark:text-[#E7E2D9]/85">
+                  Every grocery store deals with near-expiry stock. Instead of quietly dumping nutritious produce, our automated Freshness Radar applies transparent 15% to 40% markdowns on eligible batches. You save money, and food is saved from landfills.
                 </p>
-                <div className="mt-5 flex items-center gap-4">
+                <div className="mt-6 flex flex-wrap items-center gap-4">
                   <Link
-                    to="/waste-center"
-                    className="inline-flex items-center gap-2 rounded-xl bg-[#C66B42] px-6 py-2.5 text-xs font-bold uppercase tracking-wider text-white hover:bg-[#B9583D] transition shadow-sm"
+                    to="/smart-savings"
+                    className="inline-flex items-center gap-2 rounded-xl bg-[#17745A] px-7 py-3 text-xs font-bold uppercase tracking-wider text-white hover:bg-[#135E49] transition shadow-sm"
                   >
                     Explore Smart Savings
-                    <ArrowRight size={14} />
+                    <ArrowRight size={15} />
                   </Link>
                 </div>
               </div>
+
+              {/* Visual Value Cards */}
               <div className="grid grid-cols-2 gap-4">
-                <div className="rounded-xl border border-[#E9DDCA] bg-[#F6F0E5] p-4 text-center dark:bg-white/5 dark:border-white/10">
-                  <p className="font-serif text-2xl font-bold text-[#C66B42]">15–40%</p>
-                  <p className="mt-1 text-xs font-medium text-[#55524E] dark:text-[#E7E2D9]/70">Direct Markdowns</p>
+                <div className="rounded-2xl border border-[#DDD5C8] bg-[#FDFBF7] p-5 text-center dark:bg-[#132220] dark:border-white/10">
+                  <p className="font-serif text-3xl font-bold text-[#17745A] dark:text-[#D9A441]">15–40%</p>
+                  <p className="mt-1 text-xs sm:text-sm font-semibold text-[#192D2A] dark:text-white">Smart Markdowns</p>
+                  <p className="mt-1 text-[11px] text-[#55524E] dark:text-[#E7E2D9]/70">Automated FEFO discounts</p>
                 </div>
-                <div className="rounded-xl border border-[#E9DDCA] bg-[#F6F0E5] p-4 text-center dark:bg-white/5 dark:border-white/10">
-                  <p className="font-serif text-2xl font-bold text-[#C66B42]">100%</p>
-                  <p className="mt-1 text-xs font-medium text-[#55524E] dark:text-[#E7E2D9]/70">Safe & Inspected</p>
+                <div className="rounded-2xl border border-[#DDD5C8] bg-[#FDFBF7] p-5 text-center dark:bg-[#132220] dark:border-white/10">
+                  <p className="font-serif text-3xl font-bold text-[#17745A] dark:text-[#D9A441]">100%</p>
+                  <p className="mt-1 text-xs sm:text-sm font-semibold text-[#192D2A] dark:text-white">Safe & Inspected</p>
+                  <p className="mt-1 text-[11px] text-[#55524E] dark:text-[#E7E2D9]/70">Strict quality-checked</p>
                 </div>
               </div>
             </div>
@@ -607,149 +547,50 @@ const Home = () => {
       </section>
 
       {/* =========================================================================
-          SECTION 10 — BRAND TRUST & DELIVERY (Deep Forest Compact Trust Strip)
+          SECTION 08 — DELIVERY BENEFITS & TRUST (Four Distinct Prominent Cards)
           ========================================================================= */}
-      <section className="border-b border-white/10 bg-[#192D2A] text-white px-4 py-10 sm:px-6">
+      <section className="border-b border-[#DDD5C8]/80 bg-[#192D2A] text-white px-4 py-14 sm:px-6">
         <div className="mx-auto max-w-7xl">
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            <div className="flex items-start gap-3.5">
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/10 text-[#D9A441]">
-                <Truck size={18} />
+            <div className="rounded-2xl border border-white/15 bg-white/10 p-5 backdrop-blur-sm">
+              <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/15 text-[#D9A441] mb-4">
+                <Truck size={22} />
               </span>
-              <div>
-                <h4 className="text-sm font-bold text-white">Controlled Dispatch</h4>
-                <p className="mt-0.5 text-xs text-[#E7E2D9]/80">Delivered within 2 hours or in your chosen slot.</p>
-              </div>
+              <h4 className="text-base font-bold text-white">Controlled Dispatch</h4>
+              <p className="mt-1.5 text-xs sm:text-sm text-[#F4EFE6]/85 leading-relaxed">
+                Delivered within 2 hours or in your chosen delivery slot.
+              </p>
             </div>
-            <div className="flex items-start gap-3.5">
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/10 text-[#D9A441]">
-                <ShieldCheck size={18} />
+
+            <div className="rounded-2xl border border-white/15 bg-white/10 p-5 backdrop-blur-sm">
+              <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/15 text-[#D9A441] mb-4">
+                <Lock size={22} />
               </span>
-              <div>
-                <h4 className="text-sm font-bold text-white">Doorstep Security PIN</h4>
-                <p className="mt-0.5 text-xs text-[#E7E2D9]/80">Every delivery requires a 4-digit customer handover OTP.</p>
-              </div>
+              <h4 className="text-base font-bold text-white">Doorstep Security PIN</h4>
+              <p className="mt-1.5 text-xs sm:text-sm text-[#F4EFE6]/85 leading-relaxed">
+                Every delivery requires a 4-digit customer handover OTP.
+              </p>
             </div>
-            <div className="flex items-start gap-3.5">
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/10 text-[#D9A441]">
-                <Award size={18} />
+
+            <div className="rounded-2xl border border-white/15 bg-white/10 p-5 backdrop-blur-sm">
+              <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/15 text-[#D9A441] mb-4">
+                <RotateCcw size={22} />
               </span>
-              <div>
-                <h4 className="text-sm font-bold text-white">Quality Guarantee</h4>
-                <p className="mt-0.5 text-xs text-[#E7E2D9]/80">Instant refund if produce is imperfect.</p>
-              </div>
+              <h4 className="text-base font-bold text-white">Quality Guarantee</h4>
+              <p className="mt-1.5 text-xs sm:text-sm text-[#F4EFE6]/85 leading-relaxed">
+                Instant refund or replacement if produce is imperfect.
+              </p>
             </div>
-            <div className="flex items-start gap-3.5">
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/10 text-[#D9A441]">
-                <Leaf size={18} />
+
+            <div className="rounded-2xl border border-white/15 bg-white/10 p-5 backdrop-blur-sm">
+              <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/15 text-[#D9A441] mb-4">
+                <Package size={22} />
               </span>
-              <div>
-                <h4 className="text-sm font-bold text-white">Zero Plastic Liners</h4>
-                <p className="mt-0.5 text-xs text-[#E7E2D9]/80">Packed in biodegradable compostable paper.</p>
-              </div>
+              <h4 className="text-base font-bold text-white">Zero Plastic Liners</h4>
+              <p className="mt-1.5 text-xs sm:text-sm text-[#F4EFE6]/85 leading-relaxed">
+                Packed in breathable, biodegradable compostable paper.
+              </p>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* =========================================================================
-          SECTION 11 — KITCHEN JOURNAL (White Merchandising Surface)
-          ========================================================================= */}
-      <section className="border-b border-[#E9DDCA] px-4 py-12 sm:px-6 lg:py-16 bg-white dark:bg-[#161F1E] dark:border-white/10">
-        <div className="mx-auto max-w-7xl">
-          <div className="mb-8 flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
-            <div>
-              <p className="text-xs font-bold uppercase tracking-widest text-[#C66B42]">Kitchen Journal</p>
-              <h2 className="mt-1 font-serif text-2xl font-normal text-[#242321] sm:text-3xl dark:text-white">
-                Notes on Food & Hearth
-              </h2>
-            </div>
-            <span className="text-xs text-[#55524E] dark:text-[#E7E2D9]/70">Weekly culinary dispatches</span>
-          </div>
-
-          <div className="grid gap-6 md:grid-cols-3">
-            <article className="group flex flex-col overflow-hidden rounded-2xl border border-[#E9DDCA] bg-[#F6F0E5] shadow-sm dark:bg-[#1A2322] dark:border-white/10">
-              <div className="aspect-[16/10] overflow-hidden bg-sandstone/30">
-                <img
-                  src="https://images.unsplash.com/photo-1543083477-4f785aeafaa9?auto=format&fit=crop&w=600&q=80"
-                  alt="Organized pantry jar collection"
-                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                />
-              </div>
-              <div className="p-4">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-[#C66B42]">Pantry Guide</span>
-                <h3 className="font-serif text-sm font-semibold text-[#242321] dark:text-white mt-1">
-                  How to Build a Better Weekly Grocery List
-                </h3>
-                <p className="mt-1 text-xs text-[#55524E] leading-relaxed dark:text-[#E7E2D9]/70">
-                  Structuring your weekly provisions around 5 core staples to minimize mid-week frantic runs and food waste.
-                </p>
-              </div>
-            </article>
-
-            <article className="group flex flex-col overflow-hidden rounded-2xl border border-[#E9DDCA] bg-[#F6F0E5] shadow-sm dark:bg-[#1A2322] dark:border-white/10">
-              <div className="aspect-[16/10] overflow-hidden bg-sandstone/30">
-                <img
-                  src="https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=600&q=80"
-                  alt="Fresh leafy greens and herbs"
-                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                />
-              </div>
-              <div className="p-4">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-[#C66B42]">Harvest Care</span>
-                <h3 className="font-serif text-sm font-semibold text-[#242321] dark:text-white mt-1">
-                  Simple Ways to Keep Leafy Greens Fresh
-                </h3>
-                <p className="mt-1 text-xs text-[#55524E] leading-relaxed dark:text-[#E7E2D9]/70">
-                  Why cold water shock baths and breathable cotton towels double the crispness of tender coriander and baby spinach.
-                </p>
-              </div>
-            </article>
-
-            <article className="group flex flex-col overflow-hidden rounded-2xl border border-[#E9DDCA] bg-[#F6F0E5] shadow-sm dark:bg-[#1A2322] dark:border-white/10">
-              <div className="aspect-[16/10] overflow-hidden bg-sandstone/30">
-                <img
-                  src="https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=600&q=80"
-                  alt="Freshly baked artisan sourdough loaf"
-                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                />
-              </div>
-              <div className="p-4">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-[#C66B42]">Baking Craft</span>
-                <h3 className="font-serif text-sm font-semibold text-[#242321] dark:text-white mt-1">
-                  Five Easy Meals for Busy Evenings
-                </h3>
-                <p className="mt-1 text-xs text-[#55524E] leading-relaxed dark:text-[#E7E2D9]/70">
-                  Quick 20-minute skillet preparations using fresh paneer, crisp broccoli, and pantry dry spices.
-                </p>
-              </div>
-            </article>
-          </div>
-        </div>
-      </section>
-
-      {/* Custom GS Vector Monogram Architecture Showcase */}
-      <LogoConceptsShowcase />
-
-      {/* =========================================================================
-          SECTION 12 — CLOSING EDITORIAL STATEMENT (Deep Forest Canvas)
-          ========================================================================= */}
-      <section className="bg-[#192D2A] text-white px-4 py-16 sm:px-6 text-center">
-        <div className="mx-auto max-w-2xl">
-          <p className="font-serif text-2xl font-normal text-white sm:text-4xl">
-            Good food belongs in every home.
-          </p>
-          <p className="mt-3 text-xs sm:text-sm font-normal leading-relaxed text-[#E7E2D9] max-w-md mx-auto">
-            Thoughtfully sourced from certified grower partners, carefully packed, and delivered on time.
-          </p>
-          <div className="mt-6">
-            <Link
-              to="/shop"
-              className="inline-flex items-center gap-2 rounded-xl bg-[#C66B42] px-8 py-3 text-xs font-bold uppercase tracking-wider text-white shadow-md hover:bg-[#B9583D] transition"
-            >
-              Start Your Grocery Shop
-              <ArrowRight size={15} />
-            </Link>
           </div>
         </div>
       </section>

@@ -21,21 +21,21 @@ const Cart = () => {
     return (
       <div className="min-h-[70vh] bg-porcelain px-4 py-20">
         <div className="mx-auto max-w-xl rounded-2xl border border-sandstone bg-ivory p-8 sm:p-12 text-center shadow-subtle dark:bg-[#1D151A] dark:border-white/10">
-          <span className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-sandstone/30 text-terracotta dark:bg-white/10 dark:text-apricot">
+          <span className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-[#17745A]/10 text-[#17745A] dark:bg-white/10 dark:text-[#10B981]">
             <ShoppingCart size={32} />
           </span>
           <h2 className="font-serif text-2xl font-normal text-espresso sm:text-3xl dark:text-ivory">
-            Your basket is waiting
+            Your Grocery Basket is Empty
           </h2>
           <p className="mt-2 text-xs text-warmStone max-w-sm mx-auto dark:text-ivory/60">
-            Explore daily harvested vegetables, orchard fruits, stone-milled grains, and 1-click recipe kits.
+            Explore daily harvested vegetables, orchard fruits, stone-milled grains, dairy, and 1-click recipe kits.
           </p>
-          <div className="mt-8">
+          <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
             <Link
               to="/shop"
-              className="inline-flex items-center gap-2 rounded-xl bg-terracotta px-8 py-3.5 text-xs font-bold uppercase tracking-wider text-ivory shadow-subtle hover:bg-[#9C432A] transition"
+              className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#17745A] px-8 py-3.5 text-xs font-bold uppercase tracking-wider text-white shadow-sm hover:bg-[#135E49] transition active:scale-[0.98]"
             >
-              Start Grocery Shopping
+              Add Products & Explore Catalog
               <ArrowRight size={15} />
             </Link>
           </div>
@@ -49,7 +49,7 @@ const Cart = () => {
       <div className="mx-auto max-w-6xl">
         <div className="mb-8 border-b border-sandstone pb-6 flex items-baseline justify-between dark:border-white/10">
           <div>
-            <p className="text-xs font-bold uppercase tracking-widest text-terracotta dark:text-apricot">Checkout Preparation</p>
+            <p className="text-xs font-bold uppercase tracking-widest text-[#17745A] dark:text-[#10B981]">Checkout Preparation</p>
             <h1 className="mt-1 font-serif text-3xl font-normal text-espresso sm:text-4xl dark:text-ivory">
               Your Grocery Basket
             </h1>
@@ -87,13 +87,13 @@ const Cart = () => {
               <div className="mb-6 rounded-xl border border-sandstone/70 bg-porcelain p-4 dark:bg-[#251D21] dark:border-white/10">
                 <div className="flex items-center justify-between text-xs mb-2">
                   <span className="font-semibold text-espresso dark:text-ivory flex items-center gap-1.5">
-                    <Truck size={14} className="text-terracotta" />
+                    <Truck size={14} className="text-[#17745A] dark:text-[#10B981]" />
                     {total >= freeDeliveryThreshold ? 'Free Delivery Unlocked!' : `Add ₹${freeDeliveryThreshold - total} for Free Delivery`}
                   </span>
                 </div>
                 <div className="h-1.5 w-full overflow-hidden rounded-full bg-sandstone">
                   <div
-                    className="h-full bg-terracotta transition-all duration-300"
+                    className="h-full bg-[#17745A] transition-all duration-300"
                     style={{ width: `${freeDeliveryProgress}%` }}
                   />
                 </div>
@@ -129,7 +129,7 @@ const Cart = () => {
 
               <Link
                 to="/checkout"
-                className="flex w-full items-center justify-center gap-2 rounded-xl bg-terracotta py-3.5 text-xs font-bold uppercase tracking-wider text-ivory hover:bg-[#9C432A] transition shadow-subtle"
+                className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#17745A] py-3.5 text-xs font-bold uppercase tracking-wider text-white hover:bg-[#135E49] transition shadow-sm active:scale-[0.99]"
               >
                 Proceed to Delivery Details
                 <ArrowRight size={14} />

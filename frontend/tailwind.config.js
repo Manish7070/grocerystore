@@ -13,7 +13,7 @@ export default {
         charcoal: '#292724',      // Secondary Dark: Charcoal
         oat: '#F1E8D8',           // Warm Background: Warm Oat
         surface: '#FFFFFF',       // Clean Surface: Pure White
-        copper: '#C66B42',        // Primary Accent: Burnt Copper
+        copper: '#17745A',        // Primary Accent: Botanical Emerald
         ochre: '#D9A441',         // Golden Accent: Golden Ochre
         mutedStone: '#625F59',    // Muted Text
         sandstoneBorder: '#DDD5C8', // Structural Border
@@ -25,22 +25,22 @@ export default {
         ivory: '#FFFFFF',        // Clean white card surface
         espresso: '#192D2A',     // Deep Forest Ink primary text
         warmStone: '#625F59',    // Muted Stone secondary typography
-        terracotta: '#C66B42',   // Burnt Copper brand accent
+        terracotta: '#17745A',   // Botanical Emerald brand accent (no brown)
         antiqueBrass: '#D9A441', // Golden Ochre secondary accent
         aubergine: '#192D2A',    // Deep Forest editorial section
         sandstone: '#DDD5C8',    // Sandstone border
         apricot: '#F1E8D8',      // Warm Oat highlight
         
-        // Brand tonal scale anchored to copper and deep forest
+        // Brand tonal scale anchored to botanical emerald and deep forest
         brand: {
-          50: '#FDFBF7',
-          100: '#F1E8D8', // Warm Oat
-          200: '#E6D7BD',
-          300: '#DDD5C8', // Sandstone Border
-          400: '#D9A441', // Golden Ochre
-          500: '#C66B42', // Burnt Copper
-          600: '#B05932',
-          700: '#8F4524',
+          50: '#F0F9F5',
+          100: '#E0F2EB',
+          200: '#C2E5D7',
+          300: '#94CEBB',
+          400: '#4EA68B',
+          500: '#17745A', // Botanical Emerald
+          600: '#135E49',
+          700: '#0F4838',
           800: '#292724', // Charcoal
           900: '#192D2A', // Deep Forest Ink
           950: '#0E1C1A',

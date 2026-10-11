@@ -2,15 +2,15 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
-import { authAPI, ordersAPI, couponsAPI } from '../utils/api';
+import { authAPI, ordersAPI, couponsAPI, productsAPI } from '../utils/api';
 import { initiatePayment } from '../utils/razorpay';
-import { CreditCard, CheckCircle, Tag, Truck, ShieldCheck, MapPin } from 'lucide-react';
+import { CreditCard, CheckCircle, Tag, Truck, ShieldCheck, MapPin, RefreshCw } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
 import { readAddressDraft, readPendingPayment, savePendingPayment, cartFingerprint } from '../utils/checkoutSession';
 
 const Checkout = () => {
   const { user, authLoading } = useAuth();
-  const { cart, total, clearCart } = useCart();
+  const { cart, total, clearCart, addItem, updateQty } = useCart();
   const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [paymentSuccess, setPaymentSuccess] = useState(false);
@@ -78,6 +78,29 @@ const Checkout = () => {
       })
       .catch(() => setPaymentConfigured(false));
   }, []);
+
+  const handleSyncCart = async () => {
+    try {
+      const { data: allProducts } = await productsAPI.getAll();
+      if (!allProducts?.length) return;
+      let reconciled = 0;
+      cart.forEach((item) => {
+        const found = allProducts.find(
+          (p) => String(p._id).toLowerCase() === String(item._id).toLowerCase() ||
+                 p.name.toLowerCase() === item.name.toLowerCase()
+        );
+        if (found && String(found._id) !== String(item._id)) {
+          updateQty(item._id, 0);
+          addItem(found, item.quantity);
+          reconciled++;
+        }
+      });
+      setPaymentError('');
+      showToast(reconciled > 0 ? `Synchronized ${reconciled} items with active catalog.` : 'Basket is verified with catalog.');
+    } catch {
+      showToast('Unable to synchronize basket with catalog.', 'error');
+    }
+  };
 
   const handleCheckout = async (event) => {
     event.preventDefault();
@@ -245,7 +268,7 @@ const Checkout = () => {
               {/* Promo Coupon */}
               <div className="mt-4 pt-2">
                 <span className="text-[11px] font-bold uppercase tracking-wider text-warmStone flex items-center gap-1.5 mb-2 dark:text-ivory/60">
-                  <Tag size={13} className="text-terracotta" /> Promotional Voucher
+                  <Tag size={13} className="text-[#17745A] dark:text-[#10B981]" /> Promotional Voucher
                 </span>
                 <div className="flex gap-2">
                   <input
@@ -253,13 +276,13 @@ const Checkout = () => {
                     placeholder="e.g. WELCOME50, SAVER100"
                     value={couponInput}
                     onChange={(e) => setCouponInput(e.target.value.toUpperCase())}
-                    className="flex-1 rounded-lg border border-sandstone bg-porcelain px-3 py-2 text-xs font-bold uppercase text-espresso outline-none focus:border-terracotta dark:bg-[#251D21] dark:border-white/10 dark:text-ivory"
+                    className="flex-1 rounded-lg border border-sandstone bg-porcelain px-3 py-2 text-xs font-bold uppercase text-espresso outline-none focus:border-[#17745A] dark:bg-[#251D21] dark:border-white/10 dark:text-ivory"
                   />
                   <button
                     type="button"
                     onClick={handleApplyCoupon}
                     disabled={couponLoading || !couponInput.trim()}
-                    className="rounded-lg bg-terracotta px-4 py-2 text-xs font-bold text-ivory hover:bg-[#9C432A] transition disabled:opacity-40"
+                    className="rounded-lg bg-[#17745A] px-4 py-2 text-xs font-bold text-white hover:bg-[#135E49] transition disabled:opacity-40"
                   >
                     {couponLoading ? '...' : 'Apply'}
                   </button>
@@ -285,7 +308,7 @@ const Checkout = () => {
                 )}
                 <div className="flex justify-between items-baseline pt-2 border-t border-sandstone font-serif text-lg font-bold text-espresso dark:text-ivory dark:border-white/10">
                   <span>Grand Total</span>
-                  <span className="text-terracotta dark:text-apricot">
+                  <span className="text-[#17745A] dark:text-[#10B981]">
                     ₹{Math.max(total - couponDiscount, 1).toFixed(0)}
                   </span>
                 </div>
@@ -295,7 +318,7 @@ const Checkout = () => {
             {/* Delivery Slot Choice */}
             <div className="rounded-2xl border border-sandstone bg-ivory p-6 shadow-subtle dark:bg-[#1D151A] dark:border-white/10">
               <h3 className="font-serif text-sm font-semibold text-espresso flex items-center gap-2 mb-3 dark:text-ivory">
-                <Truck size={15} className="text-terracotta" /> Preferred Delivery Window
+                <Truck size={15} className="text-[#17745A] dark:text-[#10B981]" /> Preferred Delivery Window
               </h3>
               <div className="space-y-2 text-xs">
                 {[
@@ -307,7 +330,7 @@ const Checkout = () => {
                     key={slot}
                     className={`flex items-center gap-3 rounded-xl border p-3 cursor-pointer font-medium transition ${
                       deliverySlot === slot
-                        ? 'border-terracotta bg-terracotta/5 text-espresso font-bold dark:border-apricot dark:bg-apricot/10 dark:text-ivory'
+                        ? 'border-[#17745A] bg-[#17745A]/5 text-espresso font-bold dark:border-[#10B981] dark:bg-[#10B981]/10 dark:text-ivory'
                         : 'border-sandstone text-warmStone hover:bg-porcelain dark:border-white/10 dark:text-ivory/70'
                     }`}
                   >
@@ -317,7 +340,7 @@ const Checkout = () => {
                       value={slot}
                       checked={deliverySlot === slot}
                       onChange={() => setDeliverySlot(slot)}
-                      className="accent-terracotta"
+                      className="accent-[#17745A]"
                     />
                     <span>{slot}</span>
                   </label>
@@ -370,7 +393,7 @@ const Checkout = () => {
                     onChange={(event) =>
                       setDeliveryAddress({ ...deliveryAddress, [key]: event.target.value })
                     }
-                    className="mt-1 w-full rounded-xl border border-sandstone bg-porcelain px-3.5 py-2 text-xs font-medium text-espresso outline-none focus:border-terracotta dark:bg-[#251D21] dark:border-white/10 dark:text-ivory"
+                    className="mt-1 w-full rounded-xl border border-sandstone bg-porcelain px-3.5 py-2 text-xs font-medium text-espresso outline-none focus:border-[#17745A] dark:bg-[#251D21] dark:border-white/10 dark:text-ivory"
                   />
                 </label>
               ))}
@@ -385,7 +408,7 @@ const Checkout = () => {
                 <label
                   className={`block rounded-xl border p-3.5 cursor-pointer transition ${
                     paymentMethod === 'cod'
-                      ? 'border-terracotta bg-terracotta/5 dark:border-apricot dark:bg-apricot/10'
+                      ? 'border-[#17745A] bg-[#17745A]/5 dark:border-[#10B981] dark:bg-[#10B981]/10'
                       : 'border-sandstone text-warmStone hover:bg-porcelain dark:border-white/10 dark:text-ivory/70'
                   }`}
                 >
@@ -396,7 +419,7 @@ const Checkout = () => {
                     checked={paymentMethod === 'cod'}
                     disabled={loading || Boolean(pendingPayment)}
                     onChange={() => setPaymentMethod('cod')}
-                    className="mr-2.5 accent-terracotta"
+                    className="mr-2.5 accent-[#17745A]"
                   />
                   <span className="font-bold text-espresso dark:text-ivory">Cash on Delivery</span>
                   <span className="block pl-6 text-[11px] text-warmStone mt-0.5 dark:text-ivory/60">
@@ -407,7 +430,7 @@ const Checkout = () => {
                 <label
                   className={`block rounded-xl border p-3.5 cursor-pointer transition ${
                     paymentMethod === 'razorpay'
-                      ? 'border-terracotta bg-terracotta/5 dark:border-apricot dark:bg-apricot/10'
+                      ? 'border-[#17745A] bg-[#17745A]/5 dark:border-[#10B981] dark:bg-[#10B981]/10'
                       : 'border-sandstone text-warmStone hover:bg-porcelain dark:border-white/10 dark:text-ivory/70'
                   }`}
                 >
@@ -418,7 +441,7 @@ const Checkout = () => {
                     checked={paymentMethod === 'razorpay'}
                     disabled={loading || Boolean(pendingPayment)}
                     onChange={() => setPaymentMethod('razorpay')}
-                    className="mr-2.5 accent-terracotta"
+                    className="mr-2.5 accent-[#17745A]"
                   />
                   <span className="font-bold text-espresso dark:text-ivory">Pay Online (Razorpay)</span>
                   <span className="block pl-6 text-[11px] text-warmStone mt-0.5 dark:text-ivory/60">
@@ -428,8 +451,16 @@ const Checkout = () => {
               </div>
 
               {paymentError && (
-                <div className="mb-4 rounded-xl border border-errorRed/30 bg-errorRed/10 p-3 text-xs text-errorRed">
-                  {paymentError}
+                <div className="mb-4 rounded-xl border border-red-200 bg-red-50 p-3.5 text-xs text-red-700 dark:bg-red-950/40 dark:border-red-900/60 dark:text-red-300">
+                  <p className="font-semibold">{paymentError}</p>
+                  <button
+                    type="button"
+                    onClick={handleSyncCart}
+                    className="mt-2 inline-flex items-center gap-1.5 font-bold text-[#17745A] underline hover:no-underline dark:text-[#D9A441]"
+                  >
+                    <RefreshCw size={13} />
+                    <span>Synchronize & verify basket with catalog</span>
+                  </button>
                 </div>
               )}
 
@@ -441,7 +472,7 @@ const Checkout = () => {
                   loading ||
                   (!pendingPayment && paymentMethod === 'razorpay' && paymentConfigured !== true)
                 }
-                className="w-full rounded-xl bg-terracotta py-3.5 text-xs font-bold uppercase tracking-wider text-ivory hover:bg-[#9C432A] transition shadow-subtle disabled:opacity-50"
+                className="w-full rounded-xl bg-[#17745A] py-3.5 text-xs font-bold uppercase tracking-wider text-white hover:bg-[#135E49] transition shadow-sm active:scale-[0.99] disabled:opacity-50"
               >
                 {authLoading
                   ? 'Verifying session...'
