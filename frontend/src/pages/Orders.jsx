@@ -212,6 +212,21 @@ const Orders = () => {
                         <span className="font-serif text-2xl text-espresso font-semibold">₹{order.totalAmount}</span>
                       </div>
                     </div>
+
+                    <div className="mt-4 pt-3 border-t border-sandstone/60 flex items-center justify-between">
+                      <Link
+                        to={`/order-tracking/${order.orderNumber}`}
+                        className="inline-flex items-center gap-1.5 text-xs font-bold text-terracotta hover:underline"
+                      >
+                        <span>Track Timeline & Rate Quality</span>
+                        <ArrowRight size={13} />
+                      </Link>
+                      {order.deliveryStatus === 'delivered' && (
+                        <span className="text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
+                          Delivered &bull; Feedback Open
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </article>
               );

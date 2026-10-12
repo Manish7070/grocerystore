@@ -7,7 +7,15 @@ import { ArrowRight, Eye, EyeOff, Lock, Mail, User } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
 
 const Signup = () => {
-  const [formData, setFormData] = useState({ name: '', email: '', password: '', confirmPassword: '' });
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+    role: 'customer',
+    businessName: '',
+    villageOrArea: '',
+  });
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -33,10 +41,19 @@ const Signup = () => {
         name: formData.name,
         email: formData.email,
         password: formData.password,
+        role: formData.role,
+        partnerProfile: {
+          businessName: formData.businessName || formData.name,
+          villageOrArea: formData.villageOrArea || 'Local Hub',
+        },
       });
       login(res.data);
-      showToast('Welcome to GroceryStore! Your account has been created.');
-      navigate('/');
+      showToast(`Welcome to GroceryStore! Account created as ${formData.role}.`);
+
+      if (formData.role === 'kisan') navigate('/partner/farmer');
+      else if (formData.role === 'shopkeeper') navigate('/partner/shop');
+      else if (formData.role === 'distributor') navigate('/partner/distributor');
+      else navigate('/');
     } catch (err) {
       const message = err.response?.data?.message || 'Registration failed. Please check your details.';
       setError(message);
@@ -117,6 +134,63 @@ const Signup = () => {
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Account Type Selection */}
+            <div>
+              <label className="block text-xs font-bold uppercase tracking-wider text-[#192D2A] mb-1.5 dark:text-white">
+                Registering As (खाते का प्रकार)
+              </label>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                {[
+                  { id: 'customer', label: 'Consumer', icon: '🛒' },
+                  { id: 'kisan', label: '🌾 Kisan', icon: '🌱' },
+                  { id: 'shopkeeper', label: '🏪 Dukan', icon: '🏬' },
+                  { id: 'distributor', label: '🚚 Branch', icon: '🏢' },
+                ].map((type) => (
+                  <button
+                    key={type.id}
+                    type="button"
+                    onClick={() => setFormData({ ...formData, role: type.id })}
+                    className={`py-2 px-2.5 rounded-xl border text-xs font-bold transition flex items-center justify-center gap-1.5 ${
+                      formData.role === type.id
+                        ? 'bg-[#192D2A] text-white border-[#192D2A] dark:bg-[#C66B42] dark:border-[#C66B42]'
+                        : 'bg-[#FDFBF7] text-[#192D2A] border-[#DDD5C8] hover:border-[#17745A] dark:bg-[#12141A] dark:text-white dark:border-white/10'
+                    }`}
+                  >
+                    <span>{type.label}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {formData.role !== 'customer' && (
+              <div className="p-3 rounded-2xl bg-[#F1E8D8]/50 dark:bg-white/5 border border-[#DDD5C8] dark:border-white/10 space-y-3">
+                <div>
+                  <label className="block text-xs font-bold text-[#192D2A] dark:text-white mb-1">
+                    {formData.role === 'kisan' ? 'Farm / Orchard Name (खेत का नाम)' : 'Shop / Business Name (दुकान का नाम)'}
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.businessName}
+                    onChange={(e) => setFormData({ ...formData, businessName: e.target.value })}
+                    placeholder={formData.role === 'kisan' ? 'e.g. Kisan Organic Fields' : 'e.g. Gupta Kirana Store'}
+                    className="w-full rounded-xl border border-[#DDD5C8] bg-white py-2 px-3 text-xs text-[#192D2A] outline-none dark:bg-[#12141A] dark:border-white/10 dark:text-white"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-[#192D2A] dark:text-white mb-1">
+                    Village / Locality (गांव या वार्ड क्षेत्र)
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.villageOrArea}
+                    onChange={(e) => setFormData({ ...formData, villageOrArea: e.target.value })}
+                    placeholder="e.g. Rampur Village, Ward 4"
+                    className="w-full rounded-xl border border-[#DDD5C8] bg-white py-2 px-3 text-xs text-[#192D2A] outline-none dark:bg-[#12141A] dark:border-white/10 dark:text-white"
+                  />
+                </div>
+              </div>
+            )}
+
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-[#192D2A] mb-1.5 dark:text-white">
                 Full Name

@@ -340,6 +340,52 @@ const Navbar = () => {
                       </div>
 
                       <div className="py-1">
+                        {(user.isAdmin || user.role === 'admin') && (
+                          <Link
+                            to="/admin"
+                            onClick={closeMenus}
+                            className="flex items-center gap-2 rounded-lg px-2.5 py-2 text-xs font-bold text-[#C66B42] dark:text-[#D9A441] hover:bg-[#F1E8D8]/50 transition"
+                          >
+                            <ShieldCheck size={14} />
+                            <span>Super Admin Console</span>
+                          </Link>
+                        )}
+                        {user.role === 'kisan' && (
+                          <Link
+                            to="/partner/farmer"
+                            onClick={closeMenus}
+                            className="flex items-center gap-2 rounded-lg px-2.5 py-2 text-xs font-bold text-emerald-600 hover:bg-[#F1E8D8]/50 transition"
+                          >
+                            <span>🌾 Kisan Producer Portal</span>
+                          </Link>
+                        )}
+                        {user.role === 'shopkeeper' && (
+                          <Link
+                            to="/partner/shop"
+                            onClick={closeMenus}
+                            className="flex items-center gap-2 rounded-lg px-2.5 py-2 text-xs font-bold text-sky-600 hover:bg-[#F1E8D8]/50 transition"
+                          >
+                            <span>🏪 Kirana Partner Hub</span>
+                          </Link>
+                        )}
+                        {user.role === 'distributor' && (
+                          <Link
+                            to="/partner/distributor"
+                            onClick={closeMenus}
+                            className="flex items-center gap-2 rounded-lg px-2.5 py-2 text-xs font-bold text-purple-600 hover:bg-[#F1E8D8]/50 transition"
+                          >
+                            <span>🚚 Branch Distributor Hub</span>
+                          </Link>
+                        )}
+                        {user.role === 'helper' && (
+                          <Link
+                            to="/partner/helper"
+                            onClick={closeMenus}
+                            className="flex items-center gap-2 rounded-lg px-2.5 py-2 text-xs font-bold text-amber-600 hover:bg-[#F1E8D8]/50 transition"
+                          >
+                            <span>🛵 Helper Delivery Fleet</span>
+                          </Link>
+                        )}
                         <Link
                           to="/dashboard"
                           onClick={closeMenus}

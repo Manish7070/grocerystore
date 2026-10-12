@@ -52,6 +52,7 @@ export const ordersAPI = {
   getOrders: () => api.get('/orders'),
   trackOrder: (orderNumber) => api.get(`/orders/track/${orderNumber}`),
   cancelOrder: (id, reason) => api.post(`/orders/${id}/cancel`, { reason }),
+  submitFeedback: (id, data) => api.post(`/orders/${id}/feedback`, data),
 };
 
 export const couponsAPI = {
@@ -78,6 +79,33 @@ export const adminAPI = {
   getOrders: (params) => api.get('/admin/orders', { params }),
   updateOrderStatus: (id, data) => api.put(`/admin/orders/${id}/status`, data),
   getCustomers: () => api.get('/admin/customers'),
+  getUsers: (params) => api.get('/admin/users', { params }),
+  createUser: (data) => api.post('/admin/users', data),
+  blockUser: (id, data) => api.put(`/admin/users/${id}/block`, data),
+  updateUserRole: (id, role) => api.put(`/admin/users/${id}/role`, { role }),
+  deleteUser: (id) => api.delete(`/admin/users/${id}`),
+  verifyPartner: (id, isVerified) => api.put(`/admin/users/${id}/verify`, { isVerified }),
+  getApprovals: () => api.get('/admin/approvals'),
+  processApproval: (id, data) => api.put(`/admin/approvals/${id}`, data),
+  addProduct: (data) => api.post('/admin/products', data),
+  updateProduct: (id, data) => api.put(`/admin/products/${id}`, data),
+  deleteProduct: (id) => api.delete(`/admin/products/${id}`),
+};
+
+export const partnerAPI = {
+  getNearby: (params) => api.get('/partners/nearby', { params }),
+  getFarmerProduce: () => api.get('/partners/farmer/produce'),
+  addFarmerProduce: (data) => api.post('/partners/farmer/produce', data),
+  getFarmerOrders: () => api.get('/partners/farmer/orders'),
+  getShopkeeperDashboard: () => api.get('/partners/shopkeeper/dashboard'),
+  lockShopkeeperPrices: (data) => api.put('/partners/shopkeeper/price-lock', data),
+  toggleShopkeeperStock: (data) => api.put('/partners/shopkeeper/stock-toggle', data),
+  getShopkeeperOrders: () => api.get('/partners/shopkeeper/orders'),
+  dispatchShopkeeperOrder: (id, data) => api.put(`/partners/shopkeeper/orders/${id}/dispatch`, data),
+  rechargeShopkeeperWallet: (amount) => api.post('/partners/shopkeeper/wallet/recharge', { amount }),
+  getDistributorInventory: () => api.get('/partners/distributor/inventory'),
+  addDistributorProduct: (data) => api.post('/partners/distributor/inventory', data),
+  deleteDistributorProduct: (id) => api.delete(`/partners/distributor/inventory/${id}`),
 };
 
 export default api;

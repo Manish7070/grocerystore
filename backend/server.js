@@ -86,6 +86,8 @@ app.get('/api/health', (req, res) => {
   });
 });
 
+const partnerRoutes = require('./routes/partners');
+
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/orders', orderRoutes);
@@ -93,6 +95,7 @@ app.use('/api/coupons', couponRoutes);
 app.use('/api/inventory', inventoryRoutes);
 app.use('/api/delivery', deliveryRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/partners', partnerRoutes);
 app.use('/api/reviews', reviewRoutes);
 
 app.use((req, res) => {

@@ -353,6 +353,7 @@ router.get('/track/:orderNumber', async (req, res) => {
     return res.status(404).json({ message: 'Order number not found' });
   }
   res.json({
+    _id: order._id,
     orderNumber: order.orderNumber,
     deliveryStatus: order.deliveryStatus,
     paymentStatus: order.paymentStatus,
@@ -367,7 +368,51 @@ router.get('/track/:orderNumber', async (req, res) => {
     items: order.items,
     totalAmount: order.totalAmount,
     statusTimeline: order.statusTimeline,
+    feedback: order.feedback,
     createdAt: order.createdAt,
+  });
+});
+
+// POST /api/orders/:id/feedback - Customer post-delivery quality & weight feedback
+router.post('/:id/feedback', async (req, res) => {
+  const { freshnessRating, weightAccurate, deliveryBehaviorRating, comments } = req.body;
+  const order = await Order.findById(req.params.id);
+  if (!order) {
+    return res.status(404).json({ message: 'Order not found' });
+  }
+
+  const freshness = Number(freshnessRating) || 5;
+  const isAccurate = weightAccurate !== false;
+  const behavior = Number(deliveryBehaviorRating) || 5;
+
+  order.feedback = {
+    freshnessRating: freshness,
+    weightAccurate: isAccurate,
+    deliveryBehaviorRating: behavior,
+    comments: comments || '',
+    submittedAt: new Date(),
+  };
+
+  // If poor freshness or inaccurate weight, trigger a Quality Alert for Admin
+  if (freshness <= 2 || !isAccurate) {
+    order.qualityAlert = {
+      isTriggered: true,
+      reason: `Customer Alert: Freshness ${freshness}/5, Weight Accurate: ${isAccurate ? 'Yes' : 'NO'}. ${comments ? `Note: ${comments}` : ''}`,
+      resolvedByAdmin: false,
+    };
+    order.statusTimeline.push({
+      status: 'quality_alert',
+      title: '⚠️ Customer Quality / Weight Discrepancy Flagged',
+      timestamp: new Date(),
+      note: `Freshness: ${freshness}/5, Weight Accurate: ${isAccurate ? 'Yes' : 'NO'}. ${comments || ''}`,
+    });
+  }
+
+  await order.save();
+  res.json({
+    success: true,
+    message: 'Feedback submitted successfully! Thank you for keeping local quality high.',
+    feedback: order.feedback,
   });
 });
 

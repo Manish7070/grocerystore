@@ -97,5 +97,17 @@ const orderSchema = new mongoose.Schema({
     type: String,
     default: '',
   },
+  feedback: {
+    freshnessRating: { type: Number, min: 1, max: 5 },
+    weightAccurate: { type: Boolean, default: true },
+    deliveryBehaviorRating: { type: Number, min: 1, max: 5 },
+    comments: { type: String, default: '' },
+    submittedAt: Date,
+  },
+  qualityAlert: {
+    isTriggered: { type: Boolean, default: false },
+    reason: { type: String, default: '' },
+    resolvedByAdmin: { type: Boolean, default: false },
+  },
 }, { timestamps: true });
 module.exports = mongoose.model('Order', orderSchema);

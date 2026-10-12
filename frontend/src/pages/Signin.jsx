@@ -25,8 +25,21 @@ const Signin = () => {
     try {
       const res = await authAPI.signin(formData);
       login(res.data);
-      showToast('Welcome back to GroceryStore');
-      navigate(returnTo, { replace: true });
+      showToast(`Welcome back to GroceryStore, ${res.data.name || ''}!`);
+
+      if (res.data.role === 'kisan') {
+        navigate('/partner/farmer', { replace: true });
+      } else if (res.data.role === 'shopkeeper') {
+        navigate('/partner/shop', { replace: true });
+      } else if (res.data.role === 'distributor') {
+        navigate('/partner/distributor', { replace: true });
+      } else if (res.data.role === 'helper') {
+        navigate('/partner/helper', { replace: true });
+      } else if (res.data.role === 'admin' || res.data.isAdmin) {
+        navigate('/admin', { replace: true });
+      } else {
+        navigate(returnTo, { replace: true });
+      }
     } catch (err) {
       const message = err.response?.data?.message || 'Invalid email or password';
       setError(message);

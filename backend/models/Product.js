@@ -106,5 +106,31 @@ const productSchema = new mongoose.Schema({
     fat: { type: String, default: '' },
     fiber: { type: String, default: '' },
   },
+  approvalStatus: {
+    type: String,
+    enum: ['approved', 'pending', 'rejected'],
+    default: 'approved',
+  },
+  rejectionReason: {
+    type: String,
+    default: '',
+  },
+  addedBy: {
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    role: { type: String, enum: ['admin', 'kisan', 'shopkeeper', 'distributor', 'system'], default: 'system' },
+    name: { type: String, default: 'Store Admin' },
+  },
+  kisanBasePrice: {
+    type: Number,
+    default: 0,
+  },
+  shopkeeperBasePrice: {
+    type: Number,
+    default: 0,
+  },
+  isAvailableToday: {
+    type: Boolean,
+    default: true,
+  },
 }, { timestamps: true });
 module.exports = mongoose.model('Product', productSchema);

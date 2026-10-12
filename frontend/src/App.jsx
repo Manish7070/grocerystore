@@ -22,6 +22,9 @@ import Orders from './pages/Orders';
 import Signup from './pages/Signup';
 import Signin from './pages/Signin';
 import Dashboard from './pages/Dashboard';
+import FarmerPortal from './pages/FarmerPortal';
+import ShopkeeperPortal from './pages/ShopkeeperPortal';
+import DistributorPortal from './pages/DistributorPortal';
 import Footer from './components/Footer';
 import Settings from './pages/Settings';
 import Watchlist from './pages/Watchlist';
@@ -64,6 +67,14 @@ function AppContent() {
           <Route path="/order-success/:id" element={<OrderSuccess />} />
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/delivery" element={<DeliveryPortal />} />
+          <Route path="/helper" element={<DeliveryPortal />} />
+          <Route path="/partner/helper" element={<DeliveryPortal />} />
+          <Route path="/farmer" element={<FarmerPortal />} />
+          <Route path="/partner/farmer" element={<FarmerPortal />} />
+          <Route path="/shopkeeper" element={<ShopkeeperPortal />} />
+          <Route path="/partner/shop" element={<ShopkeeperPortal />} />
+          <Route path="/distributor" element={<DistributorPortal />} />
+          <Route path="/partner/distributor" element={<DistributorPortal />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/watchlist" element={<Watchlist />} />

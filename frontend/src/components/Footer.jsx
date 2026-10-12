@@ -49,6 +49,9 @@ const Footer = () => (
             <li><Link to="/track" className="hover:text-[#D9A441] transition">Track Your Delivery</Link></li>
             <li><Link to="/dashboard" className="hover:text-[#D9A441] transition">Customer Account</Link></li>
             <li><Link to="/orders" className="hover:text-[#D9A441] transition">Order History & Invoices</Link></li>
+            <li><Link to="/partner/farmer" className="hover:text-[#D9A441] transition text-[#10B981] font-semibold">🌾 Kisan Partner Portal</Link></li>
+            <li><Link to="/partner/shop" className="hover:text-[#D9A441] transition text-[#38BDF8] font-semibold">🏪 Dukan / Kirana Hub</Link></li>
+            <li><Link to="/partner/distributor" className="hover:text-[#D9A441] transition text-[#A855F7] font-semibold">🚚 Branch / Distributor</Link></li>
             <li><a href="mailto:care@grocerystore.in" className="hover:text-[#D9A441] transition">care@grocerystore.in</a></li>
             <li><a href="tel:+919876543210" className="hover:text-[#D9A441] transition">+91 98765 43210 (8 AM – 9 PM)</a></li>
             <li><span className="text-xs text-[#E7E2D9]/70">Delivery Slots: 7:00 AM – 10:00 PM</span></li>

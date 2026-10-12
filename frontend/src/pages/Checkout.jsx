@@ -16,7 +16,7 @@ const Checkout = () => {
   const [paymentSuccess, setPaymentSuccess] = useState(false);
   const [completedPaymentMethod, setCompletedPaymentMethod] = useState('');
   const [placedOrder, setPlacedOrder] = useState(null);
-  const [deliverySlot, setDeliverySlot] = useState('Express Dispatch (Next 2-hour window)');
+  const [deliverySlot, setDeliverySlot] = useState('⚡ Hyperlocal Express 300m–500m (10–15 Mins by Local Helper)');
   const [couponInput, setCouponInput] = useState('');
   const [appliedCoupon, setAppliedCoupon] = useState('');
   const [couponDiscount, setCouponDiscount] = useState(0);
@@ -322,6 +322,7 @@ const Checkout = () => {
               </h3>
               <div className="space-y-2 text-xs">
                 {[
+                  '⚡ Hyperlocal Express 300m–500m (10–15 Mins by Local Helper)',
                   'Express Dispatch (Next 2-hour window)',
                   'Morning Window (7:00 AM – 10:00 AM)',
                   'Evening Window (5:00 PM – 8:00 PM)',

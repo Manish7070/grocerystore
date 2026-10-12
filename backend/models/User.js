@@ -17,10 +17,34 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  isBlocked: {
+    type: Boolean,
+    default: false,
+  },
+  blockedReason: {
+    type: String,
+    default: '',
+  },
   role: {
     type: String,
-    enum: ['customer', 'admin', 'inventory_manager', 'delivery'],
+    enum: ['customer', 'admin', 'kisan', 'shopkeeper', 'distributor', 'helper'],
     default: 'customer',
+  },
+  partnerProfile: {
+    businessName: { type: String, default: '' },
+    villageOrArea: { type: String, default: '' },
+    upiId: { type: String, default: '' },
+    walletBalance: { type: Number, default: 0 },
+    isVerified: { type: Boolean, default: false },
+    todayPriceUpdated: { type: Boolean, default: false },
+    lastPriceUpdateAt: { type: Date },
+    rating: { type: Number, default: 5 },
+    ratingCount: { type: Number, default: 0 },
+    dailySalesTotal: { type: Number, default: 0 },
+    coordinates: {
+      type: [Number], // [longitude, latitude]
+      default: [0, 0],
+    },
   },
   phone: {
     type: String,

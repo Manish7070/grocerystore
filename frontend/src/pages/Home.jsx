@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import ProductCard from '../components/ProductCard';
+import HyperlocalConnect from '../components/HyperlocalConnect';
 import { productsAPI } from '../utils/api';
 import { useCart } from '../context/CartContext';
 import { useToast } from '../context/ToastContext';
@@ -271,6 +272,13 @@ const Home = () => {
             </div>
           </div>
         </div>
+      </section>
+
+      {/* =========================================================================
+          HYPERLOCAL CONNECT — 300M - 500M EXPRESS HELPER DELIVERY
+          ========================================================================= */}
+      <section className="px-4 py-8 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <HyperlocalConnect />
       </section>
 
       {/* =========================================================================

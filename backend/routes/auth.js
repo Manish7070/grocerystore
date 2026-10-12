@@ -12,7 +12,11 @@ const formatUser = (user, token) => ({
   _id: user._id,
   name: user.name,
   email: user.email,
-  isAdmin: user.isAdmin,
+  role: user.role || 'customer',
+  isAdmin: user.isAdmin || user.role === 'admin',
+  isBlocked: !!user.isBlocked,
+  blockedReason: user.blockedReason || '',
+  partnerProfile: user.partnerProfile || {},
   deliveryProfile: user.deliveryProfile,
   ...(token ? { token } : {}),
 });
@@ -22,6 +26,8 @@ router.post('/signup', async (req, res) => {
     const name = textValue(req.body.name);
     const email = textValue(req.body.email).toLowerCase();
     const password = req.body.password;
+    const requestedRole = textValue(req.body.role);
+    const partnerData = req.body.partnerProfile || {};
 
     if (!name || !email || typeof password !== 'string' || !password) {
       return res.status(400).json({ message: 'Name, email and password are required' });
@@ -41,9 +47,30 @@ router.post('/signup', async (req, res) => {
       return res.status(400).json({ message: 'User already exists' });
     }
 
+    // Role safety: Normal signups cannot assign 'admin' role directly
+    let role = 'customer';
+    if (['kisan', 'shopkeeper', 'distributor', 'helper'].includes(requestedRole)) {
+      role = requestedRole;
+    }
+
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
-    const user = await User.create({ name, email, password: hashedPassword });
+
+    const user = await User.create({
+      name,
+      email,
+      password: hashedPassword,
+      role,
+      partnerProfile: {
+        businessName: textValue(partnerData.businessName || name),
+        villageOrArea: textValue(partnerData.villageOrArea),
+        upiId: textValue(partnerData.upiId),
+        walletBalance: 0,
+        isVerified: false, // Admin can verify partners
+        todayPriceUpdated: false,
+      },
+    });
+
     return res.status(201).json(formatUser(user, generateToken(user._id)));
   } catch (error) {
     if (error.code === 11000) {
@@ -65,6 +92,12 @@ router.post('/signin', async (req, res) => {
 
     const user = await User.findOne({ email });
     if (user && (await bcrypt.compare(password, user.password))) {
+      if (user.isBlocked) {
+        return res.status(403).json({
+          code: 'ACCOUNT_BLOCKED',
+          message: user.blockedReason || 'Your account has been suspended by administration. Please contact support.',
+        });
+      }
       return res.json(formatUser(user, generateToken(user._id)));
     }
     return res.status(401).json({ message: 'Invalid email or password' });

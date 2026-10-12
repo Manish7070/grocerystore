@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { Search, CheckCircle2, Truck, AlertCircle, KeyRound, MapPin, Calendar } from 'lucide-react';
+import { Search, CheckCircle2, Truck, AlertCircle, KeyRound, MapPin, Calendar, Star, Scale, ThumbsUp } from 'lucide-react';
 import { ordersAPI } from '../utils/api';
+import { useToast } from '../context/ToastContext';
 
 const steps = [
   { key: 'placed', title: 'Order Registered', desc: 'Received & routed to local micro-fulfillment centre' },
@@ -17,6 +18,15 @@ const OrderTracking = () => {
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(Boolean(urlOrderNumber));
   const [error, setError] = useState('');
+  const { showToast } = useToast();
+
+  // Post-delivery feedback state
+  const [freshnessRating, setFreshnessRating] = useState(5);
+  const [weightAccurate, setWeightAccurate] = useState(true);
+  const [deliveryBehaviorRating, setDeliveryBehaviorRating] = useState(5);
+  const [feedbackComments, setFeedbackComments] = useState('');
+  const [submittingFeedback, setSubmittingFeedback] = useState(false);
+  const [feedbackSuccess, setFeedbackSuccess] = useState(false);
 
   const fetchTracking = (num) => {
     if (!num.trim()) return;
@@ -25,6 +35,9 @@ const OrderTracking = () => {
     ordersAPI.trackOrder(num.trim())
       .then((res) => {
         setOrder(res.data);
+        if (res.data.feedback?.submittedAt) {
+          setFeedbackSuccess(true);
+        }
         setLoading(false);
       })
       .catch((err) => {
@@ -32,6 +45,27 @@ const OrderTracking = () => {
         setOrder(null);
         setLoading(false);
       });
+  };
+
+  const handleFeedbackSubmit = async (e) => {
+    e.preventDefault();
+    if (!order?._id) return;
+    setSubmittingFeedback(true);
+    try {
+      await ordersAPI.submitFeedback(order._id, {
+        freshnessRating,
+        weightAccurate,
+        deliveryBehaviorRating,
+        comments: feedbackComments,
+      });
+      showToast('Aapka feedback safalta-poorvak darj ho gaya!');
+      setFeedbackSuccess(true);
+      fetchTracking(order.orderNumber);
+    } catch (err) {
+      showToast('Feedback submit karne me error aaya', 'error');
+    } finally {
+      setSubmittingFeedback(false);
+    }
   };
 
   useEffect(() => {
@@ -216,6 +250,149 @@ const OrderTracking = () => {
                 <span className="font-serif text-2xl text-espresso font-semibold">₹{order.totalAmount}</span>
               </div>
             </div>
+
+            {/* Post-Delivery Quality, Freshness & Weight Feedback */}
+            {order.deliveryStatus === 'delivered' && (
+              <div className="bg-ivory rounded-2xl border border-sandstone shadow-[0_2px_12px_rgba(39,34,31,0.04)] p-6 sm:p-8">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="p-2 rounded-xl bg-forest/10 text-forest">
+                    <Scale size={20} />
+                  </span>
+                  <div>
+                    <h3 className="font-serif text-xl text-espresso font-semibold">
+                      Post-Delivery Quality & Weight Assurance
+                    </h3>
+                    <p className="text-xs text-warmStone">
+                      ताज़ा फल-सब्जी की क्वालिटी और सही तोल (Weight) की पुष्टि करें। आपकी रेटिंग सीधे पार्टनर की विश्वसनीयता तय करती है।
+                    </p>
+                  </div>
+                </div>
+
+                {feedbackSuccess || order.feedback?.submittedAt ? (
+                  <div className="mt-4 p-4 rounded-xl bg-forest/10 border border-forest/20 text-forest text-xs font-medium flex items-center gap-3">
+                    <CheckCircle2 size={18} className="shrink-0" />
+                    <div>
+                      <p className="font-bold">धन्यवाद! आपकी डिलीवरी रेटिंग व वज़न रिपोर्ट दर्ज हो चुकी है।</p>
+                      <p className="text-[11px] opacity-90 mt-0.5">
+                        Freshness: {order.feedback?.freshnessRating || freshnessRating}★ &bull; Weight: {order.feedback?.weightAccurate ?? weightAccurate ? 'Sahi Tha (Accurate)' : 'Kam Nikla (Short Weight)'} &bull; Helper: {order.feedback?.deliveryBehaviorRating || deliveryBehaviorRating}★
+                      </p>
+                    </div>
+                  </div>
+                ) : (
+                  <form onSubmit={handleFeedbackSubmit} className="mt-6 space-y-5 border-t border-sandstone pt-5">
+                    {/* 1. Freshness Rating */}
+                    <div>
+                      <label className="block text-xs font-semibold uppercase tracking-wider text-espresso mb-2">
+                        1. Produce Freshness & Quality (सब्जी / फल की ताजगी)
+                      </label>
+                      <div className="flex items-center gap-2">
+                        {[1, 2, 3, 4, 5].map((star) => (
+                          <button
+                            key={star}
+                            type="button"
+                            onClick={() => setFreshnessRating(star)}
+                            className="p-1 text-2xl transition hover:scale-110 focus:outline-none"
+                          >
+                            <Star
+                              size={24}
+                              className={
+                                star <= freshnessRating
+                                  ? 'fill-amber-400 text-amber-400'
+                                  : 'text-sandstone'
+                              }
+                            />
+                          </button>
+                        ))}
+                        <span className="text-xs font-bold text-warmStone ml-2">
+                          {freshnessRating === 5 ? 'A-One Fresh' : freshnessRating >= 4 ? 'Good Quality' : freshnessRating >= 3 ? 'Average' : 'Poor Quality'}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* 2. Weight Accuracy */}
+                    <div>
+                      <label className="block text-xs font-semibold uppercase tracking-wider text-espresso mb-2">
+                        2. Weight Accuracy (क्या वज़न पूरा और सही था?)
+                      </label>
+                      <div className="grid grid-cols-2 gap-3 max-w-md">
+                        <button
+                          type="button"
+                          onClick={() => setWeightAccurate(true)}
+                          className={`p-3 rounded-xl border text-xs font-bold transition flex items-center justify-center gap-2 ${
+                            weightAccurate
+                              ? 'border-forest bg-forest/10 text-forest shadow-sm'
+                              : 'border-sandstone bg-porcelain text-warmStone hover:bg-ivory'
+                          }`}
+                        >
+                          <CheckCircle2 size={15} />
+                          <span>हाँ, पूरा और सही था</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setWeightAccurate(false)}
+                          className={`p-3 rounded-xl border text-xs font-bold transition flex items-center justify-center gap-2 ${
+                            !weightAccurate
+                              ? 'border-red-500 bg-red-50 text-red-700 shadow-sm'
+                              : 'border-sandstone bg-porcelain text-warmStone hover:bg-ivory'
+                          }`}
+                        >
+                          <AlertCircle size={15} />
+                          <span>नहीं, वज़न कम था (Short)</span>
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* 3. Delivery Helper Behavior */}
+                    <div>
+                      <label className="block text-xs font-semibold uppercase tracking-wider text-espresso mb-2">
+                        3. Delivery Helper Speed & Behavior (लड़के का व्यवहार)
+                      </label>
+                      <div className="flex items-center gap-2">
+                        {[1, 2, 3, 4, 5].map((star) => (
+                          <button
+                            key={star}
+                            type="button"
+                            onClick={() => setDeliveryBehaviorRating(star)}
+                            className="p-1 text-2xl transition hover:scale-110 focus:outline-none"
+                          >
+                            <Star
+                              size={24}
+                              className={
+                                star <= deliveryBehaviorRating
+                                  ? 'fill-amber-400 text-amber-400'
+                                  : 'text-sandstone'
+                              }
+                            />
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* 4. Comments */}
+                    <div>
+                      <label className="block text-xs font-semibold uppercase tracking-wider text-espresso mb-1">
+                        Any Remarks or Suggestions (कोई शिकायत या सुझाव)
+                      </label>
+                      <input
+                        type="text"
+                        value={feedbackComments}
+                        onChange={(e) => setFeedbackComments(e.target.value)}
+                        placeholder="e.g. Aloo fresh the, helper samay par aaya"
+                        className="w-full rounded-xl border border-sandstone bg-porcelain px-3 py-2 text-xs text-espresso outline-none focus:border-terracotta"
+                      />
+                    </div>
+
+                    <button
+                      type="submit"
+                      disabled={submittingFeedback}
+                      className="px-6 py-2.5 bg-forest hover:bg-forest/90 text-ivory text-xs font-bold uppercase tracking-wider rounded-xl transition shadow-sm disabled:opacity-50"
+                    >
+                      {submittingFeedback ? 'Submitting Feedback...' : 'Submit Delivery Feedback'}
+                    </button>
+                  </form>
+                )}
+              </div>
+            )}
           </div>
         )}
       </div>

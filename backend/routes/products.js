@@ -452,7 +452,12 @@ const ensureCuratedCatalog = async () => {
     )));
   }
 
-  return Product.find({ externalId: { $in: curatedExternalIds } }).sort({ category: 1, createdAt: -1 });
+  return Product.find({
+    $or: [
+      { externalId: { $in: curatedExternalIds } },
+      { approvalStatus: 'approved' },
+    ],
+  }).sort({ category: 1, createdAt: -1 });
 };
 
 const ensureCategoryCatalog = async (category) => {
@@ -473,8 +478,10 @@ const ensureCategoryCatalog = async (category) => {
   }
 
   return Product.find({
-    externalId: { $in: categoryExternalIds },
-    category,
+    $or: [
+      { externalId: { $in: categoryExternalIds } },
+      { category, approvalStatus: 'approved' },
+    ],
   }).sort({ createdAt: -1 });
 };
 
