@@ -182,41 +182,43 @@ const Checkout = () => {
 
   if (paymentSuccess) {
     return (
-      <div className="min-h-screen bg-porcelain px-4 py-16 flex items-center justify-center">
-        <div className="max-w-md w-full rounded-2xl border border-sandstone bg-ivory p-8 text-center shadow-subtle dark:bg-[#1D151A] dark:border-white/10">
-          <CheckCircle size={56} className="mx-auto text-terracotta mb-4 dark:text-apricot" />
-          <h1 className="font-serif text-2xl font-normal text-espresso mb-1 dark:text-ivory">
+      <div className="min-h-screen bg-[#FDFBF7] dark:bg-[#0B1311] px-4 py-16 flex items-center justify-center transition-colors">
+        <div className="max-w-md w-full rounded-3xl border border-[#DDD5C8] dark:border-[#223832] bg-white dark:bg-[#13221E] p-8 text-center shadow-xl">
+          <div className="w-16 h-16 mx-auto rounded-2xl bg-emerald-100 dark:bg-emerald-950/60 text-[#17745A] dark:text-[#10B981] flex items-center justify-center mb-5 shadow-xs">
+            <CheckCircle size={36} />
+          </div>
+          <h1 className="font-serif text-2xl font-bold text-[#192D2A] mb-2 dark:text-[#F8FAFC]">
             {completedPaymentMethod === 'cod' ? 'Order Confirmed!' : 'Payment Verified & Confirmed!'}
           </h1>
-          <p className="text-xs text-warmStone mb-6 dark:text-ivory/70">
+          <p className="text-xs text-[#625F59] mb-6 dark:text-[#A7B3AF] leading-relaxed">
             {completedPaymentMethod === 'cod'
-              ? 'Please keep exact cash ready upon doorstep delivery.'
-              : 'Payment captured securely. Distribution hub is packing your fresh provisions.'}
+              ? 'Please keep exact cash ready upon doorstep delivery or pay via driver UPI QR.'
+              : 'Payment captured securely. The local distribution hub is packing your fresh harvest.'}
           </p>
 
           {placedOrder?.orderNumber && (
-            <div className="mb-6 rounded-xl border border-sandstone bg-porcelain p-4 text-left dark:bg-[#251D21] dark:border-white/10">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-warmStone dark:text-ivory/60">
+            <div className="mb-6 rounded-2xl border border-[#DDD5C8] bg-[#FDFBF7] p-4 text-left dark:bg-[#162723] dark:border-[#2A443E]">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-[#625F59] dark:text-[#A7B3AF]">
                 Order Tracking Reference
               </span>
-              <p className="font-serif text-xl font-bold text-espresso dark:text-ivory">
+              <p className="font-serif text-xl font-bold text-[#192D2A] dark:text-[#F8FAFC] mt-0.5">
                 {placedOrder.orderNumber}
               </p>
               {placedOrder.deliveryOtp && (
-                <div className="mt-2.5 rounded-lg border border-terracotta/20 bg-terracotta/5 p-2 flex items-center justify-between">
-                  <span className="text-[11px] font-bold text-terracotta dark:text-apricot">Doorstep Handover OTP:</span>
-                  <span className="font-mono text-base font-black text-espresso dark:text-ivory">{placedOrder.deliveryOtp}</span>
+                <div className="mt-3 rounded-xl border border-emerald-300/60 bg-emerald-50 dark:bg-emerald-950/40 p-2.5 flex items-center justify-between">
+                  <span className="text-xs font-bold text-emerald-800 dark:text-emerald-300">Doorstep Verification OTP:</span>
+                  <span className="font-mono text-lg font-black text-[#192D2A] dark:text-[#F8FAFC] tracking-widest">{placedOrder.deliveryOtp}</span>
                 </div>
               )}
             </div>
           )}
 
-          <div className="flex flex-col gap-2.5">
+          <div className="flex flex-col gap-3">
             {placedOrder?.orderNumber && (
               <button
                 type="button"
                 onClick={() => navigate(`/track/${placedOrder.orderNumber}`)}
-                className="w-full rounded-xl bg-terracotta py-3 text-xs font-bold uppercase tracking-wider text-ivory hover:bg-[#9C432A] transition"
+                className="btn-primary w-full py-3.5 rounded-xl text-xs font-bold uppercase tracking-wider"
               >
                 Track Delivery Timeline
               </button>
@@ -224,7 +226,7 @@ const Checkout = () => {
             <button
               type="button"
               onClick={() => navigate('/orders')}
-              className="w-full rounded-xl border border-sandstone bg-porcelain py-3 text-xs font-bold uppercase tracking-wider text-espresso hover:bg-sandstone/30 transition dark:bg-[#251D21] dark:border-white/10 dark:text-ivory"
+              className="btn-secondary w-full py-3 rounded-xl text-xs font-bold uppercase tracking-wider"
             >
               View Order History
             </button>
@@ -235,12 +237,15 @@ const Checkout = () => {
   }
 
   return (
-    <div className="min-h-screen bg-porcelain px-4 py-10 sm:px-6 lg:py-14">
+    <div className="min-h-screen bg-[#FDFBF7] dark:bg-[#0B1311] px-4 py-10 sm:px-6 lg:py-14 transition-colors">
       <div className="mx-auto max-w-5xl">
-        <div className="mb-8 border-b border-sandstone pb-6 dark:border-white/10">
-          <p className="text-xs font-bold uppercase tracking-widest text-terracotta dark:text-apricot">Secure Checkout</p>
-          <h1 className="mt-1 font-serif text-3xl font-normal text-espresso sm:text-4xl dark:text-ivory">
-            Delivery & Payment
+        <div className="mb-8 border-b border-[#DDD5C8]/80 pb-6 dark:border-[#223832]">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest bg-emerald-50 dark:bg-emerald-950/40 text-[#17745A] dark:text-[#10B981] border border-emerald-200 dark:border-emerald-800/60 mb-2">
+            <ShieldCheck size={13} />
+            <span>Encrypted Checkout Protocol</span>
+          </div>
+          <h1 className="font-serif text-3xl sm:text-4xl font-bold text-[#192D2A] dark:text-[#F8FAFC]">
+            Doorstep Delivery & Payment
           </h1>
         </div>
 
@@ -248,17 +253,17 @@ const Checkout = () => {
           {/* Left Column: Basket Items & Delivery Details */}
           <div className="space-y-6">
             {/* Basket Items Summary */}
-            <div className="rounded-2xl border border-sandstone bg-ivory p-6 shadow-subtle dark:bg-[#1D151A] dark:border-white/10">
-              <h2 className="font-serif text-base font-semibold text-espresso dark:text-ivory mb-4">
+            <div className="rounded-3xl border border-[#DDD5C8] dark:border-[#223832] bg-white dark:bg-[#13221E] p-6 sm:p-7 shadow-sm">
+              <h2 className="font-serif text-lg font-bold text-[#192D2A] dark:text-[#F8FAFC] mb-4">
                 Basket Items ({cart.length})
               </h2>
-              <div className="space-y-2.5 max-h-48 overflow-y-auto pr-1 border-b border-sandstone pb-4 dark:border-white/10">
+              <div className="space-y-2.5 max-h-52 overflow-y-auto pr-1 border-b border-[#DDD5C8]/70 pb-4 dark:border-[#223832]">
                 {cart.map((item) => (
                   <div key={item._id} className="flex justify-between items-center text-xs">
-                    <span className="font-medium text-espresso truncate max-w-[200px] dark:text-ivory">
+                    <span className="font-medium text-[#192D2A] truncate max-w-[220px] dark:text-[#F8FAFC]">
                       {item.name} × {item.quantity}
                     </span>
-                    <span className="font-serif font-bold text-espresso dark:text-ivory">
+                    <span className="font-serif font-bold text-[#192D2A] dark:text-[#F8FAFC]">
                       ₹{(item.price * item.quantity).toFixed(0)}
                     </span>
                   </div>
@@ -266,8 +271,8 @@ const Checkout = () => {
               </div>
 
               {/* Promo Coupon */}
-              <div className="mt-4 pt-2">
-                <span className="text-[11px] font-bold uppercase tracking-wider text-warmStone flex items-center gap-1.5 mb-2 dark:text-ivory/60">
+              <div className="mt-5 pt-1">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-[#625F59] dark:text-[#A7B3AF] flex items-center gap-1.5 mb-2">
                   <Tag size={13} className="text-[#17745A] dark:text-[#10B981]" /> Promotional Voucher
                 </span>
                 <div className="flex gap-2">
@@ -276,37 +281,37 @@ const Checkout = () => {
                     placeholder="e.g. WELCOME50, SAVER100"
                     value={couponInput}
                     onChange={(e) => setCouponInput(e.target.value.toUpperCase())}
-                    className="flex-1 rounded-lg border border-sandstone bg-porcelain px-3 py-2 text-xs font-bold uppercase text-espresso outline-none focus:border-[#17745A] dark:bg-[#251D21] dark:border-white/10 dark:text-ivory"
+                    className="input-field uppercase font-bold"
                   />
                   <button
                     type="button"
                     onClick={handleApplyCoupon}
                     disabled={couponLoading || !couponInput.trim()}
-                    className="rounded-lg bg-[#17745A] px-4 py-2 text-xs font-bold text-white hover:bg-[#135E49] transition disabled:opacity-40"
+                    className="btn-primary px-5 py-2.5 rounded-xl text-xs font-bold disabled:opacity-40"
                   >
                     {couponLoading ? '...' : 'Apply'}
                   </button>
                 </div>
                 {appliedCoupon && (
-                  <p className="mt-2 text-xs font-bold text-successGreen">
+                  <p className="mt-2 text-xs font-bold text-emerald-700 dark:text-emerald-400">
                     Voucher Applied: {appliedCoupon} (-₹{couponDiscount})
                   </p>
                 )}
               </div>
 
               {/* Totals */}
-              <div className="mt-4 border-t border-sandstone pt-4 space-y-2 text-xs dark:border-white/10">
-                <div className="flex justify-between text-warmStone dark:text-ivory/70">
+              <div className="mt-5 border-t border-[#DDD5C8]/70 pt-4 space-y-2 text-xs dark:border-[#223832]">
+                <div className="flex justify-between text-[#625F59] dark:text-[#A7B3AF]">
                   <span>Subtotal</span>
-                  <span className="font-serif font-bold text-espresso dark:text-ivory">₹{total.toFixed(0)}</span>
+                  <span className="font-serif font-bold text-[#192D2A] dark:text-[#F8FAFC]">₹{total.toFixed(0)}</span>
                 </div>
                 {couponDiscount > 0 && (
-                  <div className="flex justify-between font-bold text-successGreen">
-                    <span>Discount</span>
+                  <div className="flex justify-between font-bold text-emerald-700 dark:text-emerald-400">
+                    <span>Voucher Savings</span>
                     <span>-₹{couponDiscount}</span>
                   </div>
                 )}
-                <div className="flex justify-between items-baseline pt-2 border-t border-sandstone font-serif text-lg font-bold text-espresso dark:text-ivory dark:border-white/10">
+                <div className="flex justify-between items-baseline pt-2 border-t border-[#DDD5C8]/70 font-serif text-xl font-bold text-[#192D2A] dark:text-[#F8FAFC] dark:border-[#223832]">
                   <span>Grand Total</span>
                   <span className="text-[#17745A] dark:text-[#10B981]">
                     ₹{Math.max(total - couponDiscount, 1).toFixed(0)}
@@ -316,11 +321,11 @@ const Checkout = () => {
             </div>
 
             {/* Delivery Slot Choice */}
-            <div className="rounded-2xl border border-sandstone bg-ivory p-6 shadow-subtle dark:bg-[#1D151A] dark:border-white/10">
-              <h3 className="font-serif text-sm font-semibold text-espresso flex items-center gap-2 mb-3 dark:text-ivory">
-                <Truck size={15} className="text-[#17745A] dark:text-[#10B981]" /> Preferred Delivery Window
+            <div className="rounded-3xl border border-[#DDD5C8] dark:border-[#223832] bg-white dark:bg-[#13221E] p-6 sm:p-7 shadow-sm">
+              <h3 className="font-serif text-base font-bold text-[#192D2A] dark:text-[#F8FAFC] flex items-center gap-2 mb-3">
+                <Truck size={17} className="text-[#17745A] dark:text-[#10B981]" /> Preferred Delivery Window
               </h3>
-              <div className="space-y-2 text-xs">
+              <div className="space-y-2.5 text-xs">
                 {[
                   '⚡ Hyperlocal Express 300m–500m (10–15 Mins by Local Helper)',
                   'Express Dispatch (Next 2-hour window)',
@@ -329,10 +334,10 @@ const Checkout = () => {
                 ].map((slot) => (
                   <label
                     key={slot}
-                    className={`flex items-center gap-3 rounded-xl border p-3 cursor-pointer font-medium transition ${
+                    className={`flex items-center gap-3 rounded-2xl border p-3.5 cursor-pointer font-medium transition ${
                       deliverySlot === slot
-                        ? 'border-[#17745A] bg-[#17745A]/5 text-espresso font-bold dark:border-[#10B981] dark:bg-[#10B981]/10 dark:text-ivory'
-                        : 'border-sandstone text-warmStone hover:bg-porcelain dark:border-white/10 dark:text-ivory/70'
+                        ? 'border-[#17745A] bg-[#17745A]/5 text-[#192D2A] font-bold dark:border-[#10B981] dark:bg-[#10B981]/10 dark:text-[#F8FAFC]'
+                        : 'border-[#DDD5C8] text-[#625F59] hover:bg-[#FDFBF7] dark:border-[#2A443E] dark:text-[#A7B3AF] dark:hover:bg-[#162723]'
                     }`}
                   >
                     <input
@@ -341,9 +346,9 @@ const Checkout = () => {
                       value={slot}
                       checked={deliverySlot === slot}
                       onChange={() => setDeliverySlot(slot)}
-                      className="accent-[#17745A]"
+                      className="accent-[#17745A] h-4 w-4"
                     />
-                    <span>{slot}</span>
+                    <span className="text-xs">{slot}</span>
                   </label>
                 ))}
               </div>
@@ -355,9 +360,9 @@ const Checkout = () => {
             {/* Delivery Address Details */}
             <fieldset
               disabled={loading || Boolean(pendingPayment)}
-              className="rounded-2xl border border-sandstone bg-ivory p-6 shadow-subtle space-y-3 dark:bg-[#1D151A] dark:border-white/10"
+              className="rounded-3xl border border-[#DDD5C8] dark:border-[#223832] bg-white dark:bg-[#13221E] p-6 sm:p-7 shadow-sm space-y-4"
             >
-              <legend className="font-serif text-base font-semibold text-espresso dark:text-ivory px-2">
+              <legend className="font-serif text-lg font-bold text-[#192D2A] dark:text-[#F8FAFC] px-1">
                 Delivery Address Details
               </legend>
               {[
@@ -385,8 +390,10 @@ const Checkout = () => {
                   maxLength: 6,
                 },
               ].map(({ key, label, ...inputProps }) => (
-                <label key={key} className="block text-xs font-semibold text-warmStone dark:text-ivory/70">
-                  {label}
+                <div key={key}>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-[#192D2A] dark:text-[#F8FAFC] mb-1">
+                    {label}
+                  </label>
                   <input
                     {...inputProps}
                     required
@@ -394,59 +401,63 @@ const Checkout = () => {
                     onChange={(event) =>
                       setDeliveryAddress({ ...deliveryAddress, [key]: event.target.value })
                     }
-                    className="mt-1 w-full rounded-xl border border-sandstone bg-porcelain px-3.5 py-2 text-xs font-medium text-espresso outline-none focus:border-[#17745A] dark:bg-[#251D21] dark:border-white/10 dark:text-ivory"
+                    className="input-field"
                   />
-                </label>
+                </div>
               ))}
             </fieldset>
 
             {/* Payment Method Selection */}
-            <div className="rounded-2xl border border-sandstone bg-ivory p-6 shadow-subtle dark:bg-[#1D151A] dark:border-white/10">
-              <h3 className="font-serif text-base font-semibold text-espresso mb-3 dark:text-ivory">
+            <div className="rounded-3xl border border-[#DDD5C8] dark:border-[#223832] bg-white dark:bg-[#13221E] p-6 sm:p-7 shadow-sm">
+              <h3 className="font-serif text-lg font-bold text-[#192D2A] dark:text-[#F8FAFC] mb-4">
                 Payment Method
               </h3>
-              <div className="space-y-2 mb-4 text-xs">
+              <div className="space-y-3 mb-5 text-xs">
                 <label
-                  className={`block rounded-xl border p-3.5 cursor-pointer transition ${
+                  className={`block rounded-2xl border p-4 cursor-pointer transition ${
                     paymentMethod === 'cod'
-                      ? 'border-[#17745A] bg-[#17745A]/5 dark:border-[#10B981] dark:bg-[#10B981]/10'
-                      : 'border-sandstone text-warmStone hover:bg-porcelain dark:border-white/10 dark:text-ivory/70'
+                      ? 'border-[#17745A] bg-[#17745A]/5 ring-1 ring-[#17745A] dark:border-[#10B981] dark:bg-[#10B981]/10 dark:ring-[#10B981]'
+                      : 'border-[#DDD5C8] text-[#625F59] hover:bg-[#FDFBF7] dark:border-[#2A443E] dark:text-[#A7B3AF] dark:hover:bg-[#162723]'
                   }`}
                 >
-                  <input
-                    type="radio"
-                    name="paymentMethod"
-                    value="cod"
-                    checked={paymentMethod === 'cod'}
-                    disabled={loading || Boolean(pendingPayment)}
-                    onChange={() => setPaymentMethod('cod')}
-                    className="mr-2.5 accent-[#17745A]"
-                  />
-                  <span className="font-bold text-espresso dark:text-ivory">Cash on Delivery</span>
-                  <span className="block pl-6 text-[11px] text-warmStone mt-0.5 dark:text-ivory/60">
-                    Pay securely in cash or via driver QR upon arrival.
+                  <div className="flex items-center gap-2.5">
+                    <input
+                      type="radio"
+                      name="paymentMethod"
+                      value="cod"
+                      checked={paymentMethod === 'cod'}
+                      disabled={loading || Boolean(pendingPayment)}
+                      onChange={() => setPaymentMethod('cod')}
+                      className="accent-[#17745A] h-4 w-4"
+                    />
+                    <span className="font-bold text-sm text-[#192D2A] dark:text-[#F8FAFC]">Cash on Delivery (COD)</span>
+                  </div>
+                  <span className="block pl-6 text-xs text-[#625F59] mt-1 dark:text-[#A7B3AF]">
+                    Pay securely in cash or scan the driver UPI QR code upon doorstep arrival.
                   </span>
                 </label>
 
                 <label
-                  className={`block rounded-xl border p-3.5 cursor-pointer transition ${
+                  className={`block rounded-2xl border p-4 cursor-pointer transition ${
                     paymentMethod === 'razorpay'
-                      ? 'border-[#17745A] bg-[#17745A]/5 dark:border-[#10B981] dark:bg-[#10B981]/10'
-                      : 'border-sandstone text-warmStone hover:bg-porcelain dark:border-white/10 dark:text-ivory/70'
+                      ? 'border-[#17745A] bg-[#17745A]/5 ring-1 ring-[#17745A] dark:border-[#10B981] dark:bg-[#10B981]/10 dark:ring-[#10B981]'
+                      : 'border-[#DDD5C8] text-[#625F59] hover:bg-[#FDFBF7] dark:border-[#2A443E] dark:text-[#A7B3AF] dark:hover:bg-[#162723]'
                   }`}
                 >
-                  <input
-                    type="radio"
-                    name="paymentMethod"
-                    value="razorpay"
-                    checked={paymentMethod === 'razorpay'}
-                    disabled={loading || Boolean(pendingPayment)}
-                    onChange={() => setPaymentMethod('razorpay')}
-                    className="mr-2.5 accent-[#17745A]"
-                  />
-                  <span className="font-bold text-espresso dark:text-ivory">Pay Online (Razorpay)</span>
-                  <span className="block pl-6 text-[11px] text-warmStone mt-0.5 dark:text-ivory/60">
-                    UPI, Credit / Debit Cards & Net Banking with instant HMAC verification.
+                  <div className="flex items-center gap-2.5">
+                    <input
+                      type="radio"
+                      name="paymentMethod"
+                      value="razorpay"
+                      checked={paymentMethod === 'razorpay'}
+                      disabled={loading || Boolean(pendingPayment)}
+                      onChange={() => setPaymentMethod('razorpay')}
+                      className="accent-[#17745A] h-4 w-4"
+                    />
+                    <span className="font-bold text-sm text-[#192D2A] dark:text-[#F8FAFC]">Pay Online (Razorpay Gateway)</span>
+                  </div>
+                  <span className="block pl-6 text-xs text-[#625F59] mt-1 dark:text-[#A7B3AF]">
+                    Instant UPI, Cards & Net Banking with automated HMAC verification.
                   </span>
                 </label>
               </div>
@@ -457,7 +468,7 @@ const Checkout = () => {
                   <button
                     type="button"
                     onClick={handleSyncCart}
-                    className="mt-2 inline-flex items-center gap-1.5 font-bold text-[#17745A] underline hover:no-underline dark:text-[#D9A441]"
+                    className="mt-2 inline-flex items-center gap-1.5 font-bold text-[#17745A] underline hover:no-underline dark:text-[#10B981]"
                   >
                     <RefreshCw size={13} />
                     <span>Synchronize & verify basket with catalog</span>
@@ -473,7 +484,7 @@ const Checkout = () => {
                   loading ||
                   (!pendingPayment && paymentMethod === 'razorpay' && paymentConfigured !== true)
                 }
-                className="w-full rounded-xl bg-[#17745A] py-3.5 text-xs font-bold uppercase tracking-wider text-white hover:bg-[#135E49] transition shadow-sm active:scale-[0.99] disabled:opacity-50"
+                className="btn-primary w-full py-4 rounded-2xl text-xs font-bold uppercase tracking-wider"
               >
                 {authLoading
                   ? 'Verifying session...'
@@ -483,7 +494,7 @@ const Checkout = () => {
                   ? 'Check Payment Status'
                   : paymentMethod === 'cod'
                   ? `Confirm COD Order (₹${Math.max(total - couponDiscount, 1).toFixed(0)})`
-                  : `Pay Now (₹${Math.max(total - couponDiscount, 1).toFixed(0)})`}
+                  : `Pay Online (₹${Math.max(total - couponDiscount, 1).toFixed(0)})`}
               </button>
             </div>
           </div>

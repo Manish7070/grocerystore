@@ -125,13 +125,16 @@ const Home = () => {
     };
   }, []);
 
-  // Filter curated products for "This Week's Market Edit" (8 items)
+  // Filter curated products for "This Week's Market Edit" (12 items)
   const filteredEditProducts = products
     .filter((p) => {
-      if (activeCategoryFilter === 'All') return true;
+      if (activeCategoryFilter === 'All') {
+        // Feature delicious food, fresh produce, dairy, bakery & farm crops on home edit
+        return !['Pet Care', 'Household', 'Personal Care'].includes(p.category);
+      }
       return p.category === activeCategoryFilter;
     })
-    .slice(0, 8);
+    .slice(0, 12);
 
   return (
     <div className="min-h-screen bg-[#FDFBF7] text-[#192D2A] dark:bg-[#0E1A18] dark:text-[#F8F3EA]">
@@ -193,8 +196,8 @@ const Home = () => {
             <div className="relative">
               <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl border border-white/20 shadow-2xl">
                 <img
-                  src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=1200&q=85"
-                  alt="Curated fresh organic produce, sourdough bread, and virgin olive oil on rustic board"
+                  src="https://images.unsplash.com/photo-1610348725531-843dff563e2c?auto=format&fit=crop&w=1200&q=85"
+                  alt="Vibrant sunlit organic produce, farm vegetables and artisanal bread"
                   className="h-full w-full object-cover transition-transform duration-700 hover:scale-105"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#192D2A]/70 via-transparent to-transparent" />
@@ -218,55 +221,58 @@ const Home = () => {
       </section>
 
       {/* =========================================================================
-          SECTION 02 — THREE CORE HIGHLIGHTS (Redesigned with Icons & High Contrast)
+          SECTION 02 — THREE CORE HIGHLIGHTS (Redesigned with Hover Motion & High Contrast)
           ========================================================================= */}
-      <section className="border-b border-[#DDD5C8]/80 bg-[#F7F4EE] px-4 py-12 sm:px-6 lg:py-16 dark:bg-[#132220] dark:border-white/10">
+      <section className="border-b border-[#DDD5C8]/80 bg-[#F7F4EE] px-4 py-14 sm:px-6 lg:py-18 dark:bg-[#0B1311] dark:border-[#223832]">
         <div className="mx-auto max-w-7xl">
           <div className="grid gap-8 md:grid-cols-3">
             {/* 01 Source */}
-            <div className="rounded-2xl border border-[#DDD5C8] bg-white p-6 sm:p-8 shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-1 dark:bg-[#1A2826] dark:border-white/10">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#192D2A]/10 text-[#192D2A] dark:bg-white/10 dark:text-[#D9A441] mb-5">
-                <Leaf size={24} />
+            <div className="group relative rounded-3xl border border-[#DDD5C8] bg-white p-7 sm:p-9 shadow-sm transition-all duration-300 hover:shadow-xl hover:-translate-y-2 hover:border-[#17745A] dark:bg-[#13221E] dark:border-[#223832] dark:hover:border-[#10B981] overflow-hidden">
+              <div className="pointer-events-none absolute -top-12 -right-12 h-32 w-32 rounded-full bg-emerald-500/10 blur-2xl group-hover:bg-emerald-500/20 transition-all duration-500" />
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#17745A]/10 text-[#17745A] dark:bg-[#10B981]/15 dark:text-[#10B981] mb-6 shadow-xs group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
+                <Leaf size={26} />
               </div>
-              <span className="text-xs font-bold uppercase tracking-widest text-[#17745A] dark:text-[#D9A441]">
-                01 &bull; Source
+              <span className="text-xs font-bold uppercase tracking-widest text-[#17745A] dark:text-[#10B981] group-hover:underline">
+                01 &bull; Verified Source
               </span>
-              <h3 className="font-serif text-xl sm:text-2xl font-semibold text-[#192D2A] mt-2 mb-3 dark:text-white">
+              <h3 className="font-serif text-2xl font-bold text-[#192D2A] mt-2 mb-3 dark:text-[#F8FAFC]">
                 Carefully Selected
               </h3>
-              <p className="text-sm sm:text-base leading-relaxed text-[#55524E] dark:text-[#E7E2D9]/85">
+              <p className="text-sm sm:text-base leading-relaxed text-[#625F59] dark:text-[#A7B3AF]">
                 Every batch of produce is evaluated at sunrise. We partner directly with verified independent farmers and artisan millers, cutting out multi-tier wholesale depots.
               </p>
             </div>
 
             {/* 02 Delivery */}
-            <div className="rounded-2xl border border-[#DDD5C8] bg-white p-6 sm:p-8 shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-1 dark:bg-[#1A2826] dark:border-white/10">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#192D2A]/10 text-[#192D2A] dark:bg-white/10 dark:text-[#D9A441] mb-5">
-                <ShieldCheck size={24} />
+            <div className="group relative rounded-3xl border border-[#DDD5C8] bg-white p-7 sm:p-9 shadow-sm transition-all duration-300 hover:shadow-xl hover:-translate-y-2 hover:border-[#17745A] dark:bg-[#13221E] dark:border-[#223832] dark:hover:border-[#10B981] overflow-hidden">
+              <div className="pointer-events-none absolute -top-12 -right-12 h-32 w-32 rounded-full bg-emerald-500/10 blur-2xl group-hover:bg-emerald-500/20 transition-all duration-500" />
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#17745A]/10 text-[#17745A] dark:bg-[#10B981]/15 dark:text-[#10B981] mb-6 shadow-xs group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
+                <ShieldCheck size={26} />
               </div>
-              <span className="text-xs font-bold uppercase tracking-widest text-[#17745A] dark:text-[#D9A441]">
-                02 &bull; Delivery
+              <span className="text-xs font-bold uppercase tracking-widest text-[#17745A] dark:text-[#10B981] group-hover:underline">
+                02 &bull; Cold-Chain Care
               </span>
-              <h3 className="font-serif text-xl sm:text-2xl font-semibold text-[#192D2A] mt-2 mb-3 dark:text-white">
+              <h3 className="font-serif text-2xl font-bold text-[#192D2A] mt-2 mb-3 dark:text-[#F8FAFC]">
                 Delivered with Care
               </h3>
-              <p className="text-sm sm:text-base leading-relaxed text-[#55524E] dark:text-[#E7E2D9]/85">
+              <p className="text-sm sm:text-base leading-relaxed text-[#625F59] dark:text-[#A7B3AF]">
                 Packed in breathable, temperature-sealed crates. Handed over with a unique 4-digit security PIN for verified doorstep assurance.
               </p>
             </div>
 
             {/* 03 Value */}
-            <div className="rounded-2xl border border-[#DDD5C8] bg-white p-6 sm:p-8 shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-1 dark:bg-[#1A2826] dark:border-white/10">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#192D2A]/10 text-[#192D2A] dark:bg-white/10 dark:text-[#D9A441] mb-5">
-                <TrendingDown size={24} />
+            <div className="group relative rounded-3xl border border-[#DDD5C8] bg-white p-7 sm:p-9 shadow-sm transition-all duration-300 hover:shadow-xl hover:-translate-y-2 hover:border-[#17745A] dark:bg-[#13221E] dark:border-[#223832] dark:hover:border-[#10B981] overflow-hidden">
+              <div className="pointer-events-none absolute -top-12 -right-12 h-32 w-32 rounded-full bg-emerald-500/10 blur-2xl group-hover:bg-emerald-500/20 transition-all duration-500" />
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#17745A]/10 text-[#17745A] dark:bg-[#10B981]/15 dark:text-[#10B981] mb-6 shadow-xs group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
+                <TrendingDown size={26} />
               </div>
-              <span className="text-xs font-bold uppercase tracking-widest text-[#17745A] dark:text-[#D9A441]">
-                03 &bull; Value
+              <span className="text-xs font-bold uppercase tracking-widest text-[#17745A] dark:text-[#10B981] group-hover:underline">
+                03 &bull; Honest Economics
               </span>
-              <h3 className="font-serif text-xl sm:text-2xl font-semibold text-[#192D2A] mt-2 mb-3 dark:text-white">
+              <h3 className="font-serif text-2xl font-bold text-[#192D2A] mt-2 mb-3 dark:text-[#F8FAFC]">
                 Everyday Value
               </h3>
-              <p className="text-sm sm:text-base leading-relaxed text-[#55524E] dark:text-[#E7E2D9]/85">
+              <p className="text-sm sm:text-base leading-relaxed text-[#625F59] dark:text-[#A7B3AF]">
                 Fair farmgate pricing paired with our zero-waste radar. Rescued near-expiry produce receives smart discounts, making mindful cooking accessible and sustainable.
               </p>
             </div>
@@ -348,14 +354,14 @@ const Home = () => {
 
             {/* Category Filter Pills */}
             <div className="flex flex-wrap gap-2">
-              {['All', 'Vegetables', 'Fruits', 'Bakery', 'Dairy', 'Rice'].map((cat) => (
+              {['All', 'Vegetables', 'Fruits', 'Dairy', 'Spices', 'Pulses', 'Rice', 'Bakery', 'Snacks'].map((cat) => (
                 <button
                   key={cat}
                   onClick={() => setActiveCategoryFilter(cat)}
                   className={`rounded-xl px-3.5 py-1.5 text-xs font-semibold transition ${
                     activeCategoryFilter === cat
-                      ? 'bg-[#192D2A] text-white shadow-sm dark:bg-[#17745A]'
-                      : 'border border-[#DDD5C8] bg-white text-[#55524E] hover:border-[#192D2A] dark:bg-[#1A2826] dark:text-[#E7E2D9] dark:border-white/10'
+                      ? 'bg-[#17745A] text-white shadow-sm dark:bg-[#10B981] dark:text-[#062117]'
+                      : 'border border-[#DDD5C8] bg-white text-[#55524E] hover:border-[#17745A] dark:bg-[#1A2826] dark:text-[#E7E2D9] dark:border-white/10'
                   }`}
                 >
                   {cat}

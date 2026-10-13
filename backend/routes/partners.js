@@ -223,6 +223,40 @@ router.put('/shopkeeper/stock-toggle', protect, authorize('shopkeeper', 'admin')
   });
 }));
 
+// POST /api/partners/shopkeeper/product - Shopkeeper adds new product for admin approval
+router.post('/shopkeeper/product', protect, authorize('shopkeeper', 'admin'), asyncHandler(async (req, res) => {
+  const { name, category, price, mrp, stock, unit, image, description } = req.body;
+  if (!name || !price || Number(price) <= 0) {
+    return res.status(400).json({ message: 'Valid product name and selling price are required' });
+  }
+
+  const basePrice = Number(price);
+  const newProduct = await Product.create({
+    name,
+    category: category || 'Vegetables',
+    price: basePrice,
+    mrp: mrp ? Number(mrp) : Math.round(basePrice * 1.2),
+    stock: stock ? Number(stock) : 50,
+    unit: unit || '1 kg',
+    image: image || '',
+    description: description || `Stocked by local merchant: ${req.user.name}`,
+    farmSource: req.user.partnerProfile?.businessName || `${req.user.name}'s Kirana Store`,
+    origin: req.user.partnerProfile?.villageOrArea || 'Local Market',
+    approvalStatus: 'pending',
+    addedBy: {
+      userId: req.user._id,
+      role: 'shopkeeper',
+      name: req.user.name,
+    },
+  });
+
+  res.status(201).json({
+    success: true,
+    message: 'Dukan ka naya product submit ho gaya! Admin approval ke baad live hoga.',
+    product: newProduct,
+  });
+}));
+
 // GET /api/partners/shopkeeper/orders - Hyperlocal 300-500m incoming orders
 router.get('/shopkeeper/orders', protect, authorize('shopkeeper', 'admin'), asyncHandler(async (req, res) => {
   const orders = await Order.find()

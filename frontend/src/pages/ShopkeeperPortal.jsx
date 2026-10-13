@@ -18,11 +18,16 @@ import {
   UserCheck,
   Volume2,
   MessageCircle,
+  PlusCircle,
+  Lock,
+  X,
+  Languages,
 } from 'lucide-react';
 import { partnerAPI } from '../utils/api';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { generateWhatsAppInvoice, playOrderAlertChime } from '../utils/billGenerator';
+import ImageCaptureInput from '../components/ImageCaptureInput';
 
 const ShopkeeperPortal = () => {
   const { user } = useAuth();
@@ -33,6 +38,18 @@ const ShopkeeperPortal = () => {
   const [orders, setOrders] = useState([]);
   const [staples, setStaples] = useState([]);
   const [rates, setRates] = useState({});
+  const [isLockedToday, setIsLockedToday] = useState(false);
+  const [isHindi, setIsHindi] = useState(false);
+
+  // Add Custom Product Modal
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [customProduct, setCustomProduct] = useState({
+    name: '',
+    category: 'Vegetables',
+    rate: '',
+    unit: '1 kg',
+    image: '',
+  });
 
   // Helper dispatch modal
   const [dispatchModalOrder, setDispatchModalOrder] = useState(null);
@@ -50,17 +67,19 @@ const ShopkeeperPortal = () => {
         partnerAPI.getShopkeeperOrders(),
       ]);
       setDashboard(dashRes.data);
-      setStaples(dashRes.data.staples || []);
+      const incomingStaples = dashRes.data.staples || [];
+      setStaples(incomingStaples);
       setOrders(ordersRes.data || []);
+      setIsLockedToday(Boolean(dashRes.data.todayPriceUpdated));
 
       const initialRates = {};
-      (dashRes.data.staples || []).forEach((item) => {
+      incomingStaples.forEach((item) => {
         initialRates[item.key] = item.defaultRate;
       });
       setRates(initialRates);
     } catch (err) {
-      console.error('Failed to load shopkeeper dashboard:', err);
-      showToast('Dukan portal data load nahi ho paya', 'error');
+      console.error('Failed to load merchant dashboard:', err);
+      showToast('Failed to load store dashboard data', 'error');
     } finally {
       setLoading(false);
     }
@@ -74,10 +93,15 @@ const ShopkeeperPortal = () => {
   const handleLockPrices = async () => {
     try {
       await partnerAPI.lockShopkeeperPrices({ prices: rates });
-      showToast('Aaj ke daily rates successfully lock ho gaye! Dukan 300-500m me live hai.');
+      setIsLockedToday(true);
+      showToast(
+        isHindi
+          ? 'आज के दैनिक दरें सफलतापूर्वक लॉक हो गईं! दुकान 300–500m दायरे में लाइव है।'
+          : "Today's daily prices locked successfully! Store is live within 300m–500m."
+      );
       loadDashboardData();
     } catch (err) {
-      showToast('Rates lock karne me error aaya', 'error');
+      showToast(isHindi ? 'दरें लॉक करने में त्रुटि हुई' : 'Error locking daily prices', 'error');
     }
   };
 
@@ -89,9 +113,56 @@ const ShopkeeperPortal = () => {
       setStaples((prev) =>
         prev.map((item) => (item.key === itemKey ? { ...item, inStock: newStatus } : item))
       );
-      showToast(newStatus ? `${itemKey} mark kiya gaya: In Stock` : `${itemKey} mark kiya gaya: Out of Stock`);
+      showToast(
+        newStatus
+          ? `${itemKey} marked: In Stock`
+          : `${itemKey} marked: Out of Stock`
+      );
     } catch (err) {
-      showToast('Stock status update nahi ho saka', 'error');
+      showToast('Failed to update stock status', 'error');
+    }
+  };
+
+  // Add Custom Store Product
+  const handleAddCustomProduct = async (e) => {
+    e.preventDefault();
+    if (!customProduct.name || !customProduct.rate) {
+      showToast('Please provide product name and rate', 'error');
+      return;
+    }
+
+    try {
+      await partnerAPI.addShopkeeperProduct({
+        name: customProduct.name,
+        category: customProduct.category || 'Vegetables',
+        price: Number(customProduct.rate),
+        mrp: Math.round(Number(customProduct.rate) * 1.2),
+        unit: customProduct.unit || '1 kg',
+        image: customProduct.image || '',
+        description: `Fresh inventory from local merchant store`,
+      });
+
+      const key = `custom_${Date.now()}`;
+      const newStaple = {
+        key,
+        name: customProduct.name,
+        defaultRate: Number(customProduct.rate),
+        unit: customProduct.unit,
+        inStock: true,
+        image: customProduct.image,
+      };
+
+      setStaples((prev) => [newStaple, ...prev]);
+      setRates((prev) => ({ ...prev, [key]: Number(customProduct.rate) }));
+      setShowAddModal(false);
+      setCustomProduct({ name: '', category: 'Vegetables', rate: '', unit: '1 kg', image: '' });
+      showToast(
+        isHindi
+          ? 'नया प्रोडक्ट सबमिट हो गया! एडमिन अप्रूवल के बाद लाइव फ्रंट पर दिखेगा।'
+          : 'New product submitted! Will appear on live storefront upon admin approval.'
+      );
+    } catch (err) {
+      showToast(err.response?.data?.message || 'Failed to submit product', 'error');
     }
   };
 
@@ -105,19 +176,19 @@ const ShopkeeperPortal = () => {
         helperName,
         helperPhone,
       });
-      showToast(`Order #${dispatchModalOrder.orderNumber} helper ke sath dispatch ho gaya!`);
+      showToast(`Order #${dispatchModalOrder.orderNumber} dispatched with helper!`);
       setDispatchModalOrder(null);
       loadDashboardData();
     } catch (err) {
-      showToast('Dispatch failed', 'error');
+      showToast('Failed to dispatch order with helper', 'error');
     }
   };
 
-  // Recharge Wallet
-  const handleRechargeWallet = async (amount) => {
+  // Quick Wallet Top-up
+  const handleRechargeWallet = async () => {
     try {
-      await partnerAPI.rechargeShopkeeperWallet(amount);
-      showToast(`₹${amount} safaltapoorvak partner wallet me add ho gaye!`);
+      await partnerAPI.rechargeShopkeeperWallet(100);
+      showToast('₹100 added to merchant wallet!');
       loadDashboardData();
     } catch (err) {
       showToast('Wallet recharge failed', 'error');
@@ -125,315 +196,433 @@ const ShopkeeperPortal = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#FDFBF7] dark:bg-[#0E1A18] text-[#192D2A] dark:text-[#F8F3EA] pb-24">
-      {/* Header */}
-      <section className="border-b border-[#DDD5C8] dark:border-white/10 bg-white dark:bg-[#121E1C] py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[#FDFBF7] dark:bg-[#0B1311] text-[#192D2A] dark:text-[#F8FAFC] pb-24 transition-colors">
+      {/* Top Header Bar */}
+      <section className="border-b border-[#DDD5C8] dark:border-[#223832] bg-white dark:bg-[#13221E] py-8 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-6">
           <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 bg-blue-50 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-800 rounded-full text-xs font-bold text-blue-800 dark:text-blue-300 uppercase tracking-wider mb-2">
-              <Store size={14} />
-              <span>Kirana / Dukan Partner Hub (300m – 500m)</span>
+            <div className="flex flex-wrap items-center gap-2 mb-2">
+              <div className="inline-flex items-center gap-2 px-3 py-1 bg-sky-50 dark:bg-sky-950/60 border border-sky-200 dark:border-sky-800 rounded-full text-xs font-bold text-sky-800 dark:text-sky-300 uppercase tracking-wider">
+                <Store size={14} />
+                <span>{isHindi ? 'दुकानदार / किराना हब' : 'Merchant Storefront Hub'}</span>
+              </div>
+
+              {/* Language Switcher */}
+              <button
+                type="button"
+                onClick={() => setIsHindi((v) => !v)}
+                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border border-[#DDD5C8] dark:border-[#2A443E] bg-[#FDFBF7] dark:bg-[#162723] text-[#17745A] dark:text-[#10B981] hover:bg-[#F1E8D8]/50 transition"
+              >
+                <Languages size={13} />
+                <span>{isHindi ? 'English Mode' : 'हिंदी मोड'}</span>
+              </button>
             </div>
+
             <h1 className="font-serif text-3xl font-bold tracking-tight">
-              {dashboard?.shopName || `${user?.name || 'Local'} Kirana Store`}
+              {dashboard?.shopName || 'Neighborhood Grocery Store'}
             </h1>
-            <p className="text-xs text-[#625F59] dark:text-[#E7E2D9]/70 mt-1">
-              Area: {dashboard?.villageOrArea || 'Ward 3 Market'} &bull; In-house Helper Fast Handover System
+            <p className="text-xs text-[#625F59] dark:text-[#A7B3AF] mt-1">
+              {isHindi
+                ? `क्षेत्र: ${dashboard?.villageOrArea || 'स्थानीय वार्ड'} • इन-हाउस हेल्पर 10–15 मिनट हैंडओवर सिस्टम`
+                : `Sector: ${dashboard?.villageOrArea || 'Local Ward'} • Rapid 10–15 Min Helper Handover Engine`}
             </p>
           </div>
 
-          <div className="flex items-center gap-3">
-            <div className="p-3 bg-[#F1E8D8]/60 dark:bg-white/10 rounded-2xl border border-[#DDD5C8] dark:border-white/10 flex items-center gap-3">
-              <Wallet size={20} className="text-[#C66B42]" />
+          <div className="flex flex-wrap items-center gap-3">
+            <button
+              type="button"
+              onClick={() => setShowAddModal(true)}
+              className="btn-primary px-4 py-2.5 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm"
+            >
+              <PlusCircle size={15} />
+              <span>{isHindi ? '+ नया प्रोडक्ट जोड़ें' : '+ Add Store Product'}</span>
+            </button>
+
+            {/* Wallet Card */}
+            <div className="bg-[#FDFBF7] dark:bg-[#162723] border border-[#DDD5C8] dark:border-[#2A443E] rounded-2xl p-3 flex items-center gap-3 shadow-xs">
+              <div className="p-2 rounded-xl bg-emerald-100 dark:bg-emerald-950 text-[#17745A] dark:text-[#10B981]">
+                <Wallet size={18} />
+              </div>
               <div>
-                <p className="text-[10px] font-bold uppercase text-[#625F59] dark:text-[#E7E2D9]/60">Prepaid Partner Wallet</p>
-                <p className="font-bold text-base text-[#192D2A] dark:text-[#F8F3EA]">₹{dashboard?.walletBalance || 0}</p>
+                <span className="text-[10px] font-bold uppercase tracking-wider text-[#625F59] dark:text-[#A7B3AF] block">
+                  {isHindi ? 'पार्टनर वॉलेट' : 'Partner Wallet'}
+                </span>
+                <span className="font-serif text-lg font-bold text-[#17745A] dark:text-[#10B981]">
+                  ₹{dashboard?.walletBalance ?? 150}
+                </span>
               </div>
               <button
-                onClick={() => handleRechargeWallet(100)}
-                className="ml-2 px-2.5 py-1 bg-[#17745A] hover:bg-[#125c47] text-white text-[11px] font-bold rounded-lg shadow-sm"
+                type="button"
+                onClick={handleRechargeWallet}
+                className="text-[11px] font-bold px-2.5 py-1 rounded-lg bg-[#17745A] text-white hover:bg-[#135E49] transition ml-1"
               >
                 +₹100 Add
               </button>
             </div>
-            <button
-              onClick={loadDashboardData}
-              className="p-3 bg-white dark:bg-[#1A2624] border border-[#DDD5C8] dark:border-white/10 rounded-xl hover:bg-[#F1E8D8] transition"
-              title="Refresh"
-            >
-              <RefreshCw size={16} />
-            </button>
           </div>
         </div>
       </section>
 
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
-        {/* Morning Cutoff Price Lock Alert Banner */}
-        <div className={`mb-8 p-5 rounded-2xl border flex flex-col md:flex-row md:items-center justify-between gap-4 ${
-          dashboard?.todayPriceUpdated
-            ? 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-300 dark:border-emerald-800 text-emerald-900 dark:text-emerald-200'
-            : 'bg-amber-50 dark:bg-amber-950/40 border-amber-300 dark:border-amber-800 text-amber-900 dark:text-amber-200'
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 space-y-8">
+        {/* Status Alert Banner */}
+        <div className={`p-4 rounded-2xl border flex items-center justify-between gap-4 ${
+          isLockedToday
+            ? 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-800 text-emerald-900 dark:text-emerald-300'
+            : 'bg-amber-50 dark:bg-amber-950/40 border-amber-200 dark:border-amber-800 text-amber-900 dark:text-amber-300'
         }`}>
-          <div className="flex items-start gap-3">
-            {dashboard?.todayPriceUpdated ? (
-              <CheckCircle2 size={24} className="text-emerald-600 shrink-0 mt-0.5" />
-            ) : (
-              <Clock size={24} className="text-amber-600 shrink-0 mt-0.5" />
-            )}
+          <div className="flex items-center gap-3">
+            {isLockedToday ? <CheckCircle2 size={22} className="text-emerald-700 shrink-0" /> : <AlertTriangle size={22} className="text-amber-700 shrink-0" />}
             <div>
               <p className="font-bold text-sm">
-                {dashboard?.todayPriceUpdated
-                  ? '✓ Aaj ke Rates Locked! (Dukan Live 300-500m Me Active Hai)'
-                  : '⚠️ Morning 8:00 AM Cutoff: Aaj ke Daily Mandi Rates Lock Karein'}
+                {isLockedToday
+                  ? (isHindi ? '✓ आज के रेट्स लॉक हैं! दुकान 300–500m में लाइव सक्रिय है।' : "✓ Today's Daily Rates Locked! Store is live within 300m–500m.")
+                  : (isHindi ? '⚠️ आज के रेट्स अभी लॉक नहीं हुए हैं।' : "⚠️ Today's daily rates are not locked yet.")}
               </p>
-              <p className="text-xs opacity-90 mt-0.5 leading-relaxed">
-                {dashboard?.todayPriceUpdated
-                  ? 'Aapke set kiye gaye base rates ke anusaar aapko fixed payout milega. Mal khatam hone par niche switch se Out of Stock karein.'
-                  : 'Order lene ke liye kripya niche diye gaye aalo, pyaaz, tamatar ke rate check karein aur "Lock Rates" button dabayein.'}
+              <p className="text-xs opacity-80 mt-0.5">
+                {isLockedToday
+                  ? (isHindi ? 'तय दरों के अनुसार फिक्स्ड पेआउट मिलेगा। कीमतें अब 24 घंटे के लिए लॉक हैं।' : 'Daily base rates are frozen for 24h to prevent price tampering during customer orders.')
+                  : (isHindi ? 'नीचे दिए गए बटन पर क्लिक करके आज के रेट्स लॉक करें।' : 'Review daily produce rates below and lock them to start receiving 10–15 min customer orders.')}
               </p>
             </div>
           </div>
 
           <button
+            type="button"
             onClick={handleLockPrices}
-            className="px-5 py-2.5 bg-[#192D2A] dark:bg-[#C66B42] text-white text-xs font-bold uppercase tracking-wider rounded-xl hover:opacity-90 transition shadow-md whitespace-nowrap self-start md:self-auto"
+            disabled={isLockedToday}
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition shrink-0 flex items-center gap-1.5 ${
+              isLockedToday
+                ? 'bg-emerald-700 text-white cursor-not-allowed opacity-90'
+                : 'bg-amber-700 text-white hover:bg-amber-800'
+            }`}
           >
-            {dashboard?.todayPriceUpdated ? 'Update / Re-Lock Rates' : 'Lock Rates & Open Store'}
+            {isLockedToday ? <Lock size={13} /> : <CheckCircle2 size={13} />}
+            <span>{isLockedToday ? (isHindi ? 'रेट्स लॉक हैं' : 'Rates Locked') : (isHindi ? 'रेट्स लॉक करें' : 'Lock Daily Rates')}</span>
           </button>
         </div>
 
-        {/* Slab Commission Ledger Card */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-          <div className="bg-white dark:bg-[#162421] p-5 rounded-2xl border border-[#DDD5C8] dark:border-white/10 shadow-sm">
-            <p className="text-[10px] font-bold uppercase tracking-wider text-[#625F59] dark:text-[#E7E2D9]/60">Today's App Sales</p>
-            <p className="font-serif text-3xl font-bold mt-1 text-[#192D2A] dark:text-[#F8F3EA]">₹{dashboard?.dailySales || 0}</p>
-            <p className="text-[10px] text-[#625F59] mt-0.5">300-500m se aaye hue orders</p>
-          </div>
-
-          <div className="bg-white dark:bg-[#162421] p-5 rounded-2xl border border-[#DDD5C8] dark:border-white/10 shadow-sm">
-            <div className="flex items-center justify-between">
-              <p className="text-[10px] font-bold uppercase tracking-wider text-[#625F59] dark:text-[#E7E2D9]/60">Platform Slab Fee</p>
-              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-100 text-blue-800">Fair Slab</span>
+        {/* 3 Metric Summary Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+          <div className="bg-white dark:bg-[#13221E] border border-[#DDD5C8] dark:border-[#223832] rounded-3xl p-6 shadow-sm">
+            <span className="text-xs font-bold uppercase tracking-wider text-[#625F59] dark:text-[#A7B3AF] block mb-1">
+              {isHindi ? "आज की बिक्री" : "Today's App Sales"}
+            </span>
+            <div className="font-serif text-3xl font-bold text-[#192D2A] dark:text-[#F8FAFC]">
+              ₹{dashboard?.dailySales ?? 0}
             </div>
-            <p className="font-serif text-3xl font-bold mt-1 text-emerald-600">₹{dashboard?.platformFee ?? 0}</p>
-            <p className="text-[10px] text-[#625F59] mt-0.5">
-              {dashboard?.dailySales <= 100 ? 'Slab 1 (₹0-₹100): Free ₹0 fee!' : 'Slab fee wallet se deduct hogi'}
+            <p className="text-xs text-[#625F59] dark:text-[#A7B3AF] mt-2">
+              {isHindi ? '300–500m दायरे से आए ऑर्डर्स' : 'Orders within 300m–500m sector'}
             </p>
           </div>
 
-          <div className="bg-white dark:bg-[#162421] p-5 rounded-2xl border border-[#DDD5C8] dark:border-white/10 shadow-sm">
-            <p className="text-[10px] font-bold uppercase tracking-wider text-[#625F59] dark:text-[#E7E2D9]/60">Dukandar Net Payout</p>
-            <p className="font-serif text-3xl font-bold mt-1 text-[#C66B42]">₹{dashboard?.netEarnings || 0}</p>
-            <p className="text-[10px] text-[#625F59] mt-0.5">Shuddh munafa bina dukan chode</p>
+          <div className="bg-white dark:bg-[#13221E] border border-[#DDD5C8] dark:border-[#223832] rounded-3xl p-6 shadow-sm">
+            <span className="text-xs font-bold uppercase tracking-wider text-[#625F59] dark:text-[#A7B3AF] block mb-1">
+              {isHindi ? 'प्लेटफॉर्म स्लैब शुल्क' : 'Platform Slab Fee'}
+            </span>
+            <div className="font-serif text-3xl font-bold text-amber-700 dark:text-amber-400">
+              ₹{dashboard?.platformFee ?? 0}
+            </div>
+            <p className="text-xs text-[#625F59] dark:text-[#A7B3AF] mt-2">
+              {isHindi ? 'स्लैब 1 (₹0–₹100): शून्य ₹0 शुल्क' : 'Slab 1 (₹0–₹100): ₹0 free tier'}
+            </p>
+          </div>
+
+          <div className="bg-white dark:bg-[#13221E] border border-[#DDD5C8] dark:border-[#223832] rounded-3xl p-6 shadow-sm">
+            <span className="text-xs font-bold uppercase tracking-wider text-[#625F59] dark:text-[#A7B3AF] block mb-1">
+              {isHindi ? 'दुकानदार शुद्ध पेआउट' : 'Merchant Net Payout'}
+            </span>
+            <div className="font-serif text-3xl font-bold text-[#17745A] dark:text-[#10B981]">
+              ₹{dashboard?.netEarnings ?? 0}
+            </div>
+            <p className="text-xs text-[#625F59] dark:text-[#A7B3AF] mt-2">
+              {isHindi ? 'शुद्ध मुनाफा बिना दुकान छोड़े' : 'Direct payout with zero intermediary margin'}
+            </p>
           </div>
         </div>
 
-        {/* Daily Pricing & 1-Tap Out of Stock Grid */}
-        <div className="bg-white dark:bg-[#162421] rounded-2xl border border-[#DDD5C8] dark:border-white/10 p-6 shadow-sm mb-8">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-[#DDD5C8]/60 dark:border-white/10">
+        {/* Daily Produce Quotes & Out-of-Stock Switch */}
+        <section className="bg-white dark:bg-[#13221E] border border-[#DDD5C8] dark:border-[#223832] rounded-3xl p-6 sm:p-8 shadow-sm space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#DDD5C8]/70 dark:border-[#223832]">
             <div>
-              <h2 className="font-serif text-lg font-bold">Daily Price Lock & 1-Tap Out of Stock Switch</h2>
-              <p className="text-xs text-[#625F59] dark:text-[#E7E2D9]/60">
-                अगर दुकान पर कोई माल खत्म हो जाए, तो स्विच को तुरंत 'Off' कर दें ताकि गलत ऑर्डर न आएं।
+              <div className="flex items-center gap-2">
+                <h2 className="font-serif text-xl font-bold text-[#192D2A] dark:text-[#F8FAFC]">
+                  {isHindi ? 'दैनिक मूल्य निर्धारण एवं स्टॉक स्विच' : 'Daily Price Lock & 1-Tap Out-of-Stock Switch'}
+                </h2>
+                {isLockedToday && (
+                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 dark:bg-emerald-950/60 text-[#17745A] dark:text-[#10B981] border border-emerald-300 dark:border-emerald-800 flex items-center gap-1">
+                    <Lock size={11} /> Locked
+                  </span>
+                )}
+              </div>
+              <p className="text-xs text-[#625F59] dark:text-[#A7B3AF] mt-1">
+                {isHindi
+                  ? 'अगर दुकान पर कोई माल खत्म हो जाए, तो स्विच को तुरंत Off कर दें ताकि गलत ऑर्डर न आएं।'
+                  : 'Toggle the switch to Out-of-Stock instantly if an item runs out. Prices freeze once locked for the day.'}
               </p>
             </div>
+
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setShowAddModal(true)}
+                className="btn-secondary px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5"
+              >
+                <PlusCircle size={14} />
+                <span>{isHindi ? '+ नया आइटम' : '+ Add Item'}</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={handleLockPrices}
+                disabled={isLockedToday}
+                className="btn-primary px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 disabled:opacity-50"
+              >
+                <Lock size={14} />
+                <span>{isLockedToday ? (isHindi ? 'कीमतें लॉक हैं' : 'Prices Locked') : (isHindi ? 'कीमतें लॉक करें' : 'Save & Lock Rates')}</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Produce List Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {staples.map((item) => {
+              const inStock = item.inStock !== false;
+              return (
+                <div
+                  key={item.key}
+                  className={`p-4 rounded-2xl border transition-all ${
+                    inStock
+                      ? 'border-[#DDD5C8] dark:border-[#223832] bg-[#FDFBF7] dark:bg-[#162723]'
+                      : 'border-red-200 dark:border-red-900/60 bg-red-50/40 dark:bg-red-950/20 opacity-75'
+                  }`}
+                >
+                  <div className="flex items-start justify-between gap-2 mb-3">
+                    <div className="flex items-center gap-2">
+                      {item.image && (
+                        <img
+                          src={item.image}
+                          alt={item.name}
+                          className="w-10 h-10 rounded-xl object-cover border border-[#DDD5C8] dark:border-[#2A443E]"
+                        />
+                      )}
+                      <div>
+                        <span className="font-bold text-sm text-[#192D2A] dark:text-[#F8FAFC] block">
+                          {item.name}
+                        </span>
+                        <span className="text-[11px] text-[#625F59] dark:text-[#A7B3AF]">
+                          Unit: {item.unit}
+                        </span>
+                      </div>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => handleToggleStock(item.key, inStock)}
+                      className={`px-2.5 py-1 rounded-full text-[10px] font-bold transition ${
+                        inStock
+                          ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300'
+                          : 'bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-300'
+                      }`}
+                    >
+                      {inStock ? '● In Stock' : '✕ Out of Stock'}
+                    </button>
+                  </div>
+
+                  <div className="flex items-center justify-between pt-2 border-t border-[#DDD5C8]/60 dark:border-[#223832]">
+                    <span className="text-xs text-[#625F59] dark:text-[#A7B3AF] font-medium">
+                      {isHindi ? 'आज का रेट: ' : "Today's Rate: "}
+                    </span>
+                    <div className="flex items-center gap-1">
+                      <span className="text-xs font-bold text-[#192D2A] dark:text-[#F8FAFC]">₹</span>
+                      <input
+                        type="number"
+                        disabled={isLockedToday}
+                        value={rates[item.key] ?? item.defaultRate}
+                        onChange={(e) =>
+                          setRates({ ...rates, [item.key]: Number(e.target.value) })
+                        }
+                        className={`w-16 rounded-lg border px-2 py-1 text-xs font-bold outline-none text-right ${
+                          isLockedToday
+                            ? 'bg-black/5 dark:bg-white/5 border-transparent text-[#625F59] dark:text-[#A7B3AF] cursor-not-allowed'
+                            : 'border-[#DDD5C8] bg-white text-[#192D2A] dark:bg-[#13221E] dark:border-[#2A443E] dark:text-[#F8FAFC]'
+                        }`}
+                      />
+                      <span className="text-xs text-[#625F59] dark:text-[#A7B3AF]">/ {item.unit}</span>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+
+        {/* Hyperlocal Incoming Orders (300m - 500m) */}
+        <section className="bg-white dark:bg-[#13221E] border border-[#DDD5C8] dark:border-[#223832] rounded-3xl p-6 sm:p-8 shadow-sm space-y-6">
+          <div className="flex items-center justify-between pb-4 border-b border-[#DDD5C8]/70 dark:border-[#223832]">
+            <div>
+              <h2 className="font-serif text-xl font-bold text-[#192D2A] dark:text-[#F8FAFC]">
+                {isHindi ? 'नजदीकी ग्राहक ऑर्डर्स (300m–500m दायरा)' : 'Nearby Customer Orders (300m – 500m Radius)'}
+              </h2>
+              <p className="text-xs text-[#625F59] dark:text-[#A7B3AF] mt-1">
+                {isHindi
+                  ? 'ऑर्डर पैक करें, अपने लड़के (हेल्पर) को सौंपें, और मौके पर तुरंत बिल प्रिंट/सेंड करें।'
+                  : 'Pack order, assign to your helper, and dispatch for 10–15 min doorstep handover.'}
+              </p>
+            </div>
+
             <button
-              onClick={handleLockPrices}
-              className="text-xs font-bold text-[#17745A] hover:underline"
+              type="button"
+              onClick={playOrderAlertChime}
+              className="text-xs font-bold px-3 py-2 rounded-xl border border-[#DDD5C8] dark:border-[#2A443E] bg-[#FDFBF7] dark:bg-[#162723] hover:border-[#17745A] flex items-center gap-1.5 transition"
             >
-              ✓ Save Current Quotes
+              <Volume2 size={14} className="text-[#17745A] dark:text-[#10B981]" />
+              <span>{isHindi ? 'टेस्ट बाजार सायरन' : 'Test Order Buzzer'}</span>
             </button>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {staples.map((item) => (
-              <div
-                key={item.key}
-                className={`p-4 rounded-xl border transition ${
-                  item.inStock
-                    ? 'border-[#DDD5C8] dark:border-white/10 bg-[#F1E8D8]/20 dark:bg-white/5'
-                    : 'border-red-200 bg-red-50/40 dark:bg-red-950/20 opacity-70'
-                }`}
-              >
-                <div className="flex items-center justify-between mb-2">
-                  <h3 className="font-bold text-xs">{item.name}</h3>
-                  {/* In-Stock / Out-of-Stock Toggle */}
-                  <button
-                    onClick={() => handleToggleStock(item.key, item.inStock)}
-                    className={`px-2.5 py-1 text-[10px] font-bold uppercase rounded-full transition ${
-                      item.inStock
-                        ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
-                        : 'bg-red-100 text-red-800 border border-red-300'
-                    }`}
-                  >
-                    {item.inStock ? '● In Stock' : '✕ Out of Stock'}
-                  </button>
-                </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {orders.length === 0 ? (
+              <div className="p-10 text-center text-xs text-[#625F59] dark:text-[#A7B3AF] col-span-2">
+                <Store size={36} className="mx-auto mb-2 text-[#DDD5C8] dark:text-[#2A443E]" />
+                <p className="font-bold text-sm">No pending orders in your 500m radius right now.</p>
+                <p className="mt-1">When a customer in your sector places an order, the alert will chime!</p>
+              </div>
+            ) : (
+              orders.slice(0, 6).map((order) => (
+                <div
+                  key={order._id}
+                  className="p-5 rounded-2xl border border-[#DDD5C8] dark:border-[#223832] bg-[#FDFBF7] dark:bg-[#162723] space-y-3"
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="font-mono text-xs font-black text-[#192D2A] dark:text-[#F8FAFC]">
+                      {order.orderNumber}
+                    </span>
+                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase bg-amber-100 text-amber-800 dark:bg-amber-950/80 dark:text-amber-300">
+                      {order.deliveryStatus || 'confirmed'}
+                    </span>
+                  </div>
 
-                <div className="flex items-center gap-2 mt-3">
-                  <span className="text-xs font-semibold text-[#625F59]">Today's Rate: ₹</span>
+                  <div>
+                    <p className="font-bold text-xs text-[#192D2A] dark:text-[#F8FAFC]">
+                      {order.deliveryAddress?.name} ({order.deliveryAddress?.phone})
+                    </p>
+                    <p className="text-[11px] text-[#625F59] dark:text-[#A7B3AF] truncate mt-0.5">
+                      {order.deliveryAddress?.address}, {order.deliveryAddress?.city}
+                    </p>
+                  </div>
+
+                  <div className="text-xs font-bold text-[#17745A] dark:text-[#10B981] flex justify-between items-center">
+                    <span>Total: ₹{order.totalAmount}</span>
+                    <span className="text-[11px] uppercase tracking-wider text-[#625F59] dark:text-[#A7B3AF]">
+                      Payment: {order.paymentMethod?.toUpperCase()} ({order.paymentStatus})
+                    </span>
+                  </div>
+
+                  {/* Actions */}
+                  <div className="flex items-center gap-2 pt-2 border-t border-[#DDD5C8]/60 dark:border-[#223832]">
+                    <button
+                      type="button"
+                      onClick={() => setPrintBillOrder(order)}
+                      className="flex-1 py-1.5 rounded-xl border border-[#DDD5C8] dark:border-[#2A443E] bg-white dark:bg-[#13221E] text-xs font-bold text-[#192D2A] dark:text-[#F8FAFC] hover:bg-[#F1E8D8]/50 transition flex items-center justify-center gap-1"
+                    >
+                      <Printer size={13} /> Bill
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setDispatchModalOrder(order)}
+                      className="flex-1 py-1.5 rounded-xl bg-[#17745A] text-white text-xs font-bold hover:bg-[#135E49] transition flex items-center justify-center gap-1"
+                    >
+                      <Truck size={13} /> Send Helper
+                    </button>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </section>
+      </main>
+
+      {/* Add Custom Store Product Modal */}
+      {showAddModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4">
+          <div className="max-w-md w-full rounded-3xl border border-[#DDD5C8] dark:border-[#223832] bg-white dark:bg-[#13221E] p-6 sm:p-7 shadow-2xl space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-[#DDD5C8]/70 dark:border-[#223832]">
+              <h3 className="font-serif text-lg font-bold text-[#192D2A] dark:text-[#F8FAFC]">
+                {isHindi ? 'नया प्रोडक्ट जोड़ें' : 'Add Store Produce / Staple'}
+              </h3>
+              <button
+                type="button"
+                onClick={() => setShowAddModal(false)}
+                className="p-1 rounded-lg text-[#625F59] hover:bg-black/5 dark:text-[#A7B3AF]"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            <form onSubmit={handleAddCustomProduct} className="space-y-4">
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-[#192D2A] dark:text-[#F8FAFC] mb-1">
+                  Product Name
+                </label>
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. Desi Ghee or Green Chillies"
+                  value={customProduct.name}
+                  onChange={(e) => setCustomProduct({ ...customProduct, name: e.target.value })}
+                  className="input-field"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-[#192D2A] dark:text-[#F8FAFC] mb-1">
+                    Rate (₹)
+                  </label>
                   <input
                     type="number"
-                    value={rates[item.key] ?? item.defaultRate}
-                    onChange={(e) => setRates({ ...rates, [item.key]: Number(e.target.value) })}
-                    className="w-20 rounded-lg border border-[#DDD5C8] dark:border-white/10 bg-white dark:bg-[#1A2624] px-2 py-1 text-xs font-bold outline-none"
+                    required
+                    placeholder="e.g. 60"
+                    value={customProduct.rate}
+                    onChange={(e) => setCustomProduct({ ...customProduct, rate: e.target.value })}
+                    className="input-field"
                   />
-                  <span className="text-xs text-[#625F59]">/ {item.unit}</span>
+                </div>
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-[#192D2A] dark:text-[#F8FAFC] mb-1">
+                    Unit
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. 1 kg / 500g"
+                    value={customProduct.unit}
+                    onChange={(e) => setCustomProduct({ ...customProduct, unit: e.target.value })}
+                    className="input-field"
+                  />
                 </div>
               </div>
-            ))}
-          </div>
-        </div>
 
-        {/* Hyperlocal Orders & Helper Dispatch Queue */}
-        <div className="bg-white dark:bg-[#162421] rounded-2xl border border-[#DDD5C8] dark:border-white/10 p-6 shadow-sm">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-[#DDD5C8]/60 dark:border-white/10">
-            <div>
-              <h2 className="font-serif text-lg font-bold flex items-center gap-2">
-                <Truck size={18} className="text-[#C66B42]" />
-                <span>Nearby Customer Orders (300m – 500m Radius)</span>
-              </h2>
-              <p className="text-xs text-[#625F59] dark:text-[#E7E2D9]/60">
-                ऑर्डर पैक करें, अपने लड़के (हेल्पर) को सौंपें, और मौके पर तुरंत बिल प्रिंट/सेंड करें।
-              </p>
-            </div>
-            <button
-              onClick={() => {
-                playOrderAlertChime();
-                showToast('Buzzer sound test played! Order notification alert is working.');
-              }}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 text-xs font-bold text-amber-800 dark:text-amber-300 hover:bg-amber-100 transition self-start sm:self-auto"
-            >
-              <Volume2 size={14} />
-              <span>Test Order Buzzer</span>
-            </button>
-          </div>
+              {/* Integrated Image & Camera Capture */}
+              <ImageCaptureInput
+                value={customProduct.image}
+                onChange={(img) => setCustomProduct({ ...customProduct, image: img })}
+                label="Product Photo"
+              />
 
-          {orders.length === 0 ? (
-            <div className="py-12 text-center text-xs text-[#625F59] dark:text-[#E7E2D9]/60">
-              No orders active right now.
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {orders.map((ord) => (
-                <div
-                  key={ord._id}
-                  className="p-4 rounded-xl border border-[#DDD5C8] dark:border-white/10 bg-[#F1E8D8]/20 flex flex-col md:flex-row md:items-center justify-between gap-4 text-xs"
-                >
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <span className="font-bold text-sm text-[#192D2A] dark:text-[#F8F3EA]">{ord.orderNumber}</span>
-                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase bg-blue-100 text-blue-800">
-                        {ord.deliveryStatus?.replace(/_/g, ' ')}
-                      </span>
-                    </div>
-                    <p className="font-semibold text-xs mt-1">
-                      {ord.deliveryAddress?.name} ({ord.deliveryAddress?.phone || 'No phone'})
-                    </p>
-                    <p className="text-[11px] text-[#625F59] dark:text-[#E7E2D9]/70">
-                      {ord.deliveryAddress?.address}, {ord.deliveryAddress?.city}
-                    </p>
-                    <p className="text-[11px] font-bold text-[#17745A] mt-0.5">
-                      Total: ₹{ord.totalAmount} &bull; Payment: {ord.paymentMethod?.toUpperCase()} ({ord.paymentStatus})
-                    </p>
-                  </div>
-
-                  <div className="flex flex-wrap items-center gap-2 self-start md:self-auto">
-                    {/* Print / View On-Spot Bill */}
-                    <button
-                      onClick={() => setPrintBillOrder(ord)}
-                      className="px-3 py-1.5 bg-white dark:bg-[#1A2624] border border-[#DDD5C8] dark:border-white/10 rounded-xl font-bold flex items-center gap-1.5 hover:bg-[#F1E8D8] transition text-xs shadow-sm"
-                    >
-                      <Receipt size={14} className="text-[#C66B42]" />
-                      <span>On-Spot Bill</span>
-                    </button>
-
-                    {/* WhatsApp Bill Direct */}
-                    <button
-                      onClick={() => {
-                        const waUrl = generateWhatsAppInvoice(ord);
-                        window.open(waUrl, '_blank');
-                      }}
-                      className="px-3 py-1.5 bg-[#25D366]/15 text-[#128C7E] dark:text-[#25D366] border border-[#25D366]/40 rounded-xl font-bold flex items-center gap-1.5 hover:bg-[#25D366]/25 transition text-xs shadow-sm"
-                      title="Send Instant Bill via WhatsApp"
-                    >
-                      <MessageCircle size={14} />
-                      <span>WhatsApp Bill</span>
-                    </button>
-
-                    {/* Dispatch to Helper */}
-                    <button
-                      onClick={() => setDispatchModalOrder(ord)}
-                      className="px-3.5 py-1.5 bg-[#17745A] hover:bg-[#125c47] text-white rounded-xl font-bold flex items-center gap-1.5 text-xs transition shadow-sm uppercase tracking-wider"
-                    >
-                      <UserCheck size={14} />
-                      <span>Send Helper (10 Mins)</span>
-                    </button>
-
-                    <a
-                      href={`tel:${ord.deliveryAddress?.phone}`}
-                      className="p-1.5 bg-white dark:bg-[#1A2624] border border-[#DDD5C8] rounded-xl hover:bg-[#F1E8D8] text-[#192D2A]"
-                      title="Call customer directly"
-                    >
-                      <Phone size={14} />
-                    </a>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Modal: Dispatch with Helper */}
-      {dispatchModalOrder && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-          <div className="w-full max-w-md bg-white dark:bg-[#162421] p-6 rounded-3xl border border-[#DDD5C8] dark:border-white/10 shadow-2xl">
-            <h3 className="font-serif text-lg font-bold mb-1">Assign Local Helper for Delivery</h3>
-            <p className="text-xs text-[#625F59] mb-4">
-              Order #{dispatchModalOrder.orderNumber} को 300–500 मीटर में पहुंचाने के लिए दुकान के लड़के का नाम दर्ज करें:
-            </p>
-
-            <form onSubmit={handleDispatchOrder} className="space-y-3 text-xs">
-              <div>
-                <label className="block font-semibold mb-1">Helper / Delivery Boy Name</label>
-                <input
-                  type="text"
-                  required
-                  value={helperName}
-                  onChange={(e) => setHelperName(e.target.value)}
-                  className="w-full rounded-xl border border-[#DDD5C8] dark:border-white/10 px-3 py-2 outline-none"
-                />
-              </div>
-
-              <div>
-                <label className="block font-semibold mb-1">Helper Mobile Number</label>
-                <input
-                  type="text"
-                  required
-                  value={helperPhone}
-                  onChange={(e) => setHelperPhone(e.target.value)}
-                  className="w-full rounded-xl border border-[#DDD5C8] dark:border-white/10 px-3 py-2 outline-none"
-                />
-              </div>
-
-              <div className="p-3 rounded-xl bg-blue-50 dark:bg-blue-950/40 text-blue-900 dark:text-blue-200 text-[11px] leading-relaxed">
-                ✓ ग्राहक के पते पर पहुंचने में लगभग 5–10 मिनट लगेंगे। ग्राहक से कैश/UPI लें और OTP वेरीफाई करें।
-              </div>
-
-              <div className="flex gap-2 pt-2">
+              <div className="flex justify-end gap-2 pt-3 border-t border-[#DDD5C8]/60 dark:border-[#223832]">
                 <button
                   type="button"
-                  onClick={() => setDispatchModalOrder(null)}
-                  className="w-1/2 py-2.5 border border-[#DDD5C8] rounded-xl font-bold"
+                  onClick={() => setShowAddModal(false)}
+                  className="btn-secondary px-4 py-2 rounded-xl text-xs font-bold"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="w-1/2 py-2.5 bg-[#17745A] text-white rounded-xl font-bold uppercase tracking-wider"
+                  className="btn-primary px-5 py-2 rounded-xl text-xs font-bold"
                 >
-                  Confirm Dispatch
+                  Add to Store
                 </button>
               </div>
             </form>
@@ -441,66 +630,57 @@ const ShopkeeperPortal = () => {
         </div>
       )}
 
-      {/* Modal: On-Spot Bill / Receipt Preview */}
-      {printBillOrder && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-          <div className="w-full max-w-sm bg-white text-black p-6 rounded-2xl border shadow-2xl font-mono text-xs">
-            <div className="text-center border-b pb-3 mb-3">
-              <h2 className="font-serif text-lg font-bold">GROCERY STORE</h2>
-              <p className="text-[10px] text-gray-600">Fine Provisions & Hyperlocal Express</p>
-              <p className="text-[10px] text-gray-500">Local Hub 300m Delivery Slip</p>
-            </div>
-
-            <div className="space-y-1 mb-3 border-b pb-2 text-[11px]">
-              <p><strong>Order #:</strong> {printBillOrder.orderNumber}</p>
-              <p><strong>Date:</strong> {new Date().toLocaleDateString()} {new Date().toLocaleTimeString()}</p>
-              <p><strong>Customer:</strong> {printBillOrder.deliveryAddress?.name}</p>
-              <p><strong>Address:</strong> {printBillOrder.deliveryAddress?.address}</p>
-              <p><strong>Payment Mode:</strong> {printBillOrder.paymentMethod?.toUpperCase()} ({printBillOrder.paymentStatus})</p>
-            </div>
-
-            <div className="border-b pb-3 mb-3">
-              <div className="flex justify-between font-bold border-b pb-1 mb-1 text-[10px] uppercase">
-                <span>Item</span>
-                <span>Qty</span>
-                <span>Price</span>
+      {/* Helper Dispatch Modal */}
+      {dispatchModalOrder && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4">
+          <div className="max-w-md w-full rounded-3xl border border-[#DDD5C8] dark:border-[#223832] bg-white dark:bg-[#13221E] p-6 shadow-2xl space-y-4">
+            <h3 className="font-serif text-lg font-bold text-[#192D2A] dark:text-[#F8FAFC]">
+              Dispatch Order #{dispatchModalOrder.orderNumber}
+            </h3>
+            <p className="text-xs text-[#625F59] dark:text-[#A7B3AF]">
+              Assign this 300m–500m order to your shop helper for fast 10–15 min delivery.
+            </p>
+            <form onSubmit={handleDispatchOrder} className="space-y-3">
+              <div>
+                <label className="block text-xs font-bold text-[#192D2A] dark:text-[#F8FAFC] mb-1">
+                  Helper Name
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={helperName}
+                  onChange={(e) => setHelperName(e.target.value)}
+                  className="input-field"
+                />
               </div>
-              {(printBillOrder.items || []).map((it, idx) => (
-                <div key={idx} className="flex justify-between text-[11px] py-0.5">
-                  <span className="truncate max-w-[140px]">{it.name}</span>
-                  <span>x{it.quantity}</span>
-                  <span>₹{it.price * it.quantity}</span>
-                </div>
-              ))}
-            </div>
-
-            <div className="flex justify-between font-bold text-sm mb-4">
-              <span>TOTAL BILLED:</span>
-              <span>₹{printBillOrder.totalAmount}</span>
-            </div>
-
-            <div className="text-center text-[10px] text-gray-500 mb-4 border-t pt-2">
-              <p>Thank you for shopping with GroceryStore!</p>
-              <p>Delivery verified by local helper.</p>
-            </div>
-
-            <div className="flex gap-2">
-              <button
-                onClick={() => setPrintBillOrder(null)}
-                className="w-1/2 py-2 border rounded font-sans font-bold"
-              >
-                Close
-              </button>
-              <button
-                onClick={() => {
-                  window.print();
-                }}
-                className="w-1/2 py-2 bg-black text-white rounded font-sans font-bold flex items-center justify-center gap-1"
-              >
-                <Printer size={14} />
-                <span>Print Bill</span>
-              </button>
-            </div>
+              <div>
+                <label className="block text-xs font-bold text-[#192D2A] dark:text-[#F8FAFC] mb-1">
+                  Helper Phone Number
+                </label>
+                <input
+                  type="tel"
+                  required
+                  value={helperPhone}
+                  onChange={(e) => setHelperPhone(e.target.value)}
+                  className="input-field"
+                />
+              </div>
+              <div className="flex justify-end gap-2 pt-3">
+                <button
+                  type="button"
+                  onClick={() => setDispatchModalOrder(null)}
+                  className="btn-secondary px-4 py-2 rounded-xl text-xs font-bold"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="btn-primary px-5 py-2 rounded-xl text-xs font-bold"
+                >
+                  Confirm & Dispatch
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

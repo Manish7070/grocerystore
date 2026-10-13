@@ -429,7 +429,7 @@ const curatedExternalIds = seedData.map((product) => product.externalId);
 
 const prepareSeedProduct = (product) => ({
   ...product,
-  image: `greenbasket-art://${product.category.toLowerCase().replaceAll(' ', '-')}`,
+  image: (product.image && product.image.startsWith('http')) ? product.image : (product.image || `greenbasket-art://${product.category.toLowerCase().replaceAll(' ', '-')}`),
   brand: 'GreenBasket',
   origin: 'India',
   source: 'greenbasket-original',
@@ -454,10 +454,10 @@ const ensureCuratedCatalog = async () => {
 
   return Product.find({
     $or: [
-      { externalId: { $in: curatedExternalIds } },
       { approvalStatus: 'approved' },
+      { externalId: { $in: curatedExternalIds } },
     ],
-  }).sort({ category: 1, createdAt: -1 });
+  }).sort({ createdAt: -1 });
 };
 
 const ensureCategoryCatalog = async (category) => {
@@ -513,6 +513,13 @@ router.post('/refresh', asyncHandler(async (req, res) => {
   const products = await ensureCuratedCatalog();
   res.json({ message: 'GreenBasket catalog refreshed', count: products.length });
 }));
+
+router.invalidateProductCache = () => {
+  productCache = {
+    expiresAt: 0,
+    products: [],
+  };
+};
 
 module.exports = router;
 

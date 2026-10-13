@@ -3,10 +3,10 @@ import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { authAPI } from '../utils/api';
 import { Brand } from '../components/Brand';
-import { ArrowRight, Eye, EyeOff, Lock, Mail } from 'lucide-react';
+import { ArrowRight, Eye, EyeOff, Lock, Mail, ShieldCheck } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
 
-const Signin = () => {
+const Signin = ({ adminMode = false }) => {
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -25,9 +25,11 @@ const Signin = () => {
     try {
       const res = await authAPI.signin(formData);
       login(res.data);
-      showToast(`Welcome back to GroceryStore, ${res.data.name || ''}!`);
+      showToast(`Welcome back, ${res.data.name || ''}!`);
 
-      if (res.data.role === 'kisan') {
+      if (adminMode || res.data.role === 'admin' || res.data.isAdmin) {
+        navigate('/admin', { replace: true });
+      } else if (res.data.role === 'kisan') {
         navigate('/partner/farmer', { replace: true });
       } else if (res.data.role === 'shopkeeper') {
         navigate('/partner/shop', { replace: true });
@@ -35,8 +37,6 @@ const Signin = () => {
         navigate('/partner/distributor', { replace: true });
       } else if (res.data.role === 'helper') {
         navigate('/partner/helper', { replace: true });
-      } else if (res.data.role === 'admin' || res.data.isAdmin) {
-        navigate('/admin', { replace: true });
       } else {
         navigate(returnTo, { replace: true });
       }
@@ -50,42 +50,28 @@ const Signin = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#FDFBF7] dark:bg-[#0F1215] flex items-center justify-center p-4 sm:p-6 lg:p-10">
-      <div className="w-full max-w-4xl overflow-hidden rounded-3xl border border-[#DDD5C8] bg-white shadow-xl dark:bg-[#181B20] dark:border-white/10 grid lg:grid-cols-2">
-        {/* Left Side: Rich Artisanal Food Photography */}
-        <div className="relative hidden lg:flex flex-col justify-between overflow-hidden bg-[#122421] p-10 text-white">
+    <div className="min-h-screen bg-[#FDFBF7] dark:bg-[#0B1311] flex items-center justify-center p-4 sm:p-6 lg:p-10 transition-colors">
+      <div className="w-full max-w-4xl overflow-hidden rounded-3xl border border-[#DDD5C8] dark:border-[#223832] bg-white dark:bg-[#13221E] shadow-xl grid lg:grid-cols-2">
+        {/* Left Side: Clean Visible Food Photography without clunky quote overlays */}
+        <div className="relative hidden lg:flex flex-col justify-between overflow-hidden bg-[#122421] p-10 text-white min-h-[520px]">
           <div className="absolute inset-0">
             <img
-              src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=1000&q=80"
-              alt="Fresh harvest provisions"
-              className="h-full w-full object-cover opacity-50 mix-blend-overlay"
+              src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=1200&q=85"
+              alt="Farm fresh produce provisions"
+              className="h-full w-full object-cover transition-transform duration-700 hover:scale-105"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#0A1614] via-[#0F231F]/80 to-[#0A1614]/60" />
+            {/* Subtle soft gradient that keeps the photo clear and visible */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-black/40" />
           </div>
 
           <div className="relative z-10">
             <Brand inverted stacked={false} />
-            <div className="mt-8 inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-xs font-semibold backdrop-blur border border-white/20">
-              <span className="h-2 w-2 rounded-full bg-[#10B981] animate-pulse" />
-              Direct-from-farm daily harvest
-            </div>
           </div>
 
-          <div className="relative z-10 space-y-4">
-            <blockquote className="font-serif text-2xl font-light italic leading-snug text-white/95">
-              &ldquo;Good food, thoughtfully harvested and delivered with cold-chain care for your family's table.&rdquo;
-            </blockquote>
-            <div className="flex items-center gap-6 pt-4 border-t border-white/15 text-xs text-white/80">
-              <div>
-                <p className="font-serif text-lg font-bold text-white">100%</p>
-                <p className="text-[11px] uppercase tracking-wider text-white/60">Verified Origin</p>
-              </div>
-              <div className="h-7 w-px bg-white/20" />
-              <div>
-                <p className="font-serif text-lg font-bold text-white">Sunrise</p>
-                <p className="text-[11px] uppercase tracking-wider text-white/60">Daily Picking</p>
-              </div>
-            </div>
+          <div className="relative z-10">
+            <p className="font-serif text-xl font-medium text-white/95 leading-relaxed drop-shadow-sm">
+              Fresh produce & artisanal provisions, direct from farm gate to your table.
+            </p>
           </div>
         </div>
 
@@ -98,18 +84,25 @@ const Signin = () => {
               alt="Fresh harvest produce"
               className="h-full w-full object-cover"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-white dark:from-[#181B20] via-black/40 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-white dark:from-[#13221E] via-black/30 to-transparent" />
             <div className="absolute bottom-3 left-6">
               <Brand compact />
             </div>
           </div>
 
           <div className="mb-6">
-            <h1 className="font-serif text-2xl sm:text-3xl font-semibold text-[#192D2A] dark:text-white">
-              Welcome Back
-            </h1>
-            <p className="mt-1.5 text-xs sm:text-sm text-[#625F59] dark:text-gray-400">
-              Sign in to manage your grocery basket, pantry reorders, and deliveries.
+            <div className="flex items-center gap-2">
+              <h1 className="font-serif text-2xl sm:text-3xl font-semibold text-[#192D2A] dark:text-[#F8FAFC]">
+                {adminMode ? 'Administrator Sign In' : 'Welcome Back'}
+              </h1>
+              {adminMode && (
+                <ShieldCheck size={20} className="text-rose-600 dark:text-rose-400" />
+              )}
+            </div>
+            <p className="mt-1.5 text-xs sm:text-sm text-[#625F59] dark:text-[#A7B3AF]">
+              {adminMode
+                ? 'Enter administrative master credentials to access the central store control hub.'
+                : 'Sign in to access your order history, saved addresses, and active deliveries.'}
             </p>
           </div>
 
@@ -121,40 +114,40 @@ const Signin = () => {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-[#192D2A] mb-1.5 dark:text-white">
+              <label className="block text-xs font-bold uppercase tracking-wider text-[#192D2A] dark:text-[#F8FAFC] mb-1.5">
                 Email Address
               </label>
               <div className="relative">
-                <Mail size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#625F59] dark:text-gray-400" />
+                <Mail size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#625F59] dark:text-[#A7B3AF]" />
                 <input
                   type="email"
                   required
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   placeholder="name@example.com"
-                  className="w-full rounded-xl border border-[#DDD5C8] bg-[#FDFBF7] py-2.5 pl-10 pr-3 text-sm text-[#192D2A] outline-none placeholder:text-[#625F59]/60 focus:border-[#17745A] focus:ring-1 focus:ring-[#17745A] dark:bg-[#12141A] dark:border-white/10 dark:text-white"
+                  className="input-field pl-10"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-[#192D2A] mb-1.5 dark:text-white">
+              <label className="block text-xs font-bold uppercase tracking-wider text-[#192D2A] dark:text-[#F8FAFC] mb-1.5">
                 Password
               </label>
               <div className="relative">
-                <Lock size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#625F59] dark:text-gray-400" />
+                <Lock size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#625F59] dark:text-[#A7B3AF]" />
                 <input
                   type={showPassword ? 'text' : 'password'}
                   required
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                   placeholder="••••••••"
-                  className="w-full rounded-xl border border-[#DDD5C8] bg-[#FDFBF7] py-2.5 pl-10 pr-10 text-sm text-[#192D2A] outline-none placeholder:text-[#625F59]/60 focus:border-[#17745A] focus:ring-1 focus:ring-[#17745A] dark:bg-[#12141A] dark:border-white/10 dark:text-white"
+                  className="input-field pl-10 pr-10"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#625F59] hover:text-[#192D2A] dark:text-gray-400 dark:hover:text-white"
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#625F59] hover:text-[#192D2A] dark:text-[#A7B3AF] dark:hover:text-[#F8FAFC]"
                   aria-label={showPassword ? 'Hide password' : 'Show password'}
                 >
                   {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
@@ -165,22 +158,24 @@ const Signin = () => {
             <button
               type="submit"
               disabled={loading}
-              className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-[#17745A] py-3.5 text-xs font-bold uppercase tracking-wider text-white shadow-sm transition hover:bg-[#135E49] active:scale-[0.98] disabled:opacity-50"
+              className="mt-6 btn-primary flex w-full items-center justify-center gap-2 py-3.5 rounded-xl text-xs font-bold uppercase tracking-wider"
             >
-              {loading ? 'Authenticating...' : 'Sign In'}
+              {loading ? 'Authenticating...' : adminMode ? 'Sign In as Administrator' : 'Sign In'}
               <ArrowRight size={14} />
             </button>
           </form>
 
-          <div className="mt-6 text-center text-xs text-[#55524E] dark:text-gray-400">
-            Don't have an account yet?{' '}
-            <Link to="/signup" className="font-bold text-[#17745A] hover:underline dark:text-[#10B981]">
-              Create an account
-            </Link>
-          </div>
+          {!adminMode && (
+            <div className="mt-6 text-center text-xs text-[#625F59] dark:text-[#A7B3AF]">
+              Don't have an account yet?{' '}
+              <Link to="/signup" className="font-bold text-[#17745A] hover:underline dark:text-[#10B981]">
+                Create an account
+              </Link>
+            </div>
+          )}
 
           <div className="mt-4 text-center">
-            <Link to="/" className="text-xs font-semibold text-[#625F59] hover:text-[#192D2A] dark:text-gray-400 dark:hover:text-white">
+            <Link to="/" className="text-xs font-semibold text-[#625F59] hover:text-[#192D2A] dark:text-[#A7B3AF] dark:hover:text-[#F8FAFC]">
               &larr; Return to Market Storefront
             </Link>
           </div>

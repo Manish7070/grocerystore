@@ -46,12 +46,12 @@ const Footer = () => (
             Customer Care
           </h4>
           <ul className="space-y-2.5 text-xs text-[#E7E2D9]">
-            <li><Link to="/track" className="hover:text-[#D9A441] transition">Track Your Delivery</Link></li>
-            <li><Link to="/dashboard" className="hover:text-[#D9A441] transition">Customer Account</Link></li>
+            <li><Link to="/profile" className="hover:text-[#D9A441] transition font-semibold text-[#10B981]">My Profile & Addresses</Link></li>
+            <li><Link to="/partner/farmer" className="hover:text-[#D9A441] transition font-semibold text-[#34D399]">Farmer Produce Exchange</Link></li>
+            <li><Link to="/partner/shop" className="hover:text-[#D9A441] transition font-semibold text-[#38BDF8]">Merchant Storefront Hub</Link></li>
+            <li><Link to="/partner/distributor" className="hover:text-[#D9A441] transition font-semibold text-[#C084FC]">Regional Logistics Hub</Link></li>
+            <li><Link to="/track" className="hover:text-[#D9A441] transition">Track Doorstep Delivery</Link></li>
             <li><Link to="/orders" className="hover:text-[#D9A441] transition">Order History & Invoices</Link></li>
-            <li><Link to="/partner/farmer" className="hover:text-[#D9A441] transition text-[#10B981] font-semibold">🌾 Kisan Partner Portal</Link></li>
-            <li><Link to="/partner/shop" className="hover:text-[#D9A441] transition text-[#38BDF8] font-semibold">🏪 Dukan / Kirana Hub</Link></li>
-            <li><Link to="/partner/distributor" className="hover:text-[#D9A441] transition text-[#A855F7] font-semibold">🚚 Branch / Distributor</Link></li>
             <li><a href="mailto:care@grocerystore.in" className="hover:text-[#D9A441] transition">care@grocerystore.in</a></li>
             <li><a href="tel:+919876543210" className="hover:text-[#D9A441] transition">+91 98765 43210 (8 AM – 9 PM)</a></li>
             <li><span className="text-xs text-[#E7E2D9]/70">Delivery Slots: 7:00 AM – 10:00 PM</span></li>

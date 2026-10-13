@@ -100,6 +100,7 @@ export const partnerAPI = {
   getShopkeeperDashboard: () => api.get('/partners/shopkeeper/dashboard'),
   lockShopkeeperPrices: (data) => api.put('/partners/shopkeeper/price-lock', data),
   toggleShopkeeperStock: (data) => api.put('/partners/shopkeeper/stock-toggle', data),
+  addShopkeeperProduct: (data) => api.post('/partners/shopkeeper/product', data),
   getShopkeeperOrders: () => api.get('/partners/shopkeeper/orders'),
   dispatchShopkeeperOrder: (id, data) => api.put(`/partners/shopkeeper/orders/${id}/dispatch`, data),
   rechargeShopkeeperWallet: (amount) => api.post('/partners/shopkeeper/wallet/recharge', { amount }),

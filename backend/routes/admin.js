@@ -4,6 +4,7 @@ const bcrypt = require('bcryptjs');
 const Order = require('../models/Order');
 const Product = require('../models/Product');
 const User = require('../models/User');
+const productRoutes = require('./products');
 const { protect, adminOnly } = require('../middleware/auth');
 const asyncHandler = require('../middleware/asyncHandler');
 
@@ -233,6 +234,9 @@ router.put('/approvals/:id', asyncHandler(async (req, res) => {
     }
     product.rejectionReason = '';
     await product.save();
+    if (productRoutes.invalidateProductCache) {
+      productRoutes.invalidateProductCache();
+    }
 
     return res.json({
       success: true,
@@ -282,6 +286,10 @@ router.post('/products', asyncHandler(async (req, res) => {
       name: req.user.name,
     },
   });
+
+  if (productRoutes.invalidateProductCache) {
+    productRoutes.invalidateProductCache();
+  }
 
   res.status(201).json(product);
 }));

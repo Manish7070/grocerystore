@@ -5,6 +5,7 @@ import { CartProvider } from './context/CartContext';
 import { ToastProvider } from './context/ToastContext';
 import { WatchlistProvider } from './context/WatchlistContext';
 import { ThemeProvider } from './context/ThemeContext';
+import { NotificationProvider } from './context/NotificationContext';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import Shop from './pages/Shop';
@@ -22,6 +23,7 @@ import Orders from './pages/Orders';
 import Signup from './pages/Signup';
 import Signin from './pages/Signin';
 import Dashboard from './pages/Dashboard';
+import Profile from './pages/Profile';
 import FarmerPortal from './pages/FarmerPortal';
 import ShopkeeperPortal from './pages/ShopkeeperPortal';
 import DistributorPortal from './pages/DistributorPortal';
@@ -50,7 +52,7 @@ function ScrollToTop() {
 
 function AppContent() {
   return (
-    <div className="min-h-screen bg-[#FDFBF7] flex flex-col text-[#192D2A] transition-colors duration-300 dark:bg-[#0E1A18] dark:text-[#F8F3EA]">
+    <div className="min-h-screen bg-[#FDFBF7] flex flex-col text-[#192D2A] transition-colors duration-300 dark:bg-[#0B1311] dark:text-[#F8FAFC]">
       <ScrollToTop />
       <Navbar />
       <main className="flex-1">
@@ -66,6 +68,7 @@ function AppContent() {
           <Route path="/track/:orderNumber" element={<OrderTracking />} />
           <Route path="/order-success/:id" element={<OrderSuccess />} />
           <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/admin-login" element={<Signin adminMode={true} />} />
           <Route path="/delivery" element={<DeliveryPortal />} />
           <Route path="/helper" element={<DeliveryPortal />} />
           <Route path="/partner/helper" element={<DeliveryPortal />} />
@@ -76,6 +79,7 @@ function AppContent() {
           <Route path="/distributor" element={<DistributorPortal />} />
           <Route path="/partner/distributor" element={<DistributorPortal />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/profile" element={<Profile />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/watchlist" element={<Watchlist />} />
           <Route path="/signup" element={<Signup />} />
@@ -100,7 +104,9 @@ function App() {
           <AuthProvider>
             <CartProvider>
               <WatchlistProvider>
-                <AppContent />
+                <NotificationProvider>
+                  <AppContent />
+                </NotificationProvider>
               </WatchlistProvider>
             </CartProvider>
           </AuthProvider>

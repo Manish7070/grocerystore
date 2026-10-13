@@ -14,6 +14,9 @@ import {
   User,
   Sun,
   Truck,
+  Store,
+  Sprout,
+  ShieldCheck,
   X,
 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
@@ -24,6 +27,7 @@ import { useToast } from '../context/ToastContext';
 import ProductArtwork from './ProductArtwork';
 import Brand from './Brand';
 import { useTheme } from '../context/ThemeContext';
+import NotificationCenter from './NotificationCenter';
 
 const popularSearches = [
   'Organic Red Onions',
@@ -97,31 +101,31 @@ const Navbar = () => {
     closeMenus();
   };
 
-  // NavLink styling with exact route matching logic
+  // NavLink styling with whitespace-nowrap and exact route matching logic
   const getNavLinkClass = (path, exact = false) => {
     const isActive = exact
       ? location.pathname === path && !location.search
       : location.pathname === path;
 
-    return `relative px-3.5 py-2 text-[14px] font-semibold tracking-[-0.01em] transition-all duration-200 ${
+    return `relative whitespace-nowrap px-3.5 py-2 text-[14px] font-semibold tracking-[-0.01em] transition-all duration-200 ${
       isActive
         ? 'text-[#C66B42] font-bold after:absolute after:bottom-0 after:left-3.5 after:right-3.5 after:h-[2.5px] after:bg-[#C66B42] after:rounded-full dark:text-[#D9A441] dark:after:bg-[#D9A441]'
-        : 'text-[#192D2A] hover:text-[#C66B42] dark:text-[#F8F3EA]/85 dark:hover:text-[#F8F3EA]'
+        : 'text-[#192D2A] hover:text-[#C66B42] dark:text-[#F8FAFC]/90 dark:hover:text-[#F8FAFC]'
     }`;
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-[#FDFBF7]/95 dark:bg-[#121E1C]/95 border-b border-[#DDD5C8]/80 dark:border-white/10 shadow-[0_2px_12px_rgba(25,45,42,0.04)] backdrop-blur-md transition-colors">
+    <header className="sticky top-0 z-50 bg-[#FDFBF7]/95 dark:bg-[#0B1311]/95 border-b border-[#DDD5C8]/80 dark:border-[#223832] shadow-[0_2px_12px_rgba(25,45,42,0.04)] backdrop-blur-md transition-colors">
       <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8">
-        <div className="flex h-20 items-center justify-between gap-4 lg:gap-8">
+        <div className="flex h-20 items-center justify-between gap-3 lg:gap-6">
           
           {/* LEFT: Clean Typography Brand Wordmark */}
           <div className="flex shrink-0 items-center">
             <Brand onClick={closeMenus} />
           </div>
 
-          {/* CENTER: Main Navigation Links with accurate active indicators */}
-          <nav className="hidden lg:flex items-center gap-1 xl:gap-3" aria-label="Main navigation">
+          {/* CENTER: Main Navigation Links strictly single-line */}
+          <nav className="hidden lg:flex items-center gap-1 xl:gap-2 whitespace-nowrap shrink-0" aria-label="Main navigation">
             <Link to="/" onClick={closeMenus} className={getNavLinkClass('/', true)}>
               Home
             </Link>
@@ -211,11 +215,14 @@ const Navbar = () => {
             <button
               type="button"
               onClick={toggleTheme}
-              className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#DDD5C8] bg-white text-[#192D2A] transition hover:border-[#C66B42] hover:text-[#C66B42] dark:border-white/10 dark:bg-[#1A2624] dark:text-[#F8F3EA]"
+              className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#DDD5C8] bg-white text-[#192D2A] transition hover:border-[#17745A] hover:text-[#17745A] dark:border-[#223832] dark:bg-[#13221E] dark:text-[#F8FAFC]"
               aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
             >
               {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
             </button>
+
+            {/* In-App Activity Notification Center */}
+            <NotificationCenter />
 
             {/* Wishlist Link */}
             <Link
@@ -333,89 +340,102 @@ const Navbar = () => {
                   </button>
 
                   {profileOpen && (
-                    <div className="absolute right-0 mt-2 w-56 overflow-hidden rounded-2xl border border-[#DDD5C8] bg-white p-2 shadow-xl z-50 dark:bg-[#192624] dark:border-white/10">
-                      <div className="border-b border-[#DDD5C8]/60 p-2.5 dark:border-white/10">
-                        <p className="text-xs font-bold text-[#192D2A] dark:text-[#F8F3EA]">{user.name}</p>
-                        <p className="truncate text-[11px] text-[#625F59] dark:text-[#F8F3EA]/60">{user.email}</p>
+                    <div className="absolute right-0 mt-2 w-60 overflow-hidden rounded-2xl border border-[#DDD5C8] bg-white p-2 shadow-xl z-50 dark:bg-[#13221E] dark:border-[#223832]">
+                      <div className="border-b border-[#DDD5C8]/60 p-2.5 dark:border-[#223832]">
+                        <p className="text-xs font-bold text-[#192D2A] dark:text-[#F8FAFC]">{user.name}</p>
+                        <p className="truncate text-[11px] text-[#625F59] dark:text-[#A7B3AF]">{user.email}</p>
                       </div>
 
                       <div className="py-1">
+                        <Link
+                          to="/profile"
+                          onClick={closeMenus}
+                          className="flex items-center gap-2 rounded-lg px-2.5 py-2 text-xs font-bold text-[#17745A] dark:text-[#10B981] hover:bg-[#F1E8D8]/50 dark:hover:bg-white/5 transition"
+                        >
+                          <User size={14} />
+                          <span>My Profile & Addresses</span>
+                        </Link>
+
                         {(user.isAdmin || user.role === 'admin') && (
                           <Link
                             to="/admin"
                             onClick={closeMenus}
-                            className="flex items-center gap-2 rounded-lg px-2.5 py-2 text-xs font-bold text-[#C66B42] dark:text-[#D9A441] hover:bg-[#F1E8D8]/50 transition"
+                            className="flex items-center gap-2 rounded-lg px-2.5 py-2 text-xs font-bold text-rose-600 dark:text-rose-400 hover:bg-[#F1E8D8]/50 dark:hover:bg-white/5 transition"
                           >
                             <ShieldCheck size={14} />
-                            <span>Super Admin Console</span>
+                            <span>Administrator Control Hub</span>
                           </Link>
                         )}
                         {user.role === 'kisan' && (
                           <Link
                             to="/partner/farmer"
                             onClick={closeMenus}
-                            className="flex items-center gap-2 rounded-lg px-2.5 py-2 text-xs font-bold text-emerald-600 hover:bg-[#F1E8D8]/50 transition"
+                            className="flex items-center gap-2 rounded-lg px-2.5 py-2 text-xs font-bold text-emerald-600 dark:text-emerald-400 hover:bg-[#F1E8D8]/50 dark:hover:bg-white/5 transition"
                           >
-                            <span>🌾 Kisan Producer Portal</span>
+                            <Sprout size={14} />
+                            <span>Farmer Produce Exchange</span>
                           </Link>
                         )}
                         {user.role === 'shopkeeper' && (
                           <Link
                             to="/partner/shop"
                             onClick={closeMenus}
-                            className="flex items-center gap-2 rounded-lg px-2.5 py-2 text-xs font-bold text-sky-600 hover:bg-[#F1E8D8]/50 transition"
+                            className="flex items-center gap-2 rounded-lg px-2.5 py-2 text-xs font-bold text-sky-600 dark:text-sky-400 hover:bg-[#F1E8D8]/50 dark:hover:bg-white/5 transition"
                           >
-                            <span>🏪 Kirana Partner Hub</span>
+                            <Store size={14} />
+                            <span>Merchant Storefront Hub</span>
                           </Link>
                         )}
                         {user.role === 'distributor' && (
                           <Link
                             to="/partner/distributor"
                             onClick={closeMenus}
-                            className="flex items-center gap-2 rounded-lg px-2.5 py-2 text-xs font-bold text-purple-600 hover:bg-[#F1E8D8]/50 transition"
+                            className="flex items-center gap-2 rounded-lg px-2.5 py-2 text-xs font-bold text-purple-600 dark:text-purple-400 hover:bg-[#F1E8D8]/50 dark:hover:bg-white/5 transition"
                           >
-                            <span>🚚 Branch Distributor Hub</span>
+                            <Truck size={14} />
+                            <span>Regional Distribution Hub</span>
                           </Link>
                         )}
                         {user.role === 'helper' && (
                           <Link
                             to="/partner/helper"
                             onClick={closeMenus}
-                            className="flex items-center gap-2 rounded-lg px-2.5 py-2 text-xs font-bold text-amber-600 hover:bg-[#F1E8D8]/50 transition"
+                            className="flex items-center gap-2 rounded-lg px-2.5 py-2 text-xs font-bold text-amber-600 dark:text-amber-400 hover:bg-[#F1E8D8]/50 dark:hover:bg-white/5 transition"
                           >
-                            <span>🛵 Helper Delivery Fleet</span>
+                            <Truck size={14} />
+                            <span>Doorstep Delivery Fleet</span>
                           </Link>
                         )}
                         <Link
                           to="/dashboard"
                           onClick={closeMenus}
-                          className="flex items-center gap-2 rounded-lg px-2.5 py-2 text-xs font-medium text-[#192D2A] hover:bg-[#F1E8D8]/50 transition dark:text-[#F8F3EA] dark:hover:bg-white/5"
+                          className="flex items-center gap-2 rounded-lg px-2.5 py-2 text-xs font-medium text-[#192D2A] hover:bg-[#F1E8D8]/50 transition dark:text-[#F8FAFC] dark:hover:bg-white/5"
                         >
-                          <LayoutDashboard size={14} className="text-[#C66B42]" />
+                          <LayoutDashboard size={14} className="text-[#17745A]" />
                           <span>Customer Dashboard</span>
                         </Link>
                         <Link
                           to="/orders"
                           onClick={closeMenus}
-                          className="flex items-center gap-2 rounded-lg px-2.5 py-2 text-xs font-medium text-[#192D2A] hover:bg-[#F1E8D8]/50 transition dark:text-[#F8F3EA] dark:hover:bg-white/5"
+                          className="flex items-center gap-2 rounded-lg px-2.5 py-2 text-xs font-medium text-[#192D2A] hover:bg-[#F1E8D8]/50 transition dark:text-[#F8FAFC] dark:hover:bg-white/5"
                         >
-                          <Package size={14} className="text-[#C66B42]" />
+                          <Package size={14} className="text-[#17745A]" />
                           <span>Orders & Invoices</span>
                         </Link>
                         <Link
                           to="/track"
                           onClick={closeMenus}
-                          className="flex items-center gap-2 rounded-lg px-2.5 py-2 text-xs font-medium text-[#192D2A] hover:bg-[#F1E8D8]/50 transition dark:text-[#F8F3EA] dark:hover:bg-white/5"
+                          className="flex items-center gap-2 rounded-lg px-2.5 py-2 text-xs font-medium text-[#192D2A] hover:bg-[#F1E8D8]/50 transition dark:text-[#F8FAFC] dark:hover:bg-white/5"
                         >
-                          <Truck size={14} className="text-[#C66B42]" />
+                          <Truck size={14} className="text-[#17745A]" />
                           <span>Live Delivery Tracking</span>
                         </Link>
                         <Link
                           to="/settings"
                           onClick={closeMenus}
-                          className="flex items-center gap-2 rounded-lg px-2.5 py-2 text-xs font-medium text-[#192D2A] hover:bg-[#F1E8D8]/50 transition dark:text-[#F8F3EA] dark:hover:bg-white/5"
+                          className="flex items-center gap-2 rounded-lg px-2.5 py-2 text-xs font-medium text-[#192D2A] hover:bg-[#F1E8D8]/50 transition dark:text-[#F8FAFC] dark:hover:bg-white/5"
                         >
-                          <Settings size={14} className="text-[#C66B42]" />
+                          <Settings size={14} className="text-[#17745A]" />
                           <span>Account Settings</span>
                         </Link>
                       </div>
