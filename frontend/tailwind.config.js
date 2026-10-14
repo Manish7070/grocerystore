@@ -31,6 +31,18 @@ export default {
         sandstone: '#DDD5C8',    // Sandstone border
         apricot: '#F1E8D8',      // Warm Oat highlight
         
+        // 4-Surface Hierarchy Dark Mode Tokens
+        deepForest: '#0B1714',     // Main page background / canvas (Level 1)
+        forestSection: '#10221B',  // Alternate section backgrounds (Level 2)
+        marketSurface: '#172C24',  // Product cards and content panels (Level 3)
+        raisedSurface: '#20392F',  // Hover cards, dropdowns, active panels (Level 4)
+        subtleBorder: '#30483C',   // Card borders and separators
+        freshMint: '#55D6A0',      // Primary CTA, selected states, links
+        mintDarkText: '#0B1714',   // Contrast text on Fresh Mint
+        warmIvory: '#F3F0E6',      // Headings and important text
+        sageText: '#B6C7BD',       // Descriptions and secondary text
+        harvestGold: '#E6BC70',    // Small premium highlights and offers
+
         // Brand tonal scale anchored to botanical emerald and deep forest
         brand: {
           50: '#F0F9F5',

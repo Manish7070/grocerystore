@@ -49,6 +49,13 @@ router.get('/nearby', asyncHandler(async (req, res) => {
       deliveryEstimate: '10 – 15 Mins',
       whatsappUrl: `https://wa.me/91${cleanPhone.slice(-10)}?text=${encodeURIComponent(`Namaste ${p.name}, I want to order grocery from GroceryStore.`)}`,
       callUrl: `tel:${rawPhone}`,
+      image: p.partnerProfile?.image || (isFarmer
+        ? 'https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=800&q=80'
+        : 'https://images.unsplash.com/photo-1578916171728-46686eac8d58?auto=format&fit=crop&w=800&q=80'),
+      badge: isFarmer ? 'Local Orchard' : 'Trusted Merchant',
+      customerCount: isFarmer ? '500+ Happy Customers' : '1K+ Orders Delivered',
+      categoryTag: isFarmer ? 'Direct Orchard' : 'Merchant Partner',
+      sourceTag: isFarmer ? '100% Fresh Locally Sourced' : 'Wide Variety Daily Essentials',
     };
   });
 

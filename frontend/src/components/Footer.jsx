@@ -40,20 +40,21 @@ const Footer = () => (
           </ul>
         </div>
 
-        {/* Customer Care */}
+        {/* Customer Care & Partner Network */}
         <div>
           <h4 className="font-serif text-sm font-semibold tracking-wide text-white mb-4">
-            Customer Care
+            Partner Network &amp; Care
           </h4>
           <ul className="space-y-2.5 text-xs text-[#E7E2D9]">
-            <li><Link to="/profile" className="hover:text-[#D9A441] transition font-semibold text-[#10B981]">My Profile & Addresses</Link></li>
-            <li><Link to="/partner/farmer" className="hover:text-[#D9A441] transition font-semibold text-[#34D399]">Farmer Produce Exchange</Link></li>
-            <li><Link to="/partner/shop" className="hover:text-[#D9A441] transition font-semibold text-[#38BDF8]">Merchant Storefront Hub</Link></li>
-            <li><Link to="/partner/distributor" className="hover:text-[#D9A441] transition font-semibold text-[#C084FC]">Regional Logistics Hub</Link></li>
-            <li><Link to="/track" className="hover:text-[#D9A441] transition">Track Doorstep Delivery</Link></li>
-            <li><Link to="/orders" className="hover:text-[#D9A441] transition">Order History & Invoices</Link></li>
-            <li><a href="mailto:care@grocerystore.in" className="hover:text-[#D9A441] transition">care@grocerystore.in</a></li>
-            <li><a href="tel:+919876543210" className="hover:text-[#D9A441] transition">+91 98765 43210 (8 AM – 9 PM)</a></li>
+            <li><Link to="/merchant/register" className="hover:text-[#F8D279] transition-colors font-semibold text-[#38BDF8]">Register as Merchant (Dukandar)</Link></li>
+            <li><Link to="/logistics/register" className="hover:text-[#F8D279] transition-colors font-semibold text-[#C084FC]">Register Logistics &amp; Store Hub</Link></li>
+            <li><Link to="/store-pos" className="hover:text-[#F8D279] transition-colors font-semibold text-[#34D399]">Walk-in Store POS Terminal</Link></li>
+            <li><Link to="/partner/shop" className="hover:text-[#F8D279] transition-colors">Merchant Storefront Hub</Link></li>
+            <li><Link to="/partner/distributor" className="hover:text-[#F8D279] transition-colors">Regional Logistics Hub</Link></li>
+            <li><Link to="/track" className="hover:text-[#F8D279] transition-colors">Track Doorstep Delivery</Link></li>
+            <li><Link to="/orders" className="hover:text-[#F8D279] transition-colors">Order History &amp; Invoices</Link></li>
+            <li><a href="mailto:care@grocerystore.in" className="hover:text-[#F8D279] transition-colors">care@grocerystore.in</a></li>
+            <li><a href="tel:+919876543210" className="hover:text-[#F8D279] transition-colors">+91 98765 43210 (8 AM – 9 PM)</a></li>
             <li><span className="text-xs text-[#E7E2D9]/70">Delivery Slots: 7:00 AM – 10:00 PM</span></li>
           </ul>
         </div>

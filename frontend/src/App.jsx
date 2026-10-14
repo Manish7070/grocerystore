@@ -30,6 +30,9 @@ import DistributorPortal from './pages/DistributorPortal';
 import Footer from './components/Footer';
 import Settings from './pages/Settings';
 import Watchlist from './pages/Watchlist';
+import MerchantRegister from './pages/MerchantRegister';
+import LogisticsRegister from './pages/LogisticsRegister';
+import StorePOS from './pages/StorePOS';
 import NotFound from './pages/NotFound';
 
 /**
@@ -78,6 +81,9 @@ function AppContent() {
           <Route path="/partner/shop" element={<ShopkeeperPortal />} />
           <Route path="/distributor" element={<DistributorPortal />} />
           <Route path="/partner/distributor" element={<DistributorPortal />} />
+          <Route path="/merchant/register" element={<MerchantRegister />} />
+          <Route path="/logistics/register" element={<LogisticsRegister />} />
+          <Route path="/store-pos" element={<StorePOS />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/settings" element={<Settings />} />

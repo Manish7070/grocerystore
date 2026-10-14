@@ -456,6 +456,75 @@ router.post('/:id/cancel', protect, async (req, res) => {
   res.json({ success: true, message: 'Order cancelled successfully and inventory restored.', order });
 });
 
+// POST /api/orders/pos-walkin - Physical Walk-in Store Sale Handover by Store Helper
+router.post('/pos-walkin', protect, async (req, res) => {
+  try {
+    const { items, customerName, customerPhone, paymentMethod, paymentRef, helperName, helperCode, storeName } = req.body;
+    
+    if (!items || !Array.isArray(items) || items.length === 0) {
+      return res.status(400).json({ message: 'No items in walk-in cart' });
+    }
+
+    const { orderItems, totalAmount } = await buildOrderDetails(items);
+    const orderNumber = `POS-${Date.now().toString().slice(-6)}`;
+    const deliveryOtp = generateOtp();
+
+    // Atomically decrement stock in MongoDB Atlas
+    if (mongoose.connection.readyState === 1) {
+      for (const item of orderItems) {
+        await Product.findByIdAndUpdate(item.productId, {
+          $inc: { stock: -item.quantity },
+        });
+      }
+    }
+
+    const order = await Order.create({
+      userId: req.user._id,
+      orderNumber,
+      items: orderItems,
+      subtotal: totalAmount,
+      totalAmount,
+      deliveryAddress: {
+        name: customerName || 'Walk-in Customer',
+        phone: customerPhone || '9999999999',
+        address: `Physical Counter Handover (${storeName || 'Main Store Branch'})`,
+        city: 'Local Store Hub',
+        pincode: '400703',
+      },
+      deliverySlot: 'Instant In-Store Counter Handover',
+      deliveryOtp,
+      paymentMethod: paymentMethod || 'cash',
+      paymentStatus: 'paid',
+      deliveryStatus: 'delivered', // Handover done immediately at counter
+      deliveredAt: new Date(),
+      statusTimeline: [
+        {
+          status: 'confirmed',
+          title: 'Counter Sale Initiated',
+          timestamp: new Date(),
+          note: `Staff: ${helperName || 'Store Helper'} (ID: ${helperCode || 'HLP-101'})`,
+        },
+        {
+          status: 'delivered',
+          title: 'Handover Completed',
+          timestamp: new Date(),
+          note: `Payment collected via ${(paymentMethod || 'cash').toUpperCase()}. Customer verified.`,
+        },
+      ],
+    });
+
+    return res.status(201).json({
+      success: true,
+      message: 'In-store sale completed and stock updated successfully',
+      orderNumber,
+      order,
+    });
+  } catch (error) {
+    console.error('POS walkin error:', error);
+    return res.status(500).json({ message: error.message || 'Failed to process in-store sale' });
+  }
+});
+
 router.get('/', protect, async (req, res, next) => {
   try {
     const orders = await Order.find({ userId: req.user._id }).sort({ createdAt: -1 });

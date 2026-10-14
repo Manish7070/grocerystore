@@ -101,50 +101,26 @@ const Shop = () => {
   return (
     <div className="min-h-screen bg-[#FDFBF7] dark:bg-[#0E1A18] pb-24 text-[#192D2A] dark:text-[#F8F3EA]">
       {/* Editorial Page Header with High-Contrast Curated Shelves Photography */}
-      <section className="relative overflow-hidden border-b border-[#DDD5C8]/80 bg-[#0F1E1B] text-white py-16 px-4 sm:px-6 lg:px-8 mb-8 shadow-inner">
+      <section className="relative overflow-hidden border-b border-[#DDD5C8]/80 bg-[#0F1E1B] text-white py-14 px-4 sm:px-6 lg:px-8 mb-8 shadow-inner">
         <div className="absolute inset-0">
           <img
             src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=1600&q=80"
             alt="Grocery catalog collection"
-            className="h-full w-full object-cover opacity-35"
+            className="h-full w-full object-cover opacity-45"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#0A1614]/95 via-[#0F231F]/90 to-[#0A1614]/95" />
-          <div className="absolute inset-0 bg-black/30" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#0A1614]/90 via-[#0F231F]/80 to-[#0A1614]/90" />
         </div>
 
-        <div className="relative z-10 max-w-4xl mx-auto text-center">
-          <span className="inline-block rounded-full bg-[#D9A441]/25 border border-[#D9A441]/40 px-3.5 py-1 text-[11px] font-extrabold uppercase tracking-widest text-[#F8D279] mb-3 shadow-sm">
-            The Grocery Catalog &bull; {selectedCategory}
+        <div className="relative z-10 max-w-3xl mx-auto text-center">
+          <span className="inline-block rounded-md bg-emerald-700/80 border border-emerald-500/40 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-emerald-100 mb-2.5 shadow-sm">
+            Catalog &bull; {selectedCategory}
           </span>
-          <h1 className="font-serif text-3xl sm:text-5xl lg:text-6xl text-white font-bold tracking-tight drop-shadow-md">
+          <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl text-white font-bold tracking-tight drop-shadow-sm">
             {selectedCategory === 'All' ? 'All Provisions & Pantry Staples' : selectedCategory}
           </h1>
-          <p className="mt-3.5 text-white/95 text-sm sm:text-lg max-w-2xl mx-auto font-sans leading-relaxed drop-shadow-sm font-medium">
-            Carefully curated daily staples, cold-pressed virgin oils, direct-harvest orchard produce, and artisan kitchen essentials.
+          <p className="mt-2.5 text-[#E2E8F0] text-sm sm:text-base max-w-xl mx-auto font-sans leading-relaxed font-normal">
+            Direct-harvest orchard produce, cold-pressed oils, and everyday fresh kitchen essentials.
           </p>
-
-          {/* Active Filter Chips in Banner */}
-          <div className="mt-6 flex flex-wrap justify-center items-center gap-2">
-            <span className="rounded-md bg-white/20 px-3 py-1 text-xs font-bold text-white backdrop-blur shadow-sm border border-white/20">
-              Showing {filteredProducts.length} items
-            </span>
-            {selectedCategory !== 'All' && (
-              <span className="inline-flex items-center gap-1 rounded-md border border-white/30 bg-white/20 px-3 py-1 text-xs font-bold text-white backdrop-blur shadow-sm">
-                {selectedCategory}
-                <button type="button" onClick={() => setCategoryFilter('All')} aria-label="Clear category filter">
-                  <X size={12} className="text-white hover:text-[#F8D279]" />
-                </button>
-              </span>
-            )}
-            {searchQuery && (
-              <span className="inline-flex items-center gap-1 rounded-md border border-white/30 bg-white/20 px-3 py-1 text-xs font-bold text-white backdrop-blur shadow-sm">
-                &ldquo;{searchQuery}&rdquo;
-                <button type="button" onClick={() => handleSearchChange('')} aria-label="Clear search">
-                  <X size={12} className="text-white hover:text-[#F8D279]" />
-                </button>
-              </span>
-            )}
-          </div>
         </div>
       </section>
 

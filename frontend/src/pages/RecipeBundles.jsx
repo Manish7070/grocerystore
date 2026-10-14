@@ -56,26 +56,26 @@ const RecipeBundles = () => {
   return (
     <div className="min-h-screen bg-[#FDFBF7] dark:bg-[#0E1A18] pb-24 text-[#192D2A] dark:text-[#F8F3EA]">
       {/* Editorial Header Banner with Visual Background Image */}
-      <section className="relative overflow-hidden border-b border-[#DDD5C8]/80 bg-[#192D2A] text-white py-16 px-4 sm:px-6 lg:px-8">
+      <section className="relative overflow-hidden border-b border-[#DDD5C8]/80 bg-[#142621] text-white py-14 px-4 sm:px-6 lg:px-8">
         <div className="absolute inset-0">
           <img
             src="https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&w=1600&q=80"
             alt="Culinary kitchen prep"
-            className="h-full w-full object-cover opacity-25 mix-blend-luminosity"
+            className="h-full w-full object-cover opacity-45"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#192D2A] via-[#192D2A]/90 to-[#192D2A]/70" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#0F1E1A]/90 via-[#142621]/80 to-[#0F1E1A]/90" />
         </div>
 
-        <div className="relative z-10 max-w-4xl mx-auto text-center">
-          <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 border border-white/20 rounded-full text-xs font-semibold text-[#D9A441] uppercase tracking-wider mb-4 backdrop-blur-sm">
-            <ChefHat size={14} />
-            <span>Culinary Discovery Studio</span>
+        <div className="relative z-10 max-w-3xl mx-auto text-center">
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 bg-emerald-700/80 border border-emerald-500/40 rounded-md text-[10px] font-bold text-emerald-100 uppercase tracking-wider mb-2.5 shadow-sm">
+            <ChefHat size={12} className="text-emerald-300" />
+            <span>Culinary Studio</span>
           </div>
-          <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl text-white font-semibold tracking-tight">
-            One-Click Recipe Kits
+          <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl text-white font-bold tracking-tight">
+            1-Click Recipe Cook Kits
           </h1>
-          <p className="mt-4 text-[#F4EFE6] text-base sm:text-lg max-w-2xl mx-auto font-sans leading-relaxed">
-            Eliminate meal-planning friction. Every ingredient measured in pristine condition, sourced straight from our cold-chain market and bundled into your cart in a single click.
+          <p className="mt-2.5 text-[#E2E8F0] text-sm sm:text-base max-w-xl mx-auto font-sans leading-relaxed font-normal">
+            Cook authentic recipes with proportional, fresh ingredients bundled into your cart in one click.
           </p>
         </div>
       </section>

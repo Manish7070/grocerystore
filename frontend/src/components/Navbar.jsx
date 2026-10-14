@@ -18,6 +18,7 @@ import {
   Sprout,
   ShieldCheck,
   X,
+  LogIn,
 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
@@ -109,13 +110,13 @@ const Navbar = () => {
 
     return `relative whitespace-nowrap px-3.5 py-2 text-[14px] font-semibold tracking-[-0.01em] transition-all duration-200 ${
       isActive
-        ? 'text-[#C66B42] font-bold after:absolute after:bottom-0 after:left-3.5 after:right-3.5 after:h-[2.5px] after:bg-[#C66B42] after:rounded-full dark:text-[#D9A441] dark:after:bg-[#D9A441]'
-        : 'text-[#192D2A] hover:text-[#C66B42] dark:text-[#F8FAFC]/90 dark:hover:text-[#F8FAFC]'
+        ? 'text-[#17745A] font-bold after:absolute after:bottom-0 after:left-3.5 after:right-3.5 after:h-[2.5px] after:bg-[#17745A] after:rounded-full dark:text-[#55D6A0] dark:after:bg-[#55D6A0]'
+        : 'text-[#192D2A] hover:text-[#17745A] dark:text-[#B6C7BD] dark:hover:text-[#F3F0E6]'
     }`;
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-[#FDFBF7]/95 dark:bg-[#0B1311]/95 border-b border-[#DDD5C8]/80 dark:border-[#223832] shadow-[0_2px_12px_rgba(25,45,42,0.04)] backdrop-blur-md transition-colors">
+    <header className="sticky top-0 z-50 bg-[#FDFBF7]/95 dark:bg-[#0B1714]/95 border-b border-[#DDD5C8]/80 dark:border-[#30483C] shadow-[0_2px_12px_rgba(25,45,42,0.04)] backdrop-blur-md transition-colors">
       <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8">
         <div className="flex h-20 items-center justify-between gap-3 lg:gap-6">
           
@@ -458,9 +459,10 @@ const Navbar = () => {
                   <Link
                     to="/signin"
                     onClick={closeMenus}
-                    className="flex h-10 items-center justify-center rounded-xl bg-[#192D2A] px-3.5 sm:px-4 text-xs font-bold text-white hover:bg-[#253D39] transition shadow-sm dark:bg-[#C66B42] dark:hover:bg-[#B05932]"
+                    className="btn-motion inline-flex h-10 items-center justify-center gap-1.5 rounded-xl bg-[#17745A] px-4 text-xs font-bold text-white shadow-sm hover:bg-[#135E49] active:scale-95 transition-all duration-300 dark:bg-[#55D6A0] dark:text-[#0B1714] dark:hover:bg-[#42C48E] dark:hover:shadow-[0_4px_16px_rgba(85,214,160,0.3)]"
                   >
-                    Sign In
+                    <LogIn size={14} />
+                    <span>Sign In</span>
                   </Link>
                 </div>
               )}
@@ -498,6 +500,18 @@ const Navbar = () => {
             <Link to="/smart-savings" onClick={closeMenus} className="rounded-xl px-4 py-2.5 text-sm font-semibold text-[#192D2A] hover:bg-[#F1E8D8] dark:text-[#F8F3EA] dark:hover:bg-white/5">
               Smart Savings
             </Link>
+            {!user && (
+              <div className="pt-3 mt-2 border-t border-[#DDD5C8]/80 dark:border-white/10">
+                <Link
+                  to="/signin"
+                  onClick={closeMenus}
+                  className="flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-emerald-700 to-[#103D33] py-3 text-sm font-bold text-white shadow-sm"
+                >
+                  <LogIn size={16} />
+                  <span>Sign In / Register</span>
+                </Link>
+              </div>
+            )}
           </nav>
         </div>
       )}

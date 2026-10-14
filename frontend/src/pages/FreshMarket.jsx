@@ -38,26 +38,26 @@ const FreshMarket = () => {
   return (
     <div className="min-h-screen bg-[#FDFBF7] dark:bg-[#0E1A18] pb-24 text-[#192D2A] dark:text-[#F8F3EA]">
       {/* Editorial Page Header with Fresh Farm Produce Background */}
-      <section className="relative overflow-hidden border-b border-[#DDD5C8]/80 bg-[#192D2A] text-white py-16 px-4 sm:px-6 lg:px-8">
+      <section className="relative overflow-hidden border-b border-[#DDD5C8]/80 bg-[#142621] text-white py-14 px-4 sm:px-6 lg:px-8">
         <div className="absolute inset-0">
           <img
             src="https://images.unsplash.com/photo-1610832958506-aa56368176cf?auto=format&fit=crop&w=1600&q=80"
             alt="Farm fresh market produce"
-            className="h-full w-full object-cover opacity-30 mix-blend-luminosity"
+            className="h-full w-full object-cover opacity-45"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#192D2A] via-[#192D2A]/85 to-[#192D2A]/60" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#0F1E1A]/90 via-[#142621]/80 to-[#0F1E1A]/90" />
         </div>
 
-        <div className="relative z-10 max-w-4xl mx-auto text-center">
-          <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 border border-white/20 rounded-full text-xs font-semibold text-[#D9A441] uppercase tracking-wider mb-4 backdrop-blur-sm">
-            <Leaf size={14} />
+        <div className="relative z-10 max-w-3xl mx-auto text-center">
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 bg-emerald-700/80 border border-emerald-500/40 rounded-md text-[10px] font-bold text-emerald-100 uppercase tracking-wider mb-2.5 shadow-sm">
+            <Leaf size={12} className="text-emerald-300" />
             <span>Farm-to-Door Transparency</span>
           </div>
-          <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl text-white font-semibold tracking-tight">
+          <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl text-white font-bold tracking-tight">
             The Fresh Market
           </h1>
-          <p className="mt-4 text-[#F4EFE6] text-base sm:text-lg max-w-2xl mx-auto font-sans leading-relaxed">
-            Directly sourced daily harvests from verified partner orchards in Himachal, Pune, and Nashik. Evaluated at sunrise and delivered within 2 hours under uninterrupted cold-chain preservation.
+          <p className="mt-2.5 text-[#E2E8F0] text-sm sm:text-base max-w-xl mx-auto font-sans leading-relaxed font-normal">
+            Direct daily harvests from verified partner orchards, delivered with cold-chain freshness.
           </p>
         </div>
       </section>

@@ -28,24 +28,51 @@ html {
   box-sizing: inherit;
 }
 
+:root {
+  --page-bg: #FDFBF7;
+  --section-bg: #F7F4EE;
+  --surface-card: #FFFFFF;
+  --surface-raised: #FAF7F0;
+  --border-subtle: #DDD5C8;
+  --text-primary: #192D2A;
+  --text-secondary: #625F59;
+  --brand-primary: #17745A;
+  --brand-text: #FFFFFF;
+  --accent-gold: #D9A441;
+}
+
+html.dark {
+  color-scheme: dark;
+  --page-bg: #0B1714;
+  --section-bg: #10221B;
+  --surface-card: #172C24;
+  --surface-raised: #20392F;
+  --border-subtle: #30483C;
+  --text-primary: #F3F0E6;
+  --text-secondary: #B6C7BD;
+  --brand-primary: #55D6A0;
+  --brand-text: #0B1714;
+  --accent-gold: #E6BC70;
+}
+
 body {
   margin: 0;
   min-width: 320px;
-  background-color: #FDFBF7;
-  color: #192D2A;
+  background-color: var(--page-bg);
+  color: var(--text-primary);
   font-family: 'Manrope', system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 html.dark body {
-  background-color: #0D1412;
-  color: #F8FAFC;
+  background-color: #0B1714;
+  color: #F3F0E6;
 }
 
-html.dark ::-webkit-scrollbar-track { background: #0D1412; }
-html.dark ::-webkit-scrollbar-thumb { background: #1E2D29; }
-html.dark ::-webkit-scrollbar-thumb:hover { background: #10B981; }
+html.dark ::-webkit-scrollbar-track { background: #0B1714; }
+html.dark ::-webkit-scrollbar-thumb { background: #172C24; }
+html.dark ::-webkit-scrollbar-thumb:hover { background: #55D6A0; }
 
 ::selection {
   background: #17745A;
@@ -74,18 +101,32 @@ html.dark .editorial-border {
     @apply w-full rounded-xl border border-[#DDD5C8] bg-[#FDFBF7] py-2.5 px-3.5 text-sm text-[#192D2A] outline-none transition-all duration-200 placeholder:text-[#625F59]/70 focus:border-[#17745A] focus:ring-2 focus:ring-[#17745A]/25 dark:border-[#2A443E] dark:bg-[#162723] dark:text-[#F8FAFC] dark:placeholder:text-[#9FB1AC]/60 dark:focus:border-[#10B981] dark:focus:ring-[#10B981]/25;
   }
 
-  /* Global Button System */
+  /* Global Button System with Motion */
   .btn-primary {
-    @apply bg-[#17745A] text-white hover:bg-[#135E49] active:scale-[0.99] transition-all duration-200 font-semibold shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#17745A]/40;
+    @apply bg-[#17745A] text-white hover:bg-[#135E49] active:scale-[0.98] transition-all duration-300 font-semibold shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#17745A]/40 dark:bg-[#55D6A0] dark:text-[#0B1714] dark:hover:bg-[#42C48E] dark:hover:shadow-[0_4px_20px_rgba(85,214,160,0.25)];
   }
   .btn-secondary {
-    @apply bg-surface border border-sandstoneBorder text-forest hover:bg-oat active:scale-[0.99] transition-all duration-200 font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-forest/20 dark:bg-[#13221E] dark:border-[#223832] dark:text-[#F8FAFC] dark:hover:bg-[#1A2E28];
+    @apply bg-surface border border-sandstoneBorder text-forest hover:bg-oat active:scale-[0.98] transition-all duration-300 font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-forest/20 dark:bg-transparent dark:border-[#30483C] dark:text-[#F3F0E6] dark:hover:bg-[#172C24] dark:hover:border-[#55D6A0]/50;
   }
   .btn-dark {
-    @apply bg-forest text-surface hover:bg-charcoal active:scale-[0.99] transition-all duration-200 font-semibold shadow-sm dark:bg-[#17745A] dark:hover:bg-[#135E49];
+    @apply bg-forest text-surface hover:bg-charcoal active:scale-[0.98] transition-all duration-300 font-semibold shadow-sm dark:bg-[#55D6A0] dark:text-[#0B1714] dark:hover:bg-[#42C48E];
   }
   .card-luxury {
-    @apply bg-surface border border-sandstoneBorder shadow-subtle hover:shadow-card transition-all duration-300 dark:bg-[#13221E] dark:border-[#223832];
+    @apply bg-surface border border-sandstoneBorder shadow-subtle hover:shadow-card transition-all duration-300 dark:bg-[#172C24] dark:border-[#30483C] dark:hover:bg-[#20392F];
+  }
+
+  /* Interactive Button Motion Classes */
+  .btn-motion {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .btn-motion:hover {
+    transform: translateY(-2px);
+  }
+  .btn-motion:active {
+    transform: translateY(0);
+    scale: 0.98;
   }
 }
 

@@ -45,7 +45,7 @@ const seedPartners = async () => {
         isBlocked: false,
         partnerProfile: {
           businessName: 'Ramesh Organic Orchards',
-          villageOrArea: 'Rampur Panchayat (Ward 3)',
+          villageOrArea: 'Rampur Panchayat Hub (Ward 3)',
           isVerified: true,
           walletBalance: 0,
           todayPriceUpdated: true,
@@ -57,7 +57,7 @@ const seedPartners = async () => {
     );
     console.log('✓ Kisan account ready: ramesh.kisan@grocerystore.in (Password: Kisan@123)');
 
-    // 3. Shopkeeper / Dukan Partner
+    // 3. Shopkeeper / Dukan Partner (Ward 3)
     const shopPassword = await bcrypt.hash('Dukan@123', salt);
     const shopkeeper = await User.findOneAndUpdate(
       { email: 'gupta.kirana@grocerystore.in' },
@@ -82,6 +82,32 @@ const seedPartners = async () => {
       { upsert: true, new: true, setDefaultsOnInsert: true }
     );
     console.log('✓ Shopkeeper account ready: gupta.kirana@grocerystore.in (Password: Dukan@123)');
+
+    // 3b. Shopkeeper / Dukan Partner (Station Road)
+    const stationShopPassword = await bcrypt.hash('Station@123', salt);
+    await User.findOneAndUpdate(
+      { email: 'verma.station@grocerystore.in' },
+      {
+        name: 'Rajesh Verma (Dukandar)',
+        email: 'verma.station@grocerystore.in',
+        password: stationShopPassword,
+        role: 'shopkeeper',
+        phone: '9844455566',
+        isBlocked: false,
+        partnerProfile: {
+          businessName: 'Verma Daily Needs & Dairy',
+          villageOrArea: 'Station Road Area (400m)',
+          isVerified: true,
+          walletBalance: 420,
+          todayPriceUpdated: true,
+          dailySalesTotal: 310,
+          rating: 4.9,
+          ratingCount: 88,
+        },
+      },
+      { upsert: true, new: true, setDefaultsOnInsert: true }
+    );
+    console.log('✓ Station Road Shopkeeper account ready: verma.station@grocerystore.in (Password: Station@123)');
 
     // 4. Branch Distributor
     const branchPassword = await bcrypt.hash('Branch@123', salt);

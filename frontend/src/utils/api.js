@@ -32,6 +32,8 @@ export const authAPI = {
   profile: () => api.get('/auth/profile'),
   signup: (data) => api.post('/auth/signup', data),
   signin: (data) => api.post('/auth/signin', data),
+  createHelper: (data) => api.post('/auth/create-helper', data),
+  getHelpers: () => api.get('/auth/helpers'),
 };
 
 export const productsAPI = {
@@ -47,6 +49,7 @@ export const ordersAPI = {
   getPaymentConfig: () => api.get('/orders/config'),
   createOrder: (data) => api.post('/orders', data),
   createCodOrder: (data) => api.post('/orders/cod', data),
+  createPosOrder: (data) => api.post('/orders/pos-walkin', data),
   verifyPayment: (id, data) => api.post(`/orders/${id}/verify`, data),
   syncPayment: (id) => api.post(`/orders/${id}/sync`),
   getOrders: () => api.get('/orders'),

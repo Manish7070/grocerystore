@@ -59,11 +59,17 @@ router.post('/signup', async (req, res) => {
     const user = await User.create({
       name,
       email,
+      phone: textValue(req.body.phone || partnerData.phone),
       password: hashedPassword,
       role,
       partnerProfile: {
         businessName: textValue(partnerData.businessName || name),
-        villageOrArea: textValue(partnerData.villageOrArea),
+        villageOrArea: textValue(partnerData.villageOrArea || partnerData.serviceArea),
+        serviceType: textValue(partnerData.serviceType),
+        serviceArea: textValue(partnerData.serviceArea || partnerData.villageOrArea),
+        storeType: textValue(partnerData.storeType),
+        fleetCount: Number(partnerData.fleetCount) || 1,
+        helperCode: textValue(partnerData.helperCode),
         upiId: textValue(partnerData.upiId),
         walletBalance: 0,
         isVerified: false, // Admin can verify partners
@@ -78,6 +84,57 @@ router.post('/signup', async (req, res) => {
     }
     console.error('Signup error:', error);
     return res.status(500).json({ message: 'Unable to create account' });
+  }
+});
+
+// Create Store Helper Staff ID (Admin or Store Manager / Partner)
+router.post('/create-helper', protect, async (req, res) => {
+  try {
+    const { name, phone, email, password, helperCode, storeLocation } = req.body;
+    if (!name || !email || !password) {
+      return res.status(400).json({ message: 'Helper name, email and password are required' });
+    }
+
+    const emailClean = textValue(email).toLowerCase();
+    const existing = await User.findOne({ email: emailClean });
+    if (existing) {
+      return res.status(400).json({ message: 'A helper with this email already exists' });
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    const helper = await User.create({
+      name: textValue(name),
+      email: emailClean,
+      phone: textValue(phone),
+      password: hashedPassword,
+      role: 'helper',
+      partnerProfile: {
+        businessName: `Store Helper (${textValue(name)})`,
+        villageOrArea: textValue(storeLocation || 'Main Store Branch'),
+        helperCode: textValue(helperCode || `HLP-${Math.floor(1000 + Math.random() * 9000)}`),
+        isVerified: true,
+      },
+    });
+
+    return res.status(201).json({
+      message: 'Store helper ID created successfully',
+      helper: formatUser(helper),
+    });
+  } catch (err) {
+    console.error('Create helper error:', err);
+    return res.status(500).json({ message: 'Failed to create helper ID' });
+  }
+});
+
+// List Store Helpers for store manager / admin
+router.get('/helpers', protect, async (req, res) => {
+  try {
+    const helpers = await User.find({ role: 'helper' }).select('-password').sort({ createdAt: -1 });
+    return res.json(helpers.map((h) => formatUser(h)));
+  } catch (err) {
+    return res.status(500).json({ message: 'Failed to fetch store helpers' });
   }
 });
 

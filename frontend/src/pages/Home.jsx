@@ -137,81 +137,81 @@ const Home = () => {
     .slice(0, 12);
 
   return (
-    <div className="min-h-screen bg-[#FDFBF7] text-[#192D2A] dark:bg-[#0E1A18] dark:text-[#F8F3EA]">
+    <div className="min-h-screen bg-[#FDFBF7] text-[#192D2A] dark:bg-[#0B1714] dark:text-[#F3F0E6] transition-colors duration-300">
       {/* =========================================================================
-          SECTION 01 — CINEMATIC EDITORIAL HERO (Deep Forest Canvas #192D2A)
+          SECTION 01 — CINEMATIC EDITORIAL HERO (Deep Forest Canvas #0B1714)
           ========================================================================= */}
-      <section className="relative overflow-hidden bg-[#192D2A] text-white px-4 py-16 sm:px-6 sm:py-20 lg:py-24">
-        {/* Subtle decorative glow */}
-        <div className="pointer-events-none absolute -top-40 -left-40 h-96 w-96 rounded-full bg-[#254641] opacity-50 blur-3xl" />
-        <div className="pointer-events-none absolute -bottom-40 -right-40 h-96 w-96 rounded-full bg-[#2B403B] opacity-50 blur-3xl" />
+      <section className="relative overflow-hidden bg-[#192D2A] text-white px-4 py-16 sm:px-6 sm:py-20 lg:py-24 dark:bg-[#0B1714] border-b border-transparent dark:border-[#30483C]/60">
+        {/* Subtle curated glow behind food photography */}
+        <div className="pointer-events-none absolute -top-40 -left-40 h-96 w-96 rounded-full bg-[#17745A]/20 dark:bg-[#55D6A0]/10 opacity-60 blur-3xl" />
+        <div className="pointer-events-none absolute top-1/2 -right-32 h-96 w-96 rounded-full bg-[#D9A441]/15 dark:bg-[#E6BC70]/10 opacity-50 blur-3xl" />
 
         <div className="mx-auto max-w-7xl relative z-10">
           <div className="grid items-center gap-12 lg:grid-cols-[1.15fr_0.85fr] lg:gap-16">
             {/* Left Narrative */}
             <div className="max-w-2xl">
-              <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-normal tracking-tight text-white leading-[1.12]">
+              <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-normal tracking-tight text-white dark:text-[#F3F0E6] leading-[1.12]">
                 Good food.<br />
-                <span className="italic font-normal text-[#D9A441]">Beautifully</span> everyday.
+                <span className="italic font-normal text-[#D9A441] dark:text-[#E6BC70]">Beautifully</span> everyday.
               </h1>
 
-              <p className="mt-6 text-base sm:text-lg font-normal leading-relaxed text-[#F4EFE6] max-w-xl">
+              <p className="mt-6 text-base sm:text-lg font-normal leading-relaxed text-[#F4EFE6] dark:text-[#B6C7BD] max-w-xl">
                 Carefully selected farm produce, pantry essentials, and artisanal ingredients — delivered directly to your doorstep with uncompromising cold-chain freshness.
               </p>
 
               <div className="mt-8 flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
                 <Link
                   to="/shop"
-                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#17745A] px-8 py-3.5 text-sm font-semibold tracking-wide text-white shadow-md transition-all duration-200 hover:bg-[#135E49] active:scale-[0.99]"
+                  className="btn-motion inline-flex items-center justify-center gap-2 rounded-xl bg-[#17745A] px-8 py-3.5 text-sm font-bold tracking-wide text-white shadow-md transition-all duration-300 hover:bg-[#135E49] hover:-translate-y-0.5 active:scale-[0.98] dark:bg-[#55D6A0] dark:text-[#0B1714] dark:hover:bg-[#42C48E] dark:hover:shadow-[0_8px_25px_rgba(85,214,160,0.35)]"
                 >
-                  Explore The Market
+                  <span>Explore The Market</span>
                   <ArrowRight size={16} />
                 </Link>
                 <Link
                   to="/bundles"
-                  className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/30 bg-white/10 px-8 py-3.5 text-sm font-semibold tracking-wide text-white transition-all duration-200 hover:bg-white/20 active:scale-[0.99] backdrop-blur-sm"
+                  className="btn-motion inline-flex items-center justify-center gap-2 rounded-xl border border-white/30 bg-white/10 px-8 py-3.5 text-sm font-semibold tracking-wide text-white transition-all duration-300 hover:bg-white/20 hover:-translate-y-0.5 active:scale-[0.98] backdrop-blur-sm dark:border-[#30483C] dark:bg-transparent dark:text-[#F3F0E6] dark:hover:bg-[#172C24] dark:hover:border-[#55D6A0]/50"
                 >
                   Shop Recipe Kits
                 </Link>
               </div>
 
               {/* Editorial Trust Accents */}
-              <div className="mt-12 grid grid-cols-3 gap-6 border-t border-white/15 pt-8">
+              <div className="mt-12 grid grid-cols-3 gap-6 border-t border-white/15 dark:border-[#30483C] pt-8">
                 <div>
-                  <p className="font-serif text-2xl sm:text-3xl font-bold text-white">40+</p>
-                  <p className="mt-1 text-xs sm:text-sm font-medium text-[#E7E2D9]/85">Partner Orchards</p>
+                  <p className="font-serif text-2xl sm:text-3xl font-bold text-white dark:text-[#F3F0E6]">40+</p>
+                  <p className="mt-1 text-xs sm:text-sm font-medium text-[#E7E2D9]/85 dark:text-[#B6C7BD]">Partner Orchards</p>
                 </div>
                 <div>
-                  <p className="font-serif text-2xl sm:text-3xl font-bold text-[#D9A441]">Zero</p>
-                  <p className="mt-1 text-xs sm:text-sm font-medium text-[#E7E2D9]/85">Synthetic Preservatives</p>
+                  <p className="font-serif text-2xl sm:text-3xl font-bold text-[#D9A441] dark:text-[#E6BC70]">Zero</p>
+                  <p className="mt-1 text-xs sm:text-sm font-medium text-[#E7E2D9]/85 dark:text-[#B6C7BD]">Synthetic Preservatives</p>
                 </div>
                 <div>
-                  <p className="font-serif text-2xl sm:text-3xl font-bold text-white">2 Hr</p>
-                  <p className="mt-1 text-xs sm:text-sm font-medium text-[#E7E2D9]/85">Direct Cold-Chain</p>
+                  <p className="font-serif text-2xl sm:text-3xl font-bold text-white dark:text-[#F3F0E6]">2 Hr</p>
+                  <p className="mt-1 text-xs sm:text-sm font-medium text-[#E7E2D9]/85 dark:text-[#B6C7BD]">Direct Cold-Chain</p>
                 </div>
               </div>
             </div>
 
             {/* Right Fresh Produce Photography */}
             <div className="relative">
-              <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl border border-white/20 shadow-2xl">
+              <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl border border-white/20 dark:border-[#30483C] shadow-2xl">
                 <img
                   src="https://images.unsplash.com/photo-1610348725531-843dff563e2c?auto=format&fit=crop&w=1200&q=85"
                   alt="Vibrant sunlit organic produce, farm vegetables and artisanal bread"
                   className="h-full w-full object-cover transition-transform duration-700 hover:scale-105"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#192D2A]/70 via-transparent to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#192D2A]/70 dark:from-[#0B1714]/80 via-transparent to-transparent" />
               </div>
 
               {/* Floating Provenance Badge */}
-              <div className="absolute -bottom-4 -left-4 hidden rounded-xl border border-white/25 bg-[#192D2A]/95 p-4 shadow-xl backdrop-blur-md sm:block">
+              <div className="absolute -bottom-4 -left-4 hidden rounded-xl border border-white/25 bg-[#192D2A]/95 dark:bg-[#172C24]/95 dark:border-[#30483C] p-4 shadow-xl backdrop-blur-md sm:block">
                 <div className="flex items-center gap-3">
-                  <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#17745A]/30 text-[#D9A441]">
+                  <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#17745A]/30 dark:bg-[#55D6A0]/20 text-[#D9A441] dark:text-[#55D6A0]">
                     <Leaf size={20} />
                   </span>
                   <div>
-                    <p className="text-xs font-bold text-white">Daily Harvest Intake</p>
-                    <p className="text-[11px] text-[#E7E2D9]/80">Evaluated at sunrise &bull; Grade A+</p>
+                    <p className="text-xs font-bold text-white dark:text-[#F3F0E6]">Daily Harvest Intake</p>
+                    <p className="text-[11px] text-[#E7E2D9]/80 dark:text-[#B6C7BD]">Evaluated at sunrise &bull; Grade A+</p>
                   </div>
                 </div>
               </div>
@@ -221,58 +221,58 @@ const Home = () => {
       </section>
 
       {/* =========================================================================
-          SECTION 02 — THREE CORE HIGHLIGHTS (Redesigned with Hover Motion & High Contrast)
+          SECTION 02 — THREE CORE HIGHLIGHTS (Surface 3: Market Surface #172C24)
           ========================================================================= */}
-      <section className="border-b border-[#DDD5C8]/80 bg-[#F7F4EE] px-4 py-14 sm:px-6 lg:py-18 dark:bg-[#0B1311] dark:border-[#223832]">
+      <section className="border-b border-[#DDD5C8]/80 bg-[#F7F4EE] px-4 py-14 sm:px-6 lg:py-18 dark:bg-[#10221B] dark:border-[#30483C]">
         <div className="mx-auto max-w-7xl">
           <div className="grid gap-8 md:grid-cols-3">
             {/* 01 Source */}
-            <div className="group relative rounded-3xl border border-[#DDD5C8] bg-white p-7 sm:p-9 shadow-sm transition-all duration-300 hover:shadow-xl hover:-translate-y-2 hover:border-[#17745A] dark:bg-[#13221E] dark:border-[#223832] dark:hover:border-[#10B981] overflow-hidden">
-              <div className="pointer-events-none absolute -top-12 -right-12 h-32 w-32 rounded-full bg-emerald-500/10 blur-2xl group-hover:bg-emerald-500/20 transition-all duration-500" />
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#17745A]/10 text-[#17745A] dark:bg-[#10B981]/15 dark:text-[#10B981] mb-6 shadow-xs group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
+            <div className="group relative rounded-3xl border border-[#DDD5C8] bg-white p-7 sm:p-9 shadow-sm transition-all duration-300 hover:shadow-xl hover:-translate-y-2 hover:border-[#17745A] dark:bg-[#172C24] dark:border-[#30483C] dark:hover:bg-[#20392F] dark:hover:border-[#55D6A0]/60 overflow-hidden">
+              <div className="pointer-events-none absolute -top-12 -right-12 h-32 w-32 rounded-full bg-emerald-500/10 dark:bg-[#55D6A0]/10 blur-2xl group-hover:bg-emerald-500/20 transition-all duration-500" />
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#17745A]/10 text-[#17745A] dark:bg-[#20392F] dark:text-[#55D6A0] mb-6 shadow-xs group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
                 <Leaf size={26} />
               </div>
-              <span className="text-xs font-bold uppercase tracking-widest text-[#17745A] dark:text-[#10B981] group-hover:underline">
+              <span className="text-xs font-bold uppercase tracking-widest text-[#17745A] dark:text-[#55D6A0] group-hover:underline">
                 01 &bull; Verified Source
               </span>
-              <h3 className="font-serif text-2xl font-bold text-[#192D2A] mt-2 mb-3 dark:text-[#F8FAFC]">
+              <h3 className="font-serif text-2xl font-bold text-[#192D2A] mt-2 mb-3 dark:text-[#F3F0E6]">
                 Carefully Selected
               </h3>
-              <p className="text-sm sm:text-base leading-relaxed text-[#625F59] dark:text-[#A7B3AF]">
+              <p className="text-sm sm:text-base leading-relaxed text-[#625F59] dark:text-[#B6C7BD]">
                 Every batch of produce is evaluated at sunrise. We partner directly with verified independent farmers and artisan millers, cutting out multi-tier wholesale depots.
               </p>
             </div>
 
             {/* 02 Delivery */}
-            <div className="group relative rounded-3xl border border-[#DDD5C8] bg-white p-7 sm:p-9 shadow-sm transition-all duration-300 hover:shadow-xl hover:-translate-y-2 hover:border-[#17745A] dark:bg-[#13221E] dark:border-[#223832] dark:hover:border-[#10B981] overflow-hidden">
-              <div className="pointer-events-none absolute -top-12 -right-12 h-32 w-32 rounded-full bg-emerald-500/10 blur-2xl group-hover:bg-emerald-500/20 transition-all duration-500" />
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#17745A]/10 text-[#17745A] dark:bg-[#10B981]/15 dark:text-[#10B981] mb-6 shadow-xs group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
+            <div className="group relative rounded-3xl border border-[#DDD5C8] bg-white p-7 sm:p-9 shadow-sm transition-all duration-300 hover:shadow-xl hover:-translate-y-2 hover:border-[#17745A] dark:bg-[#172C24] dark:border-[#30483C] dark:hover:bg-[#20392F] dark:hover:border-[#55D6A0]/60 overflow-hidden">
+              <div className="pointer-events-none absolute -top-12 -right-12 h-32 w-32 rounded-full bg-emerald-500/10 dark:bg-[#55D6A0]/10 blur-2xl group-hover:bg-emerald-500/20 transition-all duration-500" />
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#17745A]/10 text-[#17745A] dark:bg-[#20392F] dark:text-[#55D6A0] mb-6 shadow-xs group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
                 <ShieldCheck size={26} />
               </div>
-              <span className="text-xs font-bold uppercase tracking-widest text-[#17745A] dark:text-[#10B981] group-hover:underline">
+              <span className="text-xs font-bold uppercase tracking-widest text-[#17745A] dark:text-[#55D6A0] group-hover:underline">
                 02 &bull; Cold-Chain Care
               </span>
-              <h3 className="font-serif text-2xl font-bold text-[#192D2A] mt-2 mb-3 dark:text-[#F8FAFC]">
+              <h3 className="font-serif text-2xl font-bold text-[#192D2A] mt-2 mb-3 dark:text-[#F3F0E6]">
                 Delivered with Care
               </h3>
-              <p className="text-sm sm:text-base leading-relaxed text-[#625F59] dark:text-[#A7B3AF]">
+              <p className="text-sm sm:text-base leading-relaxed text-[#625F59] dark:text-[#B6C7BD]">
                 Packed in breathable, temperature-sealed crates. Handed over with a unique 4-digit security PIN for verified doorstep assurance.
               </p>
             </div>
 
             {/* 03 Value */}
-            <div className="group relative rounded-3xl border border-[#DDD5C8] bg-white p-7 sm:p-9 shadow-sm transition-all duration-300 hover:shadow-xl hover:-translate-y-2 hover:border-[#17745A] dark:bg-[#13221E] dark:border-[#223832] dark:hover:border-[#10B981] overflow-hidden">
-              <div className="pointer-events-none absolute -top-12 -right-12 h-32 w-32 rounded-full bg-emerald-500/10 blur-2xl group-hover:bg-emerald-500/20 transition-all duration-500" />
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#17745A]/10 text-[#17745A] dark:bg-[#10B981]/15 dark:text-[#10B981] mb-6 shadow-xs group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
+            <div className="group relative rounded-3xl border border-[#DDD5C8] bg-white p-7 sm:p-9 shadow-sm transition-all duration-300 hover:shadow-xl hover:-translate-y-2 hover:border-[#17745A] dark:bg-[#172C24] dark:border-[#30483C] dark:hover:bg-[#20392F] dark:hover:border-[#55D6A0]/60 overflow-hidden">
+              <div className="pointer-events-none absolute -top-12 -right-12 h-32 w-32 rounded-full bg-emerald-500/10 dark:bg-[#55D6A0]/10 blur-2xl group-hover:bg-emerald-500/20 transition-all duration-500" />
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#17745A]/10 text-[#17745A] dark:bg-[#20392F] dark:text-[#55D6A0] mb-6 shadow-xs group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
                 <TrendingDown size={26} />
               </div>
-              <span className="text-xs font-bold uppercase tracking-widest text-[#17745A] dark:text-[#10B981] group-hover:underline">
+              <span className="text-xs font-bold uppercase tracking-widest text-[#17745A] dark:text-[#55D6A0] group-hover:underline">
                 03 &bull; Honest Economics
               </span>
-              <h3 className="font-serif text-2xl font-bold text-[#192D2A] mt-2 mb-3 dark:text-[#F8FAFC]">
+              <h3 className="font-serif text-2xl font-bold text-[#192D2A] mt-2 mb-3 dark:text-[#F3F0E6]">
                 Everyday Value
               </h3>
-              <p className="text-sm sm:text-base leading-relaxed text-[#625F59] dark:text-[#A7B3AF]">
+              <p className="text-sm sm:text-base leading-relaxed text-[#625F59] dark:text-[#B6C7BD]">
                 Fair farmgate pricing paired with our zero-waste radar. Rescued near-expiry produce receives smart discounts, making mindful cooking accessible and sustainable.
               </p>
             </div>
@@ -288,20 +288,20 @@ const Home = () => {
       </section>
 
       {/* =========================================================================
-          SECTION 03 — CURATED MARKET CATEGORIES
+          SECTION 03 — CURATED MARKET CATEGORIES (Deep Forest #0B1714 Canvas)
           ========================================================================= */}
-      <section className="border-b border-[#DDD5C8]/80 px-4 py-12 sm:px-6 lg:py-16 bg-[#FDFBF7] dark:bg-[#0E1A18] dark:border-white/10">
+      <section className="border-b border-[#DDD5C8]/80 px-4 py-12 sm:px-6 lg:py-16 bg-[#FDFBF7] dark:bg-[#0B1714] dark:border-[#30483C]">
         <div className="mx-auto max-w-7xl">
           <div className="mb-8 flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
             <div>
-              <p className="text-xs font-bold uppercase tracking-widest text-[#17745A] dark:text-[#D9A441]">The Aisles</p>
-              <h2 className="mt-1 font-serif text-3xl font-semibold text-[#192D2A] dark:text-white">
+              <p className="text-xs font-bold uppercase tracking-widest text-[#17745A] dark:text-[#55D6A0]">The Aisles</p>
+              <h2 className="mt-1 font-serif text-3xl font-semibold text-[#192D2A] dark:text-[#F3F0E6]">
                 Curated Market Departments
               </h2>
             </div>
             <Link
               to="/shop"
-              className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#17745A] hover:underline dark:text-[#D9A441]"
+              className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#17745A] hover:underline dark:text-[#55D6A0]"
             >
               Browse All Aisles →
             </Link>
@@ -312,7 +312,7 @@ const Home = () => {
               <Link
                 key={cat.name}
                 to={`/shop?category=${encodeURIComponent(cat.slug)}`}
-                className="group relative flex flex-col overflow-hidden rounded-2xl border border-[#DDD5C8] bg-white shadow-sm transition-all duration-300 hover:shadow-card hover:-translate-y-1 dark:bg-[#162522] dark:border-white/10"
+                className="group relative flex flex-col overflow-hidden rounded-2xl border border-[#DDD5C8] bg-white shadow-sm transition-all duration-300 hover:shadow-card hover:-translate-y-1 dark:bg-[#172C24] dark:border-[#30483C] dark:hover:bg-[#20392F] dark:hover:border-[#55D6A0]/50"
               >
                 <div className="relative aspect-[16/10] overflow-hidden bg-sandstone/20">
                   <img
@@ -320,16 +320,16 @@ const Home = () => {
                     alt={cat.name}
                     className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#192D2A]/80 via-transparent to-transparent" />
-                  <span className="absolute bottom-3 left-4 rounded-md bg-white/90 backdrop-blur-sm px-2.5 py-1 text-[11px] font-bold text-[#192D2A]">
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#192D2A]/80 dark:from-[#0B1714]/80 via-transparent to-transparent" />
+                  <span className="absolute bottom-3 left-4 rounded-md bg-white/90 dark:bg-[#20392F]/90 dark:border dark:border-[#30483C] backdrop-blur-sm px-2.5 py-1 text-[11px] font-bold text-[#192D2A] dark:text-[#F3F0E6]">
                     {cat.count}
                   </span>
                 </div>
                 <div className="p-5">
-                  <h3 className="font-serif text-lg font-bold text-[#192D2A] transition-colors group-hover:text-[#17745A] dark:text-white dark:group-hover:text-[#D9A441]">
+                  <h3 className="font-serif text-lg font-bold text-[#192D2A] transition-colors group-hover:text-[#17745A] dark:text-[#F3F0E6] dark:group-hover:text-[#55D6A0]">
                     {cat.name}
                   </h3>
-                  <p className="mt-1 text-xs text-[#55524E] leading-relaxed dark:text-[#E7E2D9]/75">
+                  <p className="mt-1 text-xs text-[#55524E] leading-relaxed dark:text-[#B6C7BD]">
                     {cat.tagline}
                   </p>
                 </div>
@@ -340,14 +340,14 @@ const Home = () => {
       </section>
 
       {/* =========================================================================
-          SECTION 04 — THIS WEEK'S MARKET EDIT (Products Grid)
+          SECTION 04 — THIS WEEK'S MARKET EDIT (Forest Section #10221B)
           ========================================================================= */}
-      <section className="border-b border-[#DDD5C8]/80 px-4 py-12 sm:px-6 lg:py-16 bg-[#F7F4EE] dark:bg-[#132220] dark:border-white/10">
+      <section className="border-b border-[#DDD5C8]/80 px-4 py-12 sm:px-6 lg:py-16 bg-[#F7F4EE] dark:bg-[#10221B] dark:border-[#30483C]">
         <div className="mx-auto max-w-7xl">
           <div className="mb-8 flex flex-col justify-between gap-4 md:flex-row md:items-end">
             <div>
-              <p className="text-xs font-bold uppercase tracking-widest text-[#17745A] dark:text-[#D9A441]">The Edit</p>
-              <h2 className="mt-1 font-serif text-3xl font-semibold text-[#192D2A] dark:text-white">
+              <p className="text-xs font-bold uppercase tracking-widest text-[#17745A] dark:text-[#55D6A0]">The Edit</p>
+              <h2 className="mt-1 font-serif text-3xl font-semibold text-[#192D2A] dark:text-[#F3F0E6]">
                 This Week's Market Provisions
               </h2>
             </div>
@@ -360,8 +360,8 @@ const Home = () => {
                   onClick={() => setActiveCategoryFilter(cat)}
                   className={`rounded-xl px-3.5 py-1.5 text-xs font-semibold transition ${
                     activeCategoryFilter === cat
-                      ? 'bg-[#17745A] text-white shadow-sm dark:bg-[#10B981] dark:text-[#062117]'
-                      : 'border border-[#DDD5C8] bg-white text-[#55524E] hover:border-[#17745A] dark:bg-[#1A2826] dark:text-[#E7E2D9] dark:border-white/10'
+                      ? 'bg-[#17745A] text-white shadow-sm dark:bg-[#55D6A0] dark:text-[#0B1714] dark:font-bold'
+                      : 'border border-[#DDD5C8] bg-white text-[#55524E] hover:border-[#17745A] dark:bg-[#172C24] dark:text-[#B6C7BD] dark:border-[#30483C] dark:hover:border-[#55D6A0]/50'
                   }`}
                 >
                   {cat}
@@ -374,7 +374,7 @@ const Home = () => {
           {loading ? (
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
               {[1, 2, 3, 4, 5, 6, 7, 8].map((n) => (
-                <div key={n} className="h-80 rounded-2xl bg-white border border-[#DDD5C8] animate-pulse dark:bg-[#1A2826]" />
+                <div key={n} className="h-80 rounded-2xl bg-white border border-[#DDD5C8] animate-pulse dark:bg-[#172C24] dark:border-[#30483C]" />
               ))}
             </div>
           ) : (
@@ -388,9 +388,9 @@ const Home = () => {
           <div className="mt-10 text-center">
             <Link
               to="/shop"
-              className="inline-flex items-center gap-2 rounded-xl bg-[#192D2A] px-8 py-3 text-xs font-bold uppercase tracking-wider text-white transition hover:bg-[#253D39] dark:bg-[#17745A] dark:hover:bg-[#135E49]"
+              className="btn-motion inline-flex items-center gap-2 rounded-xl bg-[#192D2A] px-8 py-3 text-xs font-bold uppercase tracking-wider text-white transition hover:bg-[#253D39] dark:bg-[#55D6A0] dark:text-[#0B1714] dark:hover:bg-[#42C48E] dark:hover:shadow-[0_4px_20px_rgba(85,214,160,0.3)]"
             >
-              View Complete 240+ Item Catalog
+              <span>Explore Complete Fresh Catalog</span>
               <ArrowRight size={15} />
             </Link>
           </div>
@@ -398,43 +398,55 @@ const Home = () => {
       </section>
 
       {/* =========================================================================
-          SECTION 05 — SOURCING STORY (High-Contrast Editorial Storytelling)
+          SECTION 05 — SOURCING STORY (Deep Forest #0B1714)
           ========================================================================= */}
-      <section id="story" className="border-b border-white/10 bg-[#192D2A] text-white px-4 py-16 sm:px-6 lg:py-20">
-        <div className="mx-auto max-w-7xl">
+      <section id="story" className="relative overflow-hidden border-b border-[#DDD5C8]/80 dark:border-[#30483C] bg-[#0E1A17] dark:bg-[#0B1714] text-white px-4 py-16 sm:px-6 lg:py-20 shadow-inner">
+        {/* Background Image Layer */}
+        <div className="absolute inset-0 pointer-events-none">
+          <img
+            src="https://images.unsplash.com/photo-1500937386664-56d1dfef3854?auto=format&fit=crop&w=1600&q=80"
+            alt="Farm landscape background"
+            className="h-full w-full object-cover opacity-25"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#0B1714]/95 via-[#0B1714]/90 to-[#0B1714]/95" />
+        </div>
+
+        <div className="relative z-10 mx-auto max-w-7xl">
           <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
-            <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl border border-white/15 shadow-2xl">
+            <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl border border-white/20 dark:border-[#30483C] shadow-2xl">
               <img
-                src="https://images.unsplash.com/photo-1500937386664-56d1dfef3854?auto=format&fit=crop&w=1000&q=80"
-                alt="Early morning agricultural harvest in valley orchard"
+                src="https://images.unsplash.com/photo-1595974482597-4b8da8879bc5?auto=format&fit=crop&w=1000&q=80"
+                alt="Farmer harvesting fresh organic produce"
                 className="h-full w-full object-cover"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#192D2A]/60 via-transparent to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
             </div>
 
             <div className="space-y-5">
-              <span className="text-xs font-bold uppercase tracking-widest text-[#D9A441]">Our Sourcing Story</span>
-              <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-normal leading-tight text-white">
+              <span className="inline-block rounded-md bg-emerald-700/80 border border-emerald-500/40 dark:bg-[#172C24] dark:border-[#30483C] px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-emerald-200 dark:text-[#55D6A0] shadow-sm">
+                Our Sourcing Story
+              </span>
+              <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight text-white dark:text-[#F3F0E6]">
                 The everyday shop,<br />thoughtfully done.
               </h2>
-              <p className="text-sm sm:text-base font-normal leading-relaxed text-[#F4EFE6]">
+              <p className="text-sm sm:text-base font-normal leading-relaxed text-[#F4EFE6] dark:text-[#B6C7BD]">
                 Most modern groceries travel through multiple holding warehouses, enduring gas-ripening and weeks of chemical preservation before reaching your shelf.
               </p>
-              <p className="text-sm sm:text-base font-normal leading-relaxed text-[#F4EFE6]">
-                GroceryStore was built on a different covenant: we work directly with independent orchards in Himachal, organic vegetable growers in Pune and Nashik, and traditional cold-press millers. When produce is ordered, it is dispatched from fresh daily intakes, not stale freezer stacks.
+              <p className="text-sm sm:text-base font-normal leading-relaxed text-[#F4EFE6] dark:text-[#B6C7BD]">
+                TaazaDaily was built on a different covenant: we work directly with independent orchards in Himachal, organic vegetable growers in Pune and Nashik, and traditional cold-press millers. When produce is ordered, it is dispatched from fresh daily intakes, not stale freezer stacks.
               </p>
 
               {/* High-visibility statistics cards */}
               <div className="pt-4 grid grid-cols-2 gap-4">
-                <div className="rounded-xl border border-white/20 bg-white/10 p-4 backdrop-blur-sm">
-                  <p className="font-serif text-3xl sm:text-4xl font-bold text-[#D9A441]">100%</p>
-                  <p className="mt-1 text-xs sm:text-sm font-semibold text-white">Traceable Provenance</p>
-                  <p className="text-[11px] text-[#E7E2D9]/75 mt-0.5">Direct farmer relationships</p>
+                <div className="rounded-xl border border-white/20 dark:border-[#30483C] bg-white/10 dark:bg-[#172C24]/80 p-4 backdrop-blur-sm">
+                  <p className="font-serif text-3xl sm:text-4xl font-bold text-[#D9A441] dark:text-[#E6BC70]">100%</p>
+                  <p className="mt-1 text-xs sm:text-sm font-semibold text-white dark:text-[#F3F0E6]">Traceable Provenance</p>
+                  <p className="text-[11px] text-[#E7E2D9]/75 dark:text-[#B6C7BD] mt-0.5">Direct farmer relationships</p>
                 </div>
-                <div className="rounded-xl border border-white/20 bg-white/10 p-4 backdrop-blur-sm">
-                  <p className="font-serif text-3xl sm:text-4xl font-bold text-[#D9A441]">Zero</p>
-                  <p className="mt-1 text-xs sm:text-sm font-semibold text-white">Synthetic Preservatives</p>
-                  <p className="text-[11px] text-[#E7E2D9]/75 mt-0.5">No artificial ripening gases</p>
+                <div className="rounded-xl border border-white/20 dark:border-[#30483C] bg-white/10 dark:bg-[#172C24]/80 p-4 backdrop-blur-sm">
+                  <p className="font-serif text-3xl sm:text-4xl font-bold text-[#D9A441] dark:text-[#E6BC70]">Zero</p>
+                  <p className="mt-1 text-xs sm:text-sm font-semibold text-white dark:text-[#F3F0E6]">Synthetic Preservatives</p>
+                  <p className="text-[11px] text-[#E7E2D9]/75 dark:text-[#B6C7BD] mt-0.5">No artificial ripening gases</p>
                 </div>
               </div>
             </div>
@@ -443,20 +455,20 @@ const Home = () => {
       </section>
 
       {/* =========================================================================
-          SECTION 06 — 1-CLICK RECIPE COOK KITS PREVIEW
+          SECTION 06 — 1-CLICK RECIPE COOK KITS PREVIEW (Forest Section #10221B)
           ========================================================================= */}
-      <section className="border-b border-[#DDD5C8]/80 px-4 py-12 sm:px-6 lg:py-16 bg-[#FDFBF7] dark:bg-[#0E1A18] dark:border-white/10">
+      <section className="border-b border-[#DDD5C8]/80 px-4 py-12 sm:px-6 lg:py-16 bg-[#FDFBF7] dark:bg-[#10221B] dark:border-[#30483C]">
         <div className="mx-auto max-w-7xl">
           <div className="mb-8 flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
             <div>
-              <p className="text-xs font-bold uppercase tracking-widest text-[#17745A] dark:text-[#D9A441]">Culinary Studio</p>
-              <h2 className="mt-1 font-serif text-3xl font-semibold text-[#192D2A] dark:text-white">
+              <p className="text-xs font-bold uppercase tracking-widest text-[#17745A] dark:text-[#55D6A0]">Culinary Studio</p>
+              <h2 className="mt-1 font-serif text-3xl font-semibold text-[#192D2A] dark:text-[#F3F0E6]">
                 1-Click Recipe Cook Kits
               </h2>
             </div>
             <Link
               to="/bundles"
-              className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#17745A] hover:underline dark:text-[#D9A441]"
+              className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#17745A] hover:underline dark:text-[#55D6A0]"
             >
               Explore All Recipe Kits →
             </Link>
@@ -466,7 +478,7 @@ const Home = () => {
             {recipeKitsPreview.map((kit) => (
               <div
                 key={kit.title}
-                className="group flex flex-col overflow-hidden rounded-2xl border border-[#DDD5C8] bg-white shadow-sm transition-all duration-300 hover:shadow-card hover:-translate-y-1 dark:bg-[#162522] dark:border-white/10"
+                className="group flex flex-col overflow-hidden rounded-2xl border border-[#DDD5C8] bg-white shadow-sm transition-all duration-300 hover:shadow-card hover:-translate-y-1 dark:bg-[#172C24] dark:border-[#30483C] dark:hover:bg-[#20392F]"
               >
                 <div className="relative aspect-[16/10] overflow-hidden bg-sandstone/20">
                   <img
@@ -475,34 +487,34 @@ const Home = () => {
                     className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                   />
                   <div className="absolute top-3 left-3 flex gap-2">
-                    <span className="rounded-md bg-white/95 backdrop-blur px-2.5 py-1 text-[11px] font-semibold text-[#192D2A] flex items-center gap-1 shadow-sm">
-                      <Clock size={12} className="text-[#17745A]" />
+                    <span className="rounded-md bg-white/95 dark:bg-[#172C24]/90 dark:border dark:border-[#30483C] backdrop-blur px-2.5 py-1 text-[11px] font-semibold text-[#192D2A] dark:text-[#F3F0E6] flex items-center gap-1 shadow-sm">
+                      <Clock size={12} className="text-[#17745A] dark:text-[#55D6A0]" />
                       {kit.prepTime}
                     </span>
-                    <span className="rounded-md bg-white/95 backdrop-blur px-2.5 py-1 text-[11px] font-semibold text-[#192D2A] shadow-sm">
+                    <span className="rounded-md bg-white/95 dark:bg-[#172C24]/90 dark:border dark:border-[#30483C] backdrop-blur px-2.5 py-1 text-[11px] font-semibold text-[#192D2A] dark:text-[#F3F0E6] shadow-sm">
                       {kit.servings}
                     </span>
                   </div>
                 </div>
 
                 <div className="flex flex-1 flex-col p-5">
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-[#17745A] dark:text-[#D9A441]">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-[#17745A] dark:text-[#55D6A0]">
                     {kit.tag}
                   </span>
-                  <h3 className="font-serif text-lg font-semibold text-[#192D2A] mt-1 dark:text-white">
+                  <h3 className="font-serif text-lg font-semibold text-[#192D2A] mt-1 dark:text-[#F3F0E6]">
                     {kit.title}
                   </h3>
-                  <p className="mt-2 text-xs sm:text-sm text-[#55524E] leading-relaxed dark:text-[#E7E2D9]/80">
+                  <p className="mt-2 text-xs sm:text-sm text-[#55524E] leading-relaxed dark:text-[#B6C7BD]">
                     {kit.desc}
                   </p>
 
-                  <div className="mt-auto pt-4 flex items-center justify-between border-t border-[#DDD5C8]/60 dark:border-white/10">
-                    <span className="font-serif text-lg font-bold text-[#192D2A] dark:text-white">
+                  <div className="mt-auto pt-4 flex items-center justify-between border-t border-[#DDD5C8]/60 dark:border-[#30483C]">
+                    <span className="font-serif text-lg font-bold text-[#192D2A] dark:text-[#F3F0E6]">
                       ₹{kit.price}
                     </span>
                     <Link
                       to="/bundles"
-                      className="rounded-xl bg-[#192D2A] px-4 py-2 text-xs font-semibold text-white hover:bg-[#253D39] transition dark:bg-[#17745A] dark:hover:bg-[#135E49]"
+                      className="btn-motion rounded-xl bg-[#192D2A] px-4 py-2 text-xs font-semibold text-white hover:bg-[#253D39] transition dark:bg-[#55D6A0] dark:text-[#0B1714] dark:hover:bg-[#42C48E]"
                     >
                       View Recipe Kit
                     </Link>
@@ -515,28 +527,28 @@ const Home = () => {
       </section>
 
       {/* =========================================================================
-          SECTION 07 — SMART SAVINGS & FRESHNESS RADAR PREVIEW (Clear, High Value)
+          SECTION 07 — SMART SAVINGS & FRESHNESS RADAR (Deep Forest #0B1714)
           ========================================================================= */}
-      <section className="border-b border-[#DDD5C8]/80 px-4 py-12 sm:px-6 lg:py-16 bg-[#F7F4EE] dark:bg-[#132220] dark:border-white/10">
+      <section className="border-b border-[#DDD5C8]/80 px-4 py-12 sm:px-6 lg:py-16 bg-[#F7F4EE] dark:bg-[#0B1714] dark:border-[#30483C]">
         <div className="mx-auto max-w-7xl">
-          <div className="rounded-2xl border border-[#DDD5C8] bg-white p-6 sm:p-10 shadow-sm dark:bg-[#1A2826] dark:border-white/10">
+          <div className="rounded-2xl border border-[#DDD5C8] bg-white p-6 sm:p-10 shadow-sm dark:bg-[#172C24] dark:border-[#30483C]">
             <div className="grid gap-8 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
               <div>
-                <span className="text-xs font-bold uppercase tracking-widest text-[#17745A] dark:text-[#D9A441]">
-                  Responsible Sourcing
+                <span className="inline-block rounded-md bg-emerald-100 dark:bg-[#20392F] dark:border dark:border-[#30483C] px-2.5 py-0.5 text-xs font-bold text-emerald-800 dark:text-[#55D6A0] mb-2">
+                  Zero Food Waste Mission
                 </span>
-                <h2 className="mt-2 font-serif text-2xl sm:text-3xl lg:text-4xl font-semibold text-[#192D2A] dark:text-white">
+                <h2 className="mt-1 font-serif text-2xl sm:text-3xl lg:text-4xl font-semibold text-[#192D2A] dark:text-[#F3F0E6]">
                   Less Waste. More Everyday Value.
                 </h2>
-                <p className="mt-3 text-sm sm:text-base leading-relaxed text-[#55524E] max-w-xl dark:text-[#E7E2D9]/85">
-                  Every grocery store deals with near-expiry stock. Instead of quietly dumping nutritious produce, our automated Freshness Radar applies transparent 15% to 40% markdowns on eligible batches. You save money, and food is saved from landfills.
+                <p className="mt-3 text-sm sm:text-base leading-relaxed text-[#55524E] max-w-xl dark:text-[#B6C7BD]">
+                  Instead of letting fresh produce spoil in warehouses, our automated Freshness Radar marks down near-expiry batches by 15%–40%. You save money, and nutritious food is rescued from going to waste.
                 </p>
                 <div className="mt-6 flex flex-wrap items-center gap-4">
                   <Link
                     to="/smart-savings"
-                    className="inline-flex items-center gap-2 rounded-xl bg-[#17745A] px-7 py-3 text-xs font-bold uppercase tracking-wider text-white hover:bg-[#135E49] transition shadow-sm"
+                    className="btn-motion inline-flex items-center gap-2 rounded-xl bg-[#17745A] px-7 py-3 text-xs font-bold uppercase tracking-wider text-white hover:bg-[#135E49] transition shadow-sm dark:bg-[#55D6A0] dark:text-[#0B1714] dark:hover:bg-[#42C48E]"
                   >
-                    Explore Smart Savings
+                    <span>Explore Smart Savings</span>
                     <ArrowRight size={15} />
                   </Link>
                 </div>
@@ -544,15 +556,15 @@ const Home = () => {
 
               {/* Visual Value Cards */}
               <div className="grid grid-cols-2 gap-4">
-                <div className="rounded-2xl border border-[#DDD5C8] bg-[#FDFBF7] p-5 text-center dark:bg-[#132220] dark:border-white/10">
-                  <p className="font-serif text-3xl font-bold text-[#17745A] dark:text-[#D9A441]">15–40%</p>
-                  <p className="mt-1 text-xs sm:text-sm font-semibold text-[#192D2A] dark:text-white">Smart Markdowns</p>
-                  <p className="mt-1 text-[11px] text-[#55524E] dark:text-[#E7E2D9]/70">Automated FEFO discounts</p>
+                <div className="rounded-2xl border border-[#DDD5C8] bg-[#FDFBF7] p-5 text-center dark:bg-[#20392F] dark:border-[#30483C]">
+                  <p className="font-serif text-3xl font-bold text-[#17745A] dark:text-[#E6BC70]">15–40%</p>
+                  <p className="mt-1 text-xs sm:text-sm font-semibold text-[#192D2A] dark:text-[#F3F0E6]">Smart Markdowns</p>
+                  <p className="mt-1 text-[11px] text-[#55524E] dark:text-[#B6C7BD]">Automated FEFO discounts</p>
                 </div>
-                <div className="rounded-2xl border border-[#DDD5C8] bg-[#FDFBF7] p-5 text-center dark:bg-[#132220] dark:border-white/10">
-                  <p className="font-serif text-3xl font-bold text-[#17745A] dark:text-[#D9A441]">100%</p>
-                  <p className="mt-1 text-xs sm:text-sm font-semibold text-[#192D2A] dark:text-white">Safe & Inspected</p>
-                  <p className="mt-1 text-[11px] text-[#55524E] dark:text-[#E7E2D9]/70">Strict quality-checked</p>
+                <div className="rounded-2xl border border-[#DDD5C8] bg-[#FDFBF7] p-5 text-center dark:bg-[#20392F] dark:border-[#30483C]">
+                  <p className="font-serif text-3xl font-bold text-[#17745A] dark:text-[#E6BC70]">100%</p>
+                  <p className="mt-1 text-xs sm:text-sm font-semibold text-[#192D2A] dark:text-[#F3F0E6]">Safe & Inspected</p>
+                  <p className="mt-1 text-[11px] text-[#55524E] dark:text-[#B6C7BD]">Strict quality-checked</p>
                 </div>
               </div>
             </div>
@@ -561,47 +573,47 @@ const Home = () => {
       </section>
 
       {/* =========================================================================
-          SECTION 08 — DELIVERY BENEFITS & TRUST (Four Distinct Prominent Cards)
+          SECTION 08 — DELIVERY BENEFITS & TRUST (Forest Section #10221B)
           ========================================================================= */}
-      <section className="border-b border-[#DDD5C8]/80 bg-[#192D2A] text-white px-4 py-14 sm:px-6">
+      <section className="border-b border-[#DDD5C8]/80 bg-[#FAF7F2] dark:bg-[#10221B] dark:border-[#30483C] px-4 py-14 sm:px-6">
         <div className="mx-auto max-w-7xl">
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            <div className="rounded-2xl border border-white/15 bg-white/10 p-5 backdrop-blur-sm">
-              <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/15 text-[#D9A441] mb-4">
+            <div className="rounded-2xl border border-[#E2DBD0] bg-white p-6 shadow-sm transition hover:shadow-md dark:border-[#30483C] dark:bg-[#172C24] dark:hover:bg-[#20392F]">
+              <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700 dark:bg-[#20392F] dark:text-[#55D6A0] mb-4 shadow-xs">
                 <Truck size={22} />
               </span>
-              <h4 className="text-base font-bold text-white">Controlled Dispatch</h4>
-              <p className="mt-1.5 text-xs sm:text-sm text-[#F4EFE6]/85 leading-relaxed">
+              <h4 className="text-base font-bold text-[#192D2A] dark:text-[#F3F0E6]">Controlled Dispatch</h4>
+              <p className="mt-1.5 text-xs sm:text-sm text-[#666056] dark:text-[#B6C7BD] leading-relaxed">
                 Delivered within 2 hours or in your chosen delivery slot.
               </p>
             </div>
 
-            <div className="rounded-2xl border border-white/15 bg-white/10 p-5 backdrop-blur-sm">
-              <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/15 text-[#D9A441] mb-4">
+            <div className="rounded-2xl border border-[#E2DBD0] bg-white p-6 shadow-sm transition hover:shadow-md dark:border-[#30483C] dark:bg-[#172C24] dark:hover:bg-[#20392F]">
+              <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-amber-50 text-amber-700 dark:bg-[#20392F] dark:text-[#E6BC70] mb-4 shadow-xs">
                 <Lock size={22} />
               </span>
-              <h4 className="text-base font-bold text-white">Doorstep Security PIN</h4>
-              <p className="mt-1.5 text-xs sm:text-sm text-[#F4EFE6]/85 leading-relaxed">
+              <h4 className="text-base font-bold text-[#192D2A] dark:text-[#F3F0E6]">Doorstep Security PIN</h4>
+              <p className="mt-1.5 text-xs sm:text-sm text-[#666056] dark:text-[#B6C7BD] leading-relaxed">
                 Every delivery requires a 4-digit customer handover OTP.
               </p>
             </div>
 
-            <div className="rounded-2xl border border-white/15 bg-white/10 p-5 backdrop-blur-sm">
-              <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/15 text-[#D9A441] mb-4">
+            <div className="rounded-2xl border border-[#E2DBD0] bg-white p-6 shadow-sm transition hover:shadow-md dark:border-[#30483C] dark:bg-[#172C24] dark:hover:bg-[#20392F]">
+              <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-sky-50 text-sky-700 dark:bg-[#20392F] dark:text-[#55D6A0] mb-4 shadow-xs">
                 <RotateCcw size={22} />
               </span>
-              <h4 className="text-base font-bold text-white">Quality Guarantee</h4>
-              <p className="mt-1.5 text-xs sm:text-sm text-[#F4EFE6]/85 leading-relaxed">
+              <h4 className="text-base font-bold text-[#192D2A] dark:text-[#F3F0E6]">Quality Guarantee</h4>
+              <p className="mt-1.5 text-xs sm:text-sm text-[#666056] dark:text-[#B6C7BD] leading-relaxed">
                 Instant refund or replacement if produce is imperfect.
               </p>
             </div>
 
-            <div className="rounded-2xl border border-white/15 bg-white/10 p-5 backdrop-blur-sm">
-              <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/15 text-[#D9A441] mb-4">
+            <div className="rounded-2xl border border-[#E2DBD0] bg-white p-6 shadow-sm transition hover:shadow-md dark:border-[#30483C] dark:bg-[#172C24] dark:hover:bg-[#20392F]">
+              <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-teal-50 text-teal-700 dark:bg-[#20392F] dark:text-[#55D6A0] mb-4 shadow-xs">
                 <Package size={22} />
               </span>
-              <h4 className="text-base font-bold text-white">Zero Plastic Liners</h4>
-              <p className="mt-1.5 text-xs sm:text-sm text-[#F4EFE6]/85 leading-relaxed">
+              <h4 className="text-base font-bold text-[#192D2A] dark:text-[#F3F0E6]">Zero Plastic Liners</h4>
+              <p className="mt-1.5 text-xs sm:text-sm text-[#666056] dark:text-[#B6C7BD] leading-relaxed">
                 Packed in breathable, biodegradable compostable paper.
               </p>
             </div>

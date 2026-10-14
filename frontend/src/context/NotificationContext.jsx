@@ -81,6 +81,18 @@ export const NotificationProvider = ({ children }) => {
     });
   };
 
+  const deleteNotification = (id) => {
+    const key = getStorageKey();
+    setNotifications((prev) => {
+      const next = prev.filter((n) => n.id !== id);
+      try {
+        localStorage.setItem(key, JSON.stringify(next));
+      } catch {}
+      setUnreadCount(next.filter((n) => !n.read).length);
+      return next;
+    });
+  };
+
   const markAllAsRead = () => {
     const key = getStorageKey();
     setNotifications((prev) => {
@@ -110,6 +122,7 @@ export const NotificationProvider = ({ children }) => {
         addNotification,
         markAsRead,
         markAllAsRead,
+        deleteNotification,
         clearAll,
       }}
     >
@@ -127,6 +140,7 @@ export const useNotifications = () => {
       addNotification: () => {},
       markAsRead: () => {},
       markAllAsRead: () => {},
+      deleteNotification: () => {},
       clearAll: () => {},
     };
   }
