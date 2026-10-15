@@ -212,24 +212,26 @@ const Navbar = () => {
               )}
             </div>
 
-            {/* Theme Toggle (Sun/Moon) */}
+            {/* Theme Toggle (Sun/Moon) - Shown in desktop header, and in mobile drawer */}
             <button
               type="button"
               onClick={toggleTheme}
-              className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-xl border border-[#DDD5C8] bg-white text-[#192D2A] transition hover:border-[#17745A] hover:text-[#17745A] dark:border-[#223832] dark:bg-[#13221E] dark:text-[#F8FAFC]"
+              className="hidden sm:flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-xl border border-[#DDD5C8] bg-white text-[#192D2A] transition hover:border-[#17745A] hover:text-[#17745A] dark:border-[#223832] dark:bg-[#13221E] dark:text-[#F8FAFC]"
               aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
             >
               {theme === 'dark' ? <Sun size={15} /> : <Moon size={15} />}
             </button>
 
-            {/* In-App Activity Notification Center */}
-            <NotificationCenter />
+            {/* In-App Activity Notification Center - Desktop header */}
+            <div className="hidden sm:block">
+              <NotificationCenter />
+            </div>
 
-            {/* Wishlist Link - visible on min-400px, accessible via mobile drawer for smaller screens */}
+            {/* Wishlist Link - Desktop header, accessible via mobile drawer for smaller screens */}
             <Link
               to="/watchlist"
               onClick={closeMenus}
-              className="relative hidden min-[440px]:flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-xl border border-[#DDD5C8] bg-white text-[#192D2A] transition hover:border-[#C66B42] hover:text-[#C66B42] dark:border-white/10 dark:bg-[#1A2624] dark:text-[#F8F3EA]"
+              className="relative hidden sm:flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-xl border border-[#DDD5C8] bg-white text-[#192D2A] transition hover:border-[#C66B42] hover:text-[#C66B42] dark:border-white/10 dark:bg-[#1A2624] dark:text-[#F8F3EA]"
               aria-label="Wishlist"
             >
               <Heart size={15} />
@@ -455,27 +457,27 @@ const Navbar = () => {
                   )}
                 </div>
               ) : (
-                <div className="flex items-center gap-2">
+                <div className="hidden sm:flex items-center gap-2">
                   <Link
                     to="/signin"
                     onClick={closeMenus}
                     className="btn-motion inline-flex h-9 sm:h-10 items-center justify-center gap-1.5 rounded-xl bg-[#17745A] px-2.5 sm:px-4 text-xs font-bold text-white shadow-sm hover:bg-[#135E49] active:scale-95 transition-all duration-300 dark:bg-[#55D6A0] dark:text-[#0B1714] dark:hover:bg-[#42C48E] dark:hover:shadow-[0_4px_16px_rgba(85,214,160,0.3)]"
                   >
                     <LogIn size={14} />
-                    <span className="hidden min-[380px]:inline">Sign In</span>
+                    <span>Sign In</span>
                   </Link>
                 </div>
               )}
             </div>
 
-            {/* Mobile Hamburger Toggle */}
+            {/* Mobile Hamburger Toggle — 3-Line Menu Button (Prominent & Always Visible on Mobile) */}
             <button
               type="button"
               onClick={() => setMobileOpen((prev) => !prev)}
-              className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-xl border border-[#DDD5C8] bg-white text-[#192D2A] lg:hidden dark:bg-[#1A2624] dark:border-white/10 dark:text-[#F8F3EA]"
+              className="flex h-9 w-9 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-xl border-2 border-[#17745A] bg-[#17745A]/10 text-[#17745A] hover:bg-[#17745A] hover:text-white transition-all duration-200 lg:hidden dark:border-[#55D6A0] dark:bg-[#55D6A0]/10 dark:text-[#55D6A0] dark:hover:bg-[#55D6A0] dark:hover:text-[#0B1714]"
               aria-label="Toggle navigation menu"
             >
-              {mobileOpen ? <X size={17} /> : <Menu size={17} />}
+              {mobileOpen ? <X size={20} className="stroke-[2.5]" /> : <Menu size={20} className="stroke-[2.5]" />}
             </button>
           </div>
         </div>
@@ -484,6 +486,39 @@ const Navbar = () => {
       {/* Mobile Drawer Menu with Search & Rich Navigation */}
       {mobileOpen && (
         <div className="border-t border-[#DDD5C8] bg-[#FDFBF7] px-4 py-5 shadow-2xl lg:hidden dark:bg-[#10221B] dark:border-[#30483C] max-h-[85vh] overflow-y-auto">
+          {/* Top User Account & Theme Toggle Bar */}
+          <div className="flex items-center justify-between gap-3 mb-4 pb-4 border-b border-[#DDD5C8]/70 dark:border-[#30483C]">
+            {user ? (
+              <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#17745A] text-white font-bold text-xs shadow-sm dark:bg-[#55D6A0] dark:text-[#0B1714]">
+                  {user.name?.charAt(0).toUpperCase() || 'U'}
+                </span>
+                <div className="min-w-0">
+                  <p className="font-bold text-xs text-[#192D2A] dark:text-white truncate">{user.name}</p>
+                  <p className="text-[10px] text-[#625F59] dark:text-[#A7B3AF] truncate">{user.email}</p>
+                </div>
+              </div>
+            ) : (
+              <Link
+                to="/signin"
+                onClick={closeMenus}
+                className="inline-flex items-center gap-2 rounded-xl bg-[#17745A] px-4 py-2 text-xs font-bold text-white shadow-sm dark:bg-[#55D6A0] dark:text-[#0B1714]"
+              >
+                <LogIn size={14} />
+                <span>Sign In / Register</span>
+              </Link>
+            )}
+
+            {/* Mobile In-Drawer Theme Switcher */}
+            <button
+              type="button"
+              onClick={toggleTheme}
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-[#DDD5C8] bg-white text-[#192D2A] transition hover:border-[#17745A] dark:border-[#30483C] dark:bg-[#172C24] dark:text-[#F8FAFC]"
+              aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+            >
+              {theme === 'dark' ? <Sun size={15} /> : <Moon size={15} />}
+            </button>
+          </div>
           {/* Mobile Search Bar inside Drawer */}
           <form
             onSubmit={(e) => {
