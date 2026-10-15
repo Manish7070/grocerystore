@@ -71,7 +71,7 @@ const Signup = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-[#FDFBF7] dark:bg-[#0B1311] flex items-center justify-center p-4 sm:p-6 lg:p-10 transition-colors">
+    <div className="min-h-screen bg-[#FDFBF7] dark:bg-[#0B1311] flex items-center justify-center p-3 sm:p-6 lg:p-10 transition-colors">
       <div className="w-full max-w-4xl overflow-hidden rounded-3xl border border-[#DDD5C8] dark:border-[#223832] bg-white dark:bg-[#13221E] shadow-xl grid lg:grid-cols-2">
         {/* Left Side: Clean Visible Produce Photography */}
         <div className="relative hidden lg:flex flex-col justify-between overflow-hidden bg-[#122421] p-10 text-white min-h-[580px]">
@@ -96,16 +96,16 @@ const Signup = () => {
         </div>
 
         {/* Right Side: Registration Form */}
-        <div className="p-6 sm:p-10 flex flex-col justify-center">
+        <div className="p-4 sm:p-8 lg:p-10 flex flex-col justify-center">
           {/* Mobile Food Banner */}
-          <div className="relative mb-6 -mx-6 -mt-6 h-36 overflow-hidden lg:hidden">
+          <div className="relative mb-6 -mx-4 -mt-4 sm:-mx-8 sm:-mt-8 h-32 sm:h-36 overflow-hidden lg:hidden">
             <img
               src="https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=800&q=80"
               alt="Artisan food provisions"
               className="h-full w-full object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-white dark:from-[#13221E] via-black/30 to-transparent" />
-            <div className="absolute bottom-3 left-6">
+            <div className="absolute bottom-3 left-4 sm:left-6">
               <Brand compact />
             </div>
           </div>
@@ -131,7 +131,7 @@ const Signup = () => {
               <label className="block text-xs font-bold uppercase tracking-wider text-[#192D2A] dark:text-[#F8FAFC] mb-1.5">
                 Registering As
               </label>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 sm:gap-2">
                 {accountTypes.map((type) => {
                   const Icon = type.icon;
                   const isSelected = formData.role === type.id;
@@ -140,13 +140,13 @@ const Signup = () => {
                       key={type.id}
                       type="button"
                       onClick={() => setFormData({ ...formData, role: type.id })}
-                      className={`py-2 px-2 rounded-xl border text-[11px] font-bold transition flex items-center justify-center gap-1.5 ${
+                      className={`py-2 px-1.5 sm:px-2 rounded-xl border text-[10px] sm:text-[11px] font-bold transition flex items-center justify-center gap-1 sm:gap-1.5 ${
                         isSelected
                           ? 'bg-[#17745A] text-white border-[#17745A] shadow-xs dark:bg-[#10B981] dark:border-[#10B981]'
                           : 'bg-[#FDFBF7] text-[#192D2A] border-[#DDD5C8] hover:border-[#17745A] dark:bg-[#162723] dark:text-[#F8FAFC] dark:border-[#2A443E]'
                       }`}
                     >
-                      <Icon size={13} />
+                      <Icon size={13} className="shrink-0" />
                       <span className="truncate">{type.label}</span>
                     </button>
                   );

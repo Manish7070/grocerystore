@@ -66,7 +66,7 @@ const HyperlocalConnect = () => {
   };
 
   return (
-    <section className="relative overflow-hidden rounded-3xl border border-[#E7DFC6] bg-gradient-to-br from-[#FAF7F0] via-[#F4EFE6] to-[#ECE5D8] p-6 sm:p-10 shadow-lg transition-all duration-300 dark:border-[#30483C] dark:from-[#0B1714] dark:via-[#10221B] dark:to-[#0B1714]">
+    <section className="relative overflow-hidden rounded-3xl border border-[#E7DFC6] bg-gradient-to-br from-[#FAF7F0] via-[#F4EFE6] to-[#ECE5D8] p-4 sm:p-8 lg:p-10 shadow-lg transition-all duration-300 dark:border-[#30483C] dark:from-[#0B1714] dark:via-[#10221B] dark:to-[#0B1714]">
       {/* Decorative Orchard Atmosphere Background Ambient Glow */}
       <div className="pointer-events-none absolute -top-20 -right-20 h-80 w-80 rounded-full bg-emerald-400/15 blur-3xl dark:bg-[#55D6A0]/10" />
       <div className="pointer-events-none absolute -bottom-24 -left-20 h-80 w-80 rounded-full bg-amber-400/15 blur-3xl dark:bg-[#E6BC70]/10" />
@@ -125,12 +125,12 @@ const HyperlocalConnect = () => {
         </div>
 
         {/* Location Controls on Top Right */}
-        <div className="flex flex-wrap items-center gap-2.5 shrink-0 self-start">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 w-full lg:w-auto shrink-0 self-start">
           <button
             type="button"
             onClick={handleDetectGps}
             disabled={gpsDetecting}
-            className={`px-4 py-2.5 rounded-xl text-xs font-bold border flex items-center gap-2 transition-all duration-200 shadow-xs ${
+            className={`px-4 py-2.5 rounded-xl text-xs font-bold border flex items-center justify-center gap-2 transition-all duration-200 shadow-xs ${
               gpsActive
                 ? 'bg-emerald-600 text-white border-emerald-600 dark:bg-[#55D6A0] dark:text-[#0B1714] dark:border-[#55D6A0] shadow-md'
                 : 'bg-white dark:bg-[#172C24] text-[#192D2A] dark:text-[#F3F0E6] border-[#DDD5C8] dark:border-[#30483C] hover:border-emerald-600 dark:hover:border-[#55D6A0]/50 hover:shadow'
@@ -140,13 +140,13 @@ const HyperlocalConnect = () => {
             <span>{gpsDetecting ? 'Locating Sector...' : gpsActive ? 'GPS Active (350m)' : 'Detect My Location'}</span>
           </button>
 
-          <div className="flex items-center gap-2 bg-white dark:bg-[#172C24] border border-[#DDD5C8] dark:border-[#30483C] rounded-xl px-3.5 py-2 shadow-xs">
+          <div className="flex items-center gap-2 bg-white dark:bg-[#172C24] border border-[#DDD5C8] dark:border-[#30483C] rounded-xl px-3.5 py-2 shadow-xs justify-between sm:justify-start">
             <MapPin size={15} className="text-emerald-600 dark:text-[#55D6A0] shrink-0" />
             <select
               value={selectedVillage}
               onChange={(e) => setSelectedVillage(e.target.value)}
               aria-label="Filter neighborhood branch"
-              className="bg-transparent text-xs font-bold text-[#192D2A] dark:text-[#F3F0E6] outline-none cursor-pointer pr-1"
+              className="bg-transparent text-xs font-bold text-[#192D2A] dark:text-[#F3F0E6] outline-none cursor-pointer pr-1 w-full sm:w-auto"
             >
               <option value="Ward 3" className="dark:bg-[#172C24]">Ward 3 / Main Bazaar (300m)</option>
               <option value="Panchayat Hub" className="dark:bg-[#172C24]">Panchayat Hub / Farm Gate (500m)</option>

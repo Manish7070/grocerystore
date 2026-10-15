@@ -3,10 +3,10 @@ import { Mail, Phone, ShieldCheck, MapPin, Truck, Award } from 'lucide-react';
 import Brand from './Brand';
 
 const Footer = () => (
-  <footer className="border-t border-[#192D2A]/40 bg-[#192D2A] px-4 pt-16 pb-12 text-[#F8F3EA]">
+  <footer className="border-t border-[#192D2A]/40 bg-[#192D2A] px-4 pt-10 pb-8 sm:pt-16 sm:pb-12 text-[#F8F3EA]">
     <div className="mx-auto max-w-7xl">
       {/* Top Four Columns Grid */}
-      <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-4 pb-14 border-b border-white/15">
+      <div className="grid gap-8 sm:gap-12 sm:grid-cols-2 lg:grid-cols-4 pb-10 sm:pb-14 border-b border-white/15">
         {/* Brand & Editorial Philosophy */}
         <div className="space-y-4">
           <Brand inverted className="mb-2" />
@@ -97,9 +97,9 @@ const Footer = () => (
       </div>
 
       {/* Bottom Legal / Payment Bar */}
-      <div className="pt-8 flex flex-col items-center justify-between gap-4 text-xs font-medium text-[#E7E2D9]/80 sm:flex-row">
+      <div className="pt-6 sm:pt-8 flex flex-col items-center justify-between gap-4 text-xs font-medium text-[#E7E2D9]/80 sm:flex-row text-center sm:text-left">
         <p>© {new Date().getFullYear()} GroceryStore Ltd. Registered Indian Commerce Platform. All rights reserved.</p>
-        <div className="flex items-center gap-4">
+        <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-4 text-center sm:text-right">
           <span>Supported: UPI • Debit / Credit Cards • Net Banking • Cash on Delivery</span>
         </div>
       </div>

@@ -225,24 +225,27 @@ const Shop = () => {
           {/* Right Product Grid Area */}
           <div>
             {/* Top Sort & Mobile Filter Toggle Bar */}
-            <div className="mb-6 flex items-center justify-between gap-4 rounded-2xl border border-[#DDD5C8] bg-white p-3.5 shadow-sm dark:bg-[#162522] dark:border-white/10">
+            <div className="mb-6 flex items-center justify-between gap-2.5 sm:gap-4 rounded-2xl border border-[#DDD5C8] bg-white p-3 sm:p-3.5 shadow-sm dark:bg-[#162522] dark:border-white/10">
               <button
                 type="button"
                 onClick={() => setMobileFilterOpen(true)}
-                className="flex items-center gap-1.5 rounded-xl border border-[#DDD5C8] bg-[#F7F4EE] px-3.5 py-2 text-xs font-bold text-[#192D2A] lg:hidden dark:bg-[#132220] dark:border-white/10 dark:text-white"
+                className="flex items-center gap-1.5 rounded-xl border border-[#DDD5C8] bg-[#F7F4EE] px-3 sm:px-3.5 py-2 text-xs font-bold text-[#192D2A] lg:hidden dark:bg-[#132220] dark:border-white/10 dark:text-white shadow-xs"
               >
                 <SlidersHorizontal size={14} />
                 <span>Filters</span>
+                {(selectedCategory !== 'All' || onlyOrganic || onlyInStock || maxPrice < 1200) && (
+                  <span className="h-2 w-2 rounded-full bg-[#17745A] dark:bg-[#55D6A0]" />
+                )}
               </button>
 
-              <div className="flex items-center gap-2 ml-auto">
-                <ArrowUpDown size={14} className="text-[#625F59] dark:text-[#E7E2D9]/60" />
+              <div className="flex items-center gap-1.5 sm:gap-2 ml-auto">
+                <ArrowUpDown size={14} className="text-[#625F59] shrink-0 dark:text-[#E7E2D9]/60" />
                 <label htmlFor="shop-sort" className="sr-only">Sort products</label>
                 <select
                   id="shop-sort"
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
-                  className="rounded-xl border border-[#DDD5C8] bg-[#F7F4EE] px-3 py-2 text-xs font-semibold text-[#192D2A] outline-none dark:bg-[#132220] dark:border-white/10 dark:text-white"
+                  className="rounded-xl border border-[#DDD5C8] bg-[#F7F4EE] px-2.5 sm:px-3 py-2 text-[11px] sm:text-xs font-semibold text-[#192D2A] outline-none dark:bg-[#132220] dark:border-white/10 dark:text-white cursor-pointer"
                 >
                   <option value="recommended">Recommended</option>
                   <option value="price_asc">Price: Low to High</option>
@@ -255,13 +258,13 @@ const Shop = () => {
 
             {/* Products Grid */}
             {loading ? (
-              <div className="grid grid-cols-2 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="grid grid-cols-2 gap-3 sm:gap-5 md:grid-cols-2 lg:grid-cols-3">
                 {[1, 2, 3, 4, 5, 6].map((i) => (
-                  <div key={i} className="h-80 animate-pulse rounded-2xl bg-white border border-[#DDD5C8] dark:bg-[#162522]" />
+                  <div key={i} className="h-72 sm:h-80 animate-pulse rounded-2xl bg-white border border-[#DDD5C8] dark:bg-[#162522]" />
                 ))}
               </div>
             ) : paginatedProducts.length === 0 ? (
-              <div className="rounded-2xl border border-[#DDD5C8] bg-white p-12 text-center dark:bg-[#162522] dark:border-white/10">
+              <div className="rounded-2xl border border-[#DDD5C8] bg-white p-8 sm:p-12 text-center dark:bg-[#162522] dark:border-white/10">
                 <p className="font-serif text-lg font-semibold text-[#192D2A] dark:text-white">No items matched your current filters</p>
                 <p className="mt-1 text-xs text-[#55524E] dark:text-[#E7E2D9]/70">Try widening your price range or clearing search queries.</p>
                 <button
@@ -279,7 +282,7 @@ const Shop = () => {
                 </button>
               </div>
             ) : (
-              <div className="grid grid-cols-2 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="grid grid-cols-2 gap-3 sm:gap-5 md:grid-cols-2 lg:grid-cols-3">
                 {paginatedProducts.map((product) => (
                   <ProductCard key={product._id} product={product} />
                 ))}
@@ -372,6 +375,150 @@ const Shop = () => {
           </div>
         </div>
       </div>
+
+      {/* Mobile Filter Drawer / Bottom Sheet */}
+      {mobileFilterOpen && (
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-xs p-0 sm:p-4 animate-in fade-in duration-200">
+          <div className="w-full max-w-lg max-h-[85vh] sm:max-h-[90vh] flex flex-col rounded-t-3xl sm:rounded-3xl border border-[#DDD5C8] bg-white shadow-2xl dark:bg-[#162522] dark:border-white/10 overflow-hidden">
+            {/* Header */}
+            <div className="flex items-center justify-between border-b border-[#DDD5C8]/80 bg-[#F7F4EE] px-5 py-4 dark:bg-[#132220] dark:border-white/10 shrink-0">
+              <div className="flex items-center gap-2">
+                <SlidersHorizontal size={18} className="text-[#17745A] dark:text-[#55D6A0]" />
+                <h2 className="font-serif text-base font-bold text-[#192D2A] dark:text-white">
+                  Filter &amp; Refine Aisles
+                </h2>
+              </div>
+              <button
+                type="button"
+                onClick={() => setMobileFilterOpen(false)}
+                className="rounded-lg p-1.5 text-[#625F59] hover:bg-black/5 dark:text-[#E7E2D9] dark:hover:bg-white/10"
+                aria-label="Close filters"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            {/* Body with scroll */}
+            <div className="flex-1 overflow-y-auto p-5 space-y-5">
+              {/* Search within catalog */}
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-[#192D2A] mb-2 dark:text-white">
+                  Search in catalog
+                </label>
+                <div className="flex items-center gap-2 rounded-xl border border-[#DDD5C8] bg-[#F7F4EE] px-3.5 py-2.5 dark:bg-[#132220] dark:border-white/10">
+                  <Search size={15} className="text-[#625F59] dark:text-[#E7E2D9]/60 shrink-0" />
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => handleSearchChange(e.target.value)}
+                    placeholder="Apples, flour, ghee..."
+                    className="min-w-0 flex-1 bg-transparent text-xs text-[#192D2A] outline-none placeholder:text-[#625F59]/70 dark:text-white"
+                  />
+                  {searchQuery && (
+                    <button type="button" onClick={() => handleSearchChange('')} className="text-[#625F59] dark:text-[#E7E2D9]">
+                      <X size={14} />
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {/* Departments Pills */}
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-[#192D2A] mb-2 dark:text-white">
+                  Departments ({categories.length})
+                </label>
+                <div className="flex flex-wrap gap-1.5 max-h-44 overflow-y-auto p-1 border border-[#DDD5C8]/60 rounded-xl dark:border-white/10">
+                  {categories.map((cat) => (
+                    <button
+                      key={cat}
+                      type="button"
+                      onClick={() => setCategoryFilter(cat)}
+                      className={`rounded-lg px-2.5 py-1 text-xs font-semibold transition ${
+                        selectedCategory === cat
+                          ? 'bg-[#17745A] text-white shadow-xs dark:bg-[#55D6A0] dark:text-[#0B1714]'
+                          : 'border border-[#DDD5C8] bg-white text-[#55524E] dark:bg-[#1A2826] dark:text-[#E7E2D9] dark:border-white/10'
+                      }`}
+                    >
+                      {cat}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Price slider */}
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-bold uppercase tracking-wider text-[#192D2A] dark:text-white">
+                    Max Price
+                  </span>
+                  <span className="font-serif text-base font-bold text-[#17745A] dark:text-[#55D6A0]">
+                    ₹{maxPrice}
+                  </span>
+                </div>
+                <input
+                  type="range"
+                  min="30"
+                  max="1200"
+                  step="10"
+                  value={maxPrice}
+                  onChange={(e) => setMaxPrice(Number(e.target.value))}
+                  className="w-full accent-[#17745A] cursor-pointer"
+                />
+                <div className="flex justify-between text-[11px] text-[#625F59] mt-1 dark:text-[#E7E2D9]/60">
+                  <span>₹30</span>
+                  <span>₹1,200</span>
+                </div>
+              </div>
+
+              {/* Attributes Toggles */}
+              <div className="space-y-2.5 pt-2 border-t border-[#DDD5C8]/60 dark:border-white/10">
+                <label className="flex items-center gap-2.5 text-xs font-medium text-[#192D2A] cursor-pointer dark:text-white">
+                  <input
+                    type="checkbox"
+                    checked={onlyOrganic}
+                    onChange={(e) => setOnlyOrganic(e.target.checked)}
+                    className="rounded border-[#DDD5C8] text-[#17745A] focus:ring-0"
+                  />
+                  <span>Certified Organic Only</span>
+                </label>
+                <label className="flex items-center gap-2.5 text-xs font-medium text-[#192D2A] cursor-pointer dark:text-white">
+                  <input
+                    type="checkbox"
+                    checked={onlyInStock}
+                    onChange={(e) => setOnlyInStock(e.target.checked)}
+                    className="rounded border-[#DDD5C8] text-[#17745A] focus:ring-0"
+                  />
+                  <span>In Stock Only</span>
+                </label>
+              </div>
+            </div>
+
+            {/* Footer CTA */}
+            <div className="p-4 border-t border-[#DDD5C8]/80 bg-[#F7F4EE] dark:bg-[#132220] dark:border-white/10 flex items-center gap-2 shrink-0">
+              <button
+                type="button"
+                onClick={() => {
+                  setCategoryFilter('All');
+                  handleSearchChange('');
+                  setMaxPrice(1200);
+                  setOnlyOrganic(false);
+                  setOnlyInStock(false);
+                }}
+                className="flex-1 rounded-xl border border-[#DDD5C8] bg-white py-2.5 text-xs font-bold text-[#192D2A] dark:bg-[#162522] dark:text-white dark:border-white/10"
+              >
+                Reset All
+              </button>
+              <button
+                type="button"
+                onClick={() => setMobileFilterOpen(false)}
+                className="flex-1 btn-primary py-2.5 rounded-xl text-xs font-bold"
+              >
+                Apply ({filteredProducts.length} Items)
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

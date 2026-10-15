@@ -23,13 +23,13 @@ export const Brand = ({
       <div className={`flex flex-col ${stacked ? 'items-center text-center' : 'items-start text-left'}`}>
         <span
           className={`font-serif tracking-tight font-semibold leading-none ${
-            compact ? 'text-xl sm:text-2xl' : 'text-2xl sm:text-[26px]'
+            compact ? 'text-lg sm:text-2xl' : 'text-xl sm:text-[26px]'
           } ${inverted ? 'text-[#F8F3EA]' : 'text-[#192D2A] dark:text-[#F8F3EA]'}`}
         >
           Grocery<span className="font-serif italic font-normal text-[#17745A] dark:text-[#10B981]">Store</span>
         </span>
         <span
-          className={`mt-1 block font-sans text-[9px] sm:text-[10px] font-bold tracking-[0.22em] uppercase ${
+          className={`mt-0.5 sm:mt-1 hidden min-[360px]:block font-sans text-[7.5px] min-[400px]:text-[8.5px] sm:text-[10px] font-bold tracking-[0.15em] sm:tracking-[0.22em] uppercase ${
             inverted ? 'text-[#E7E2D9]/75' : 'text-[#625F59] dark:text-[#E7E2D9]/70'
           }`}
         >

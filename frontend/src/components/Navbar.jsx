@@ -145,7 +145,7 @@ const Navbar = () => {
           </nav>
 
           {/* RIGHT: Search, Wishlist, Cart (Icon only, no price), Profile, Theme, Mobile toggle */}
-          <div className="flex items-center gap-2 sm:gap-3">
+          <div className="flex items-center gap-1.5 sm:gap-2.5">
             
             {/* Search Input */}
             <div ref={searchRef} className="relative hidden md:block w-44 lg:w-56 xl:w-64 transition-all">
@@ -216,41 +216,41 @@ const Navbar = () => {
             <button
               type="button"
               onClick={toggleTheme}
-              className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#DDD5C8] bg-white text-[#192D2A] transition hover:border-[#17745A] hover:text-[#17745A] dark:border-[#223832] dark:bg-[#13221E] dark:text-[#F8FAFC]"
+              className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-xl border border-[#DDD5C8] bg-white text-[#192D2A] transition hover:border-[#17745A] hover:text-[#17745A] dark:border-[#223832] dark:bg-[#13221E] dark:text-[#F8FAFC]"
               aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
             >
-              {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
+              {theme === 'dark' ? <Sun size={15} /> : <Moon size={15} />}
             </button>
 
             {/* In-App Activity Notification Center */}
             <NotificationCenter />
 
-            {/* Wishlist Link */}
+            {/* Wishlist Link - visible on min-400px, accessible via mobile drawer for smaller screens */}
             <Link
               to="/watchlist"
               onClick={closeMenus}
-              className="relative flex h-10 w-10 items-center justify-center rounded-xl border border-[#DDD5C8] bg-white text-[#192D2A] transition hover:border-[#C66B42] hover:text-[#C66B42] dark:border-white/10 dark:bg-[#1A2624] dark:text-[#F8F3EA]"
+              className="relative hidden min-[440px]:flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-xl border border-[#DDD5C8] bg-white text-[#192D2A] transition hover:border-[#C66B42] hover:text-[#C66B42] dark:border-white/10 dark:bg-[#1A2624] dark:text-[#F8F3EA]"
               aria-label="Wishlist"
             >
-              <Heart size={16} />
+              <Heart size={15} />
               {watchlist.length > 0 && (
-                <span className="absolute -top-1 -right-1 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-[#C66B42] px-1 text-[10px] font-bold text-white">
+                <span className="absolute -top-1 -right-1 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-[#C66B42] px-1 text-[9px] font-bold text-white">
                   {watchlist.length}
                 </span>
               )}
             </Link>
 
-            {/* Cart Trigger Button — Clean Icon + Item-Count Badge (NO PRICE DISPLAY IN HEADER) */}
+            {/* Cart Trigger Button — Clean Icon + Item-Count Badge */}
             <div ref={cartRef} className="relative">
               <button
                 type="button"
                 onClick={() => setCartOpen((prev) => !prev)}
-                className="relative flex h-10 w-10 sm:w-auto sm:px-3 items-center justify-center gap-1.5 rounded-xl border border-[#192D2A] bg-[#192D2A] text-white transition hover:bg-[#253D39] active:scale-95 shadow-sm dark:bg-[#C66B42] dark:border-[#C66B42] dark:hover:bg-[#B05932]"
+                className="relative flex h-9 w-9 sm:h-10 sm:w-auto sm:px-3 items-center justify-center gap-1.5 rounded-xl border border-[#192D2A] bg-[#192D2A] text-white transition hover:bg-[#253D39] active:scale-95 shadow-sm dark:bg-[#C66B42] dark:border-[#C66B42] dark:hover:bg-[#B05932]"
                 aria-label={`Shopping basket with ${totalItems} items`}
               >
-                <ShoppingCart size={17} />
+                <ShoppingCart size={15} />
                 {totalItems > 0 && (
-                  <span className="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-[#C66B42] dark:bg-white text-white dark:text-[#192D2A] px-1.5 text-[11px] font-bold">
+                  <span className="flex h-4.5 min-w-[18px] sm:h-5 sm:min-w-[20px] items-center justify-center rounded-full bg-[#C66B42] dark:bg-white text-white dark:text-[#192D2A] px-1 sm:px-1.5 text-[10px] sm:text-[11px] font-bold">
                     {totalItems}
                   </span>
                 )}
@@ -258,7 +258,7 @@ const Navbar = () => {
 
               {/* Cart Drawer Dropdown */}
               {cartOpen && (
-                <div className="absolute right-0 mt-3 w-[min(92vw,390px)] overflow-hidden rounded-2xl border border-[#DDD5C8] bg-white shadow-2xl z-50 dark:bg-[#192624] dark:border-white/10">
+                <div className="absolute right-[-24px] sm:right-0 mt-3 w-[min(calc(100vw-24px),390px)] overflow-hidden rounded-2xl border border-[#DDD5C8] bg-white shadow-2xl z-50 dark:bg-[#192624] dark:border-white/10">
                   <div className="flex items-center justify-between border-b border-[#DDD5C8] bg-[#F1E8D8]/50 px-4 py-3 dark:bg-[#121E1C] dark:border-white/10">
                     <div>
                       <p className="font-serif text-sm font-semibold text-[#192D2A] dark:text-[#F8F3EA]">Your Market Basket</p>
@@ -332,16 +332,16 @@ const Navbar = () => {
                   <button
                     type="button"
                     onClick={() => setProfileOpen((prev) => !prev)}
-                    className="flex h-10 items-center gap-2 rounded-xl border border-[#DDD5C8] bg-white px-2.5 sm:px-3 text-xs font-bold text-[#192D2A] hover:border-[#C66B42] transition dark:bg-[#1A2624] dark:border-white/10 dark:text-[#F8F3EA]"
+                    className="flex h-9 sm:h-10 items-center gap-1.5 sm:gap-2 rounded-xl border border-[#DDD5C8] bg-white px-2 sm:px-3 text-xs font-bold text-[#192D2A] hover:border-[#C66B42] transition dark:bg-[#1A2624] dark:border-white/10 dark:text-[#F8F3EA]"
                   >
-                    <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#192D2A] text-[10px] font-bold text-white dark:bg-[#C66B42]">
+                    <span className="flex h-5.5 w-5.5 sm:h-6 sm:w-6 items-center justify-center rounded-full bg-[#192D2A] text-[9px] sm:text-[10px] font-bold text-white dark:bg-[#C66B42]">
                       {user.name?.charAt(0).toUpperCase() || 'U'}
                     </span>
-                    <span className="hidden sm:inline font-sans">{user.name?.split(' ')[0]}</span>
+                    <span className="hidden md:inline font-sans">{user.name?.split(' ')[0]}</span>
                   </button>
 
                   {profileOpen && (
-                    <div className="absolute right-0 mt-2 w-60 overflow-hidden rounded-2xl border border-[#DDD5C8] bg-white p-2 shadow-xl z-50 dark:bg-[#13221E] dark:border-[#223832]">
+                    <div className="absolute right-[-10px] sm:right-0 mt-2 w-60 overflow-hidden rounded-2xl border border-[#DDD5C8] bg-white p-2 shadow-xl z-50 dark:bg-[#13221E] dark:border-[#223832]">
                       <div className="border-b border-[#DDD5C8]/60 p-2.5 dark:border-[#223832]">
                         <p className="text-xs font-bold text-[#192D2A] dark:text-[#F8FAFC]">{user.name}</p>
                         <p className="truncate text-[11px] text-[#625F59] dark:text-[#A7B3AF]">{user.email}</p>
@@ -459,10 +459,10 @@ const Navbar = () => {
                   <Link
                     to="/signin"
                     onClick={closeMenus}
-                    className="btn-motion inline-flex h-10 items-center justify-center gap-1.5 rounded-xl bg-[#17745A] px-4 text-xs font-bold text-white shadow-sm hover:bg-[#135E49] active:scale-95 transition-all duration-300 dark:bg-[#55D6A0] dark:text-[#0B1714] dark:hover:bg-[#42C48E] dark:hover:shadow-[0_4px_16px_rgba(85,214,160,0.3)]"
+                    className="btn-motion inline-flex h-9 sm:h-10 items-center justify-center gap-1.5 rounded-xl bg-[#17745A] px-2.5 sm:px-4 text-xs font-bold text-white shadow-sm hover:bg-[#135E49] active:scale-95 transition-all duration-300 dark:bg-[#55D6A0] dark:text-[#0B1714] dark:hover:bg-[#42C48E] dark:hover:shadow-[0_4px_16px_rgba(85,214,160,0.3)]"
                   >
                     <LogIn size={14} />
-                    <span>Sign In</span>
+                    <span className="hidden min-[380px]:inline">Sign In</span>
                   </Link>
                 </div>
               )}
@@ -472,46 +472,238 @@ const Navbar = () => {
             <button
               type="button"
               onClick={() => setMobileOpen((prev) => !prev)}
-              className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#DDD5C8] bg-white text-[#192D2A] lg:hidden dark:bg-[#1A2624] dark:border-white/10 dark:text-[#F8F3EA]"
+              className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-xl border border-[#DDD5C8] bg-white text-[#192D2A] lg:hidden dark:bg-[#1A2624] dark:border-white/10 dark:text-[#F8F3EA]"
               aria-label="Toggle navigation menu"
             >
-              {mobileOpen ? <X size={18} /> : <Menu size={18} />}
+              {mobileOpen ? <X size={17} /> : <Menu size={17} />}
             </button>
           </div>
         </div>
       </div>
 
-      {/* Mobile Drawer Menu */}
+      {/* Mobile Drawer Menu with Search & Rich Navigation */}
       {mobileOpen && (
-        <div className="border-t border-[#DDD5C8] bg-[#FDFBF7] px-4 py-6 shadow-xl lg:hidden dark:bg-[#121E1C] dark:border-white/10">
-          <nav className="flex flex-col gap-2" aria-label="Mobile navigation">
-            <Link to="/" onClick={closeMenus} className="rounded-xl px-4 py-2.5 text-sm font-semibold text-[#192D2A] hover:bg-[#F1E8D8] dark:text-[#F8F3EA] dark:hover:bg-white/5">
-              Home
+        <div className="border-t border-[#DDD5C8] bg-[#FDFBF7] px-4 py-5 shadow-2xl lg:hidden dark:bg-[#10221B] dark:border-[#30483C] max-h-[85vh] overflow-y-auto">
+          {/* Mobile Search Bar inside Drawer */}
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              submitSearch();
+            }}
+            className="mb-4 flex items-center gap-2 rounded-xl border border-[#DDD5C8] bg-white px-3 py-2.5 dark:bg-[#172C24] dark:border-[#30483C]"
+          >
+            <Search size={16} className="text-[#625F59] dark:text-[#B6C7BD]" />
+            <input
+              type="text"
+              value={navSearch}
+              onChange={(e) => setNavSearch(e.target.value)}
+              placeholder="Search farm fresh produce, milk, rice..."
+              className="min-w-0 flex-1 bg-transparent text-xs font-medium text-[#192D2A] outline-none placeholder:text-[#625F59]/70 dark:text-white"
+            />
+            {navSearch ? (
+              <button
+                type="button"
+                onClick={() => setNavSearch('')}
+                className="text-[#625F59] dark:text-[#B6C7BD]"
+              >
+                <X size={14} />
+              </button>
+            ) : (
+              <button
+                type="submit"
+                className="rounded-lg bg-[#17745A] px-2.5 py-1 text-[11px] font-bold text-white dark:bg-[#55D6A0] dark:text-[#0B1714]"
+              >
+                Go
+              </button>
+            )}
+          </form>
+
+          {/* Quick Search Chips */}
+          <div className="mb-4 flex flex-wrap gap-1.5">
+            {popularSearches.slice(0, 5).map((item) => (
+              <button
+                key={item}
+                type="button"
+                onClick={() => {
+                  setNavSearch(item);
+                  submitSearch(item);
+                }}
+                className="rounded-lg border border-[#DDD5C8]/80 bg-white/80 px-2 py-1 text-[10px] font-medium text-[#192D2A] dark:bg-[#172C24] dark:text-[#B6C7BD] dark:border-[#30483C]"
+              >
+                {item}
+              </button>
+            ))}
+          </div>
+
+          <nav className="flex flex-col gap-1 border-t border-[#DDD5C8]/70 pt-3 dark:border-[#30483C]" aria-label="Mobile navigation">
+            <Link
+              to="/"
+              onClick={closeMenus}
+              className={`flex items-center justify-between rounded-xl px-3.5 py-2.5 text-xs font-bold transition ${
+                location.pathname === '/'
+                  ? 'bg-[#17745A] text-white dark:bg-[#55D6A0] dark:text-[#0B1714]'
+                  : 'text-[#192D2A] hover:bg-[#F1E8D8] dark:text-[#F3F0E6] dark:hover:bg-white/5'
+              }`}
+            >
+              <span>Home Storefront</span>
+              <span className="text-[10px] opacity-70">Main</span>
             </Link>
-            <Link to="/shop" onClick={closeMenus} className="rounded-xl px-4 py-2.5 text-sm font-semibold text-[#192D2A] hover:bg-[#F1E8D8] dark:text-[#F8F3EA] dark:hover:bg-white/5">
-              Shop Catalog
+            <Link
+              to="/shop"
+              onClick={closeMenus}
+              className={`flex items-center justify-between rounded-xl px-3.5 py-2.5 text-xs font-bold transition ${
+                location.pathname === '/shop'
+                  ? 'bg-[#17745A] text-white dark:bg-[#55D6A0] dark:text-[#0B1714]'
+                  : 'text-[#192D2A] hover:bg-[#F1E8D8] dark:text-[#F3F0E6] dark:hover:bg-white/5'
+              }`}
+            >
+              <span>All Provisions Catalog</span>
+              <span className="text-[10px] opacity-70">Aisles</span>
             </Link>
-            <Link to="/fresh-market" onClick={closeMenus} className="rounded-xl px-4 py-2.5 text-sm font-semibold text-[#192D2A] hover:bg-[#F1E8D8] dark:text-[#F8F3EA] dark:hover:bg-white/5">
-              Fresh Market
+            <Link
+              to="/fresh-market"
+              onClick={closeMenus}
+              className={`flex items-center justify-between rounded-xl px-3.5 py-2.5 text-xs font-bold transition ${
+                location.pathname === '/fresh-market'
+                  ? 'bg-[#17745A] text-white dark:bg-[#55D6A0] dark:text-[#0B1714]'
+                  : 'text-[#192D2A] hover:bg-[#F1E8D8] dark:text-[#F3F0E6] dark:hover:bg-white/5'
+              }`}
+            >
+              <span>Fresh Market Harvest</span>
+              <span className="text-[10px] text-emerald-600 dark:text-[#55D6A0] font-black">Daily</span>
             </Link>
-            <Link to="/bundles" onClick={closeMenus} className="rounded-xl px-4 py-2.5 text-sm font-semibold text-[#192D2A] hover:bg-[#F1E8D8] dark:text-[#F8F3EA] dark:hover:bg-white/5">
-              Recipe Kits
+            <Link
+              to="/bundles"
+              onClick={closeMenus}
+              className={`flex items-center justify-between rounded-xl px-3.5 py-2.5 text-xs font-bold transition ${
+                location.pathname === '/bundles'
+                  ? 'bg-[#17745A] text-white dark:bg-[#55D6A0] dark:text-[#0B1714]'
+                  : 'text-[#192D2A] hover:bg-[#F1E8D8] dark:text-[#F3F0E6] dark:hover:bg-white/5'
+              }`}
+            >
+              <span>Recipe Kits</span>
+              <span className="text-[10px] opacity-70">Cook</span>
             </Link>
-            <Link to="/smart-savings" onClick={closeMenus} className="rounded-xl px-4 py-2.5 text-sm font-semibold text-[#192D2A] hover:bg-[#F1E8D8] dark:text-[#F8F3EA] dark:hover:bg-white/5">
-              Smart Savings
+            <Link
+              to="/smart-savings"
+              onClick={closeMenus}
+              className={`flex items-center justify-between rounded-xl px-3.5 py-2.5 text-xs font-bold transition ${
+                location.pathname === '/smart-savings'
+                  ? 'bg-[#17745A] text-white dark:bg-[#55D6A0] dark:text-[#0B1714]'
+                  : 'text-[#192D2A] hover:bg-[#F1E8D8] dark:text-[#F3F0E6] dark:hover:bg-white/5'
+              }`}
+            >
+              <span>Smart Savings (Zero Waste)</span>
+              <span className="text-[10px] font-black text-amber-600 dark:text-[#E6BC70]">Deals</span>
             </Link>
-            {!user && (
-              <div className="pt-3 mt-2 border-t border-[#DDD5C8]/80 dark:border-white/10">
+
+            {/* Account & Orders Section */}
+            <div className="pt-3 mt-2 border-t border-[#DDD5C8]/70 dark:border-[#30483C] space-y-1">
+              <p className="px-3.5 text-[10px] font-bold uppercase tracking-wider text-[#625F59] dark:text-[#B6C7BD]">
+                Kitchen &amp; Order Tools
+              </p>
+              <Link
+                to="/watchlist"
+                onClick={closeMenus}
+                className="flex items-center justify-between rounded-xl px-3.5 py-2 text-xs font-semibold text-[#192D2A] hover:bg-[#F1E8D8] dark:text-[#F3F0E6] dark:hover:bg-white/5"
+              >
+                <span className="flex items-center gap-2">
+                  <Heart size={14} className="text-[#C66B42]" />
+                  <span>Saved Kitchen Essentials</span>
+                </span>
+                {watchlist.length > 0 && (
+                  <span className="rounded-full bg-[#C66B42] px-2 py-0.5 text-[10px] font-bold text-white">
+                    {watchlist.length}
+                  </span>
+                )}
+              </Link>
+              <Link
+                to="/track"
+                onClick={closeMenus}
+                className="flex items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-semibold text-[#192D2A] hover:bg-[#F1E8D8] dark:text-[#F3F0E6] dark:hover:bg-white/5"
+              >
+                <Truck size={14} className="text-[#17745A] dark:text-[#55D6A0]" />
+                <span>Live Delivery Tracking</span>
+              </Link>
+              <Link
+                to="/orders"
+                onClick={closeMenus}
+                className="flex items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-semibold text-[#192D2A] hover:bg-[#F1E8D8] dark:text-[#F3F0E6] dark:hover:bg-white/5"
+              >
+                <Package size={14} className="text-[#17745A] dark:text-[#55D6A0]" />
+                <span>Order History &amp; Invoices</span>
+              </Link>
+              <Link
+                to="/store-pos"
+                onClick={closeMenus}
+                className="flex items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-semibold text-emerald-700 dark:text-[#55D6A0] hover:bg-[#F1E8D8] dark:hover:bg-white/5"
+              >
+                <Store size={14} />
+                <span>Store POS Walk-in Terminal</span>
+              </Link>
+            </div>
+
+            {/* Merchant / Partner Quick Links */}
+            <div className="pt-3 mt-2 border-t border-[#DDD5C8]/70 dark:border-[#30483C] space-y-1">
+              <p className="px-3.5 text-[10px] font-bold uppercase tracking-wider text-[#625F59] dark:text-[#B6C7BD]">
+                Partner Network
+              </p>
+              <Link
+                to="/merchant/register"
+                onClick={closeMenus}
+                className="flex items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-semibold text-sky-700 dark:text-sky-400 hover:bg-[#F1E8D8] dark:hover:bg-white/5"
+              >
+                <Store size={14} />
+                <span>Register as Merchant (Dukandar)</span>
+              </Link>
+              <Link
+                to="/logistics/register"
+                onClick={closeMenus}
+                className="flex items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-semibold text-purple-700 dark:text-purple-400 hover:bg-[#F1E8D8] dark:hover:bg-white/5"
+              >
+                <Truck size={14} />
+                <span>Register Logistics &amp; Store Hub</span>
+              </Link>
+            </div>
+
+            {/* Account / Auth CTA */}
+            <div className="pt-4 mt-2 border-t border-[#DDD5C8]/70 dark:border-[#30483C]">
+              {user ? (
+                <div className="space-y-2">
+                  <div className="px-3.5 py-2 rounded-xl bg-white dark:bg-[#172C24] border border-[#DDD5C8]/60 dark:border-[#30483C]">
+                    <p className="text-xs font-bold text-[#192D2A] dark:text-[#F3F0E6]">{user.name}</p>
+                    <p className="text-[11px] text-[#625F59] dark:text-[#B6C7BD] truncate">{user.email}</p>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <Link
+                      to="/profile"
+                      onClick={closeMenus}
+                      className="flex items-center justify-center gap-1.5 rounded-xl border border-[#DDD5C8] bg-white py-2.5 text-xs font-bold text-[#192D2A] dark:bg-[#172C24] dark:text-white dark:border-[#30483C]"
+                    >
+                      <User size={13} />
+                      <span>Profile</span>
+                    </Link>
+                    <button
+                      type="button"
+                      onClick={handleLogout}
+                      className="flex items-center justify-center gap-1.5 rounded-xl bg-rose-50 py-2.5 text-xs font-bold text-rose-600 dark:bg-rose-950/40 dark:text-rose-400"
+                    >
+                      <LogOut size={13} />
+                      <span>Sign Out</span>
+                    </button>
+                  </div>
+                </div>
+              ) : (
                 <Link
                   to="/signin"
                   onClick={closeMenus}
-                  className="flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-emerald-700 to-[#103D33] py-3 text-sm font-bold text-white shadow-sm"
+                  className="btn-primary flex items-center justify-center gap-2 rounded-xl py-3 text-xs font-bold uppercase tracking-wider"
                 >
-                  <LogIn size={16} />
-                  <span>Sign In / Register</span>
+                  <LogIn size={15} />
+                  <span>Sign In or Register</span>
                 </Link>
-              </div>
-            )}
+              )}
+            </div>
           </nav>
         </div>
       )}

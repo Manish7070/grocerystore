@@ -50,7 +50,7 @@ const Signin = ({ adminMode = false }) => {
   };
 
   return (
-    <div className="min-h-screen bg-[#FDFBF7] dark:bg-[#0B1311] flex items-center justify-center p-4 sm:p-6 lg:p-10 transition-colors">
+    <div className="min-h-screen bg-[#FDFBF7] dark:bg-[#0B1311] flex items-center justify-center p-3 sm:p-6 lg:p-10 transition-colors">
       <div className="w-full max-w-4xl overflow-hidden rounded-3xl border border-[#DDD5C8] dark:border-[#223832] bg-white dark:bg-[#13221E] shadow-xl grid lg:grid-cols-2">
         {/* Left Side: Clean Visible Food Photography without clunky quote overlays */}
         <div className="relative hidden lg:flex flex-col justify-between overflow-hidden bg-[#122421] p-10 text-white min-h-[520px]">
@@ -76,16 +76,16 @@ const Signin = ({ adminMode = false }) => {
         </div>
 
         {/* Right Side: Authentication Form */}
-        <div className="p-6 sm:p-10 flex flex-col justify-center">
+        <div className="p-4 sm:p-8 lg:p-10 flex flex-col justify-center">
           {/* Mobile Food Banner */}
-          <div className="relative mb-6 -mx-6 -mt-6 h-36 overflow-hidden lg:hidden">
+          <div className="relative mb-6 -mx-4 -mt-4 sm:-mx-8 sm:-mt-8 h-32 sm:h-36 overflow-hidden lg:hidden">
             <img
               src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=800&q=80"
               alt="Fresh harvest produce"
               className="h-full w-full object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-white dark:from-[#13221E] via-black/30 to-transparent" />
-            <div className="absolute bottom-3 left-6">
+            <div className="absolute bottom-3 left-4 sm:left-6">
               <Brand compact />
             </div>
           </div>

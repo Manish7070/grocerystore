@@ -71,44 +71,44 @@ const ProductCard = ({ product }) => {
         </div>
 
         {/* Product Information Body */}
-        <div className="flex flex-1 flex-col p-4">
+        <div className="flex flex-1 flex-col p-3 sm:p-4">
           {/* Title and Rating Row */}
-          <div className="mb-1.5 flex items-start justify-between gap-2">
+          <div className="mb-1 sm:mb-1.5 flex items-start justify-between gap-1.5 sm:gap-2">
             <div className="min-w-0 flex-1">
               <Link
                 to={`/product/${product._id}`}
-                className="line-clamp-1 font-serif text-base font-bold text-[#192D2A] transition-colors hover:text-[#17745A] dark:text-[#F3F0E6] dark:hover:text-[#55D6A0] capitalize"
+                className="line-clamp-1 font-serif text-sm sm:text-base font-bold text-[#192D2A] transition-colors hover:text-[#17745A] dark:text-[#F3F0E6] dark:hover:text-[#55D6A0] capitalize"
               >
                 {product.name}
               </Link>
-              <p className="mt-0.5 text-xs font-medium text-[#7A746E] dark:text-[#B6C7BD] capitalize">
+              <p className="mt-0.5 text-[11px] sm:text-xs font-medium text-[#7A746E] dark:text-[#B6C7BD] capitalize truncate">
                 {product.unit || 'Standard Pack'} {product.origin ? `• ${product.origin}` : ''}
               </p>
             </div>
-            <div className="flex shrink-0 items-center gap-1 rounded-md bg-[#F4EFE6] px-1.5 py-0.5 text-[11px] font-bold text-[#192D2A] dark:bg-[#20392F] dark:text-[#E6BC70]">
+            <div className="flex shrink-0 items-center gap-1 rounded-md bg-[#F4EFE6] px-1.5 py-0.5 text-[10px] sm:text-[11px] font-bold text-[#192D2A] dark:bg-[#20392F] dark:text-[#E6BC70]">
               <Star size={11} className="fill-current text-amber-400 dark:text-[#E6BC70]" />
               <span>{product.rating || 4.8}</span>
             </div>
           </div>
 
           {/* Description */}
-          <p className="line-clamp-2 text-xs leading-relaxed text-[#6E6862] mb-3 dark:text-[#B6C7BD]">
+          <p className="line-clamp-2 text-[11px] sm:text-xs leading-relaxed text-[#6E6862] mb-2 sm:mb-3 dark:text-[#B6C7BD]">
             {product.description || 'Verified fresh stock direct from partner dispatch.'}
           </p>
 
           {/* Price & Action Section */}
-          <div className="mt-auto pt-2.5 border-t border-[#EDE7DD] dark:border-[#30483C]">
-            <div className="mb-2.5 flex items-baseline justify-between">
+          <div className="mt-auto pt-2 sm:pt-2.5 border-t border-[#EDE7DD] dark:border-[#30483C]">
+            <div className="mb-2 sm:mb-2.5 flex items-baseline justify-between gap-1">
               <div>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-800 dark:text-[#55D6A0] block">
+                <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-emerald-800 dark:text-[#55D6A0] block">
                   Farm Direct Rate
                 </span>
-                <div className="flex items-baseline gap-2">
-                  <span className="font-serif text-2xl font-black text-[#192D2A] dark:text-[#F3F0E6]">
+                <div className="flex items-baseline gap-1.5 sm:gap-2">
+                  <span className="font-serif text-lg sm:text-2xl font-black text-[#192D2A] dark:text-[#F3F0E6]">
                     ₹{product.price}
                   </span>
                   {product.mrp && product.mrp > product.price && (
-                    <span className="text-xs text-[#9B958D] line-through font-mono dark:text-[#B6C7BD]/70">
+                    <span className="text-[10px] sm:text-xs text-[#9B958D] line-through font-mono dark:text-[#B6C7BD]/70">
                       ₹{product.mrp}
                     </span>
                   )}
@@ -117,7 +117,7 @@ const ProductCard = ({ product }) => {
 
               {/* Stock status indicator */}
               <span
-                className={`rounded-md px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${
+                className={`rounded-md px-1.5 sm:px-2 py-0.5 text-[9px] sm:text-[10px] font-bold uppercase tracking-wider shrink-0 ${
                   isOutOfStock
                     ? 'bg-rose-50 text-rose-700 border border-rose-200 dark:bg-rose-950/40 dark:border-rose-900 dark:text-rose-400'
                     : 'bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-[#20392F] dark:border-[#30483C] dark:text-[#55D6A0]'
@@ -132,7 +132,7 @@ const ProductCard = ({ product }) => {
               type="button"
               onClick={() => setQuantityOpen(true)}
               disabled={isOutOfStock}
-              className={`btn-motion flex w-full items-center justify-center gap-2 rounded-xl py-2.5 px-4 text-xs font-bold uppercase tracking-wider transition-all duration-300 shadow-sm active:scale-[0.98] ${
+              className={`btn-motion flex w-full items-center justify-center gap-1 sm:gap-2 rounded-xl py-2 px-2 sm:py-2.5 sm:px-4 text-[10px] sm:text-xs font-bold uppercase tracking-wider transition-all duration-300 shadow-sm active:scale-[0.98] ${
                 addedAnimation
                   ? 'bg-emerald-700 text-white dark:bg-[#55D6A0] dark:text-[#0B1714]'
                   : 'bg-[#17745A] text-white hover:bg-[#135E49] disabled:cursor-not-allowed disabled:bg-[#DDD5C8] disabled:text-[#8C847A] dark:bg-[#55D6A0] dark:text-[#0B1714] dark:hover:bg-[#42C48E] dark:hover:shadow-[0_4px_16px_rgba(85,214,160,0.3)]'
@@ -140,14 +140,15 @@ const ProductCard = ({ product }) => {
             >
               {addedAnimation ? (
                 <>
-                  <Check size={14} />
+                  <Check size={13} />
                   <span>Added</span>
                 </>
               ) : (
                 <>
-                  <ShoppingBag size={14} />
-                  <span>{isOutOfStock ? 'Unavailable' : 'Add to Basket'}</span>
-                  {!isOutOfStock && <Plus size={13} />}
+                  <ShoppingBag size={13} />
+                  <span>{isOutOfStock ? 'Sold Out' : 'Add'}</span>
+                  {!isOutOfStock && <span className="hidden min-[380px]:inline">to Basket</span>}
+                  {!isOutOfStock && <Plus size={12} />}
                 </>
               )}
             </button>

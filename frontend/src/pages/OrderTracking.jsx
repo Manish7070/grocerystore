@@ -93,33 +93,33 @@ const OrderTracking = () => {
   return (
     <div className="min-h-screen bg-porcelain pb-24">
       {/* Editorial Header */}
-      <section className="border-b border-sandstone bg-ivory py-16 px-4 sm:px-6 lg:px-8">
+      <section className="border-b border-sandstone bg-ivory py-10 sm:py-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-3xl mx-auto text-center">
           <div className="inline-flex items-center gap-2 px-3 py-1 bg-apricot/30 border border-terracotta/20 rounded-full text-xs font-semibold text-terracotta uppercase tracking-wider mb-4">
             <Truck size={14} />
             <span>Cold-Chain Transit Timeline</span>
           </div>
-          <h1 className="font-serif text-4xl sm:text-5xl text-espresso font-semibold tracking-tight">
+          <h1 className="font-serif text-2xl sm:text-4xl lg:text-5xl text-espresso font-semibold tracking-tight">
             Track Your Order
           </h1>
-          <p className="mt-3 text-warmStone text-sm sm:text-base font-sans leading-relaxed">
+          <p className="mt-3 text-warmStone text-xs sm:text-base font-sans leading-relaxed">
             Follow your harvest basket from temperature-controlled packing to doorstep arrival.
           </p>
 
-          <form onSubmit={handleSearch} className="mt-8 flex items-center max-w-md mx-auto bg-porcelain border border-sandstone rounded-xl p-1.5 shadow-sm focus-within:border-terracotta transition-colors">
-            <Search size={18} className="ml-3 text-warmStone shrink-0" />
+          <form onSubmit={handleSearch} className="mt-6 sm:mt-8 flex items-center max-w-md mx-auto bg-porcelain border border-sandstone rounded-xl p-1.5 shadow-sm focus-within:border-terracotta transition-colors">
+            <Search size={18} className="ml-2.5 sm:ml-3 text-warmStone shrink-0" />
             <input
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="e.g. GS-2026-928173"
-              className="flex-1 bg-transparent px-3 py-2 text-xs sm:text-sm font-medium uppercase tracking-wider text-espresso placeholder:normal-case placeholder:tracking-normal placeholder:text-warmStone/70 outline-none"
+              className="min-w-0 flex-1 bg-transparent px-2.5 sm:px-3 py-2 text-xs sm:text-sm font-medium uppercase tracking-wider text-espresso placeholder:normal-case placeholder:tracking-normal placeholder:text-warmStone/70 outline-none"
             />
             <button
               type="submit"
-              className="bg-terracotta text-ivory px-5 py-2.5 rounded-lg text-xs font-semibold uppercase tracking-wider hover:bg-terracotta/90 transition-colors shrink-0"
+              className="bg-terracotta text-ivory px-3.5 sm:px-5 py-2.5 rounded-lg text-xs font-semibold uppercase tracking-wider hover:bg-terracotta/90 transition-colors shrink-0"
             >
-              Locate Order
+              Locate
             </button>
           </form>
         </div>
@@ -143,7 +143,7 @@ const OrderTracking = () => {
         {order && (
           <div className="space-y-6">
             {/* Primary Order Details & Doorstep PIN */}
-            <div className="bg-ivory rounded-2xl border border-sandstone shadow-[0_2px_12px_rgba(39,34,31,0.04)] p-6 sm:p-8">
+            <div className="bg-ivory rounded-2xl border border-sandstone shadow-[0_2px_12px_rgba(39,34,31,0.04)] p-4 sm:p-8">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-sandstone pb-6">
                 <div>
                   <span className="text-[11px] font-semibold uppercase tracking-wider text-warmStone">Order Identifier</span>

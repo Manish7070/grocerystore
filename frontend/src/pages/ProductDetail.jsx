@@ -240,7 +240,7 @@ const ProductDetail = () => {
               <p className="text-xs font-bold uppercase tracking-wider text-espresso mb-2 dark:text-ivory">
                 Check Delivery Serviceability
               </p>
-              <form onSubmit={checkPincode} className="flex gap-2 max-w-sm">
+              <form onSubmit={checkPincode} className="flex flex-col sm:flex-row gap-2 max-w-sm">
                 <input
                   type="text"
                   maxLength={6}
@@ -266,14 +266,14 @@ const ProductDetail = () => {
         </div>
 
         {/* Detailed Information Tabs */}
-        <div className="mt-16 border-t border-sandstone pt-10 dark:border-white/10">
-          <div className="flex border-b border-sandstone dark:border-white/10">
+        <div className="mt-12 sm:mt-16 border-t border-sandstone pt-8 sm:pt-10 dark:border-white/10">
+          <div className="flex border-b border-sandstone dark:border-white/10 overflow-x-auto no-scrollbar whitespace-nowrap touch-scroll">
             {['overview', 'provenance', 'storage', 'reviews'].map((tab) => (
               <button
                 key={tab}
                 type="button"
                 onClick={() => setActiveTab(tab)}
-                className={`px-6 py-3 text-xs font-bold uppercase tracking-wider border-b-2 transition ${
+                className={`px-4 sm:px-6 py-3 text-xs font-bold uppercase tracking-wider border-b-2 transition shrink-0 ${
                   activeTab === tab
                     ? 'border-terracotta text-terracotta font-extrabold dark:border-apricot dark:text-apricot'
                     : 'border-transparent text-warmStone hover:text-espresso dark:text-ivory/60'

@@ -237,30 +237,30 @@ const Checkout = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#FDFBF7] dark:bg-[#0B1311] px-4 py-10 sm:px-6 lg:py-14 transition-colors">
+    <div className="min-h-screen bg-[#FDFBF7] dark:bg-[#0B1311] px-3 py-6 sm:px-6 lg:py-14 transition-colors">
       <div className="mx-auto max-w-5xl">
-        <div className="mb-8 border-b border-[#DDD5C8]/80 pb-6 dark:border-[#223832]">
+        <div className="mb-6 sm:mb-8 border-b border-[#DDD5C8]/80 pb-4 sm:pb-6 dark:border-[#223832]">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest bg-emerald-50 dark:bg-emerald-950/40 text-[#17745A] dark:text-[#10B981] border border-emerald-200 dark:border-emerald-800/60 mb-2">
             <ShieldCheck size={13} />
             <span>Encrypted Checkout Protocol</span>
           </div>
-          <h1 className="font-serif text-3xl sm:text-4xl font-bold text-[#192D2A] dark:text-[#F8FAFC]">
+          <h1 className="font-serif text-2xl sm:text-4xl font-bold text-[#192D2A] dark:text-[#F8FAFC]">
             Doorstep Delivery & Payment
           </h1>
         </div>
 
-        <form onSubmit={handleCheckout} className="grid gap-8 md:grid-cols-2">
+        <form onSubmit={handleCheckout} className="grid gap-6 sm:gap-8 md:grid-cols-2">
           {/* Left Column: Basket Items & Delivery Details */}
           <div className="space-y-6">
             {/* Basket Items Summary */}
-            <div className="rounded-3xl border border-[#DDD5C8] dark:border-[#223832] bg-white dark:bg-[#13221E] p-6 sm:p-7 shadow-sm">
+            <div className="rounded-3xl border border-[#DDD5C8] dark:border-[#223832] bg-white dark:bg-[#13221E] p-4 sm:p-7 shadow-sm">
               <h2 className="font-serif text-lg font-bold text-[#192D2A] dark:text-[#F8FAFC] mb-4">
                 Basket Items ({cart.length})
               </h2>
               <div className="space-y-2.5 max-h-52 overflow-y-auto pr-1 border-b border-[#DDD5C8]/70 pb-4 dark:border-[#223832]">
                 {cart.map((item) => (
                   <div key={item._id} className="flex justify-between items-center text-xs">
-                    <span className="font-medium text-[#192D2A] truncate max-w-[220px] dark:text-[#F8FAFC]">
+                    <span className="font-medium text-[#192D2A] truncate max-w-[170px] sm:max-w-[220px] dark:text-[#F8FAFC]">
                       {item.name} × {item.quantity}
                     </span>
                     <span className="font-serif font-bold text-[#192D2A] dark:text-[#F8FAFC]">
@@ -321,7 +321,7 @@ const Checkout = () => {
             </div>
 
             {/* Delivery Slot Choice */}
-            <div className="rounded-3xl border border-[#DDD5C8] dark:border-[#223832] bg-white dark:bg-[#13221E] p-6 sm:p-7 shadow-sm">
+            <div className="rounded-3xl border border-[#DDD5C8] dark:border-[#223832] bg-white dark:bg-[#13221E] p-4 sm:p-7 shadow-sm">
               <h3 className="font-serif text-base font-bold text-[#192D2A] dark:text-[#F8FAFC] flex items-center gap-2 mb-3">
                 <Truck size={17} className="text-[#17745A] dark:text-[#10B981]" /> Preferred Delivery Window
               </h3>
@@ -334,7 +334,7 @@ const Checkout = () => {
                 ].map((slot) => (
                   <label
                     key={slot}
-                    className={`flex items-center gap-3 rounded-2xl border p-3.5 cursor-pointer font-medium transition ${
+                    className={`flex items-center gap-3 rounded-2xl border p-3 sm:p-3.5 cursor-pointer font-medium transition ${
                       deliverySlot === slot
                         ? 'border-[#17745A] bg-[#17745A]/5 text-[#192D2A] font-bold dark:border-[#10B981] dark:bg-[#10B981]/10 dark:text-[#F8FAFC]'
                         : 'border-[#DDD5C8] text-[#625F59] hover:bg-[#FDFBF7] dark:border-[#2A443E] dark:text-[#A7B3AF] dark:hover:bg-[#162723]'
@@ -346,9 +346,9 @@ const Checkout = () => {
                       value={slot}
                       checked={deliverySlot === slot}
                       onChange={() => setDeliverySlot(slot)}
-                      className="accent-[#17745A] h-4 w-4"
+                      className="accent-[#17745A] h-4 w-4 shrink-0"
                     />
-                    <span className="text-xs">{slot}</span>
+                    <span className="text-xs break-words">{slot}</span>
                   </label>
                 ))}
               </div>
@@ -360,7 +360,7 @@ const Checkout = () => {
             {/* Delivery Address Details */}
             <fieldset
               disabled={loading || Boolean(pendingPayment)}
-              className="rounded-3xl border border-[#DDD5C8] dark:border-[#223832] bg-white dark:bg-[#13221E] p-6 sm:p-7 shadow-sm space-y-4"
+              className="rounded-3xl border border-[#DDD5C8] dark:border-[#223832] bg-white dark:bg-[#13221E] p-4 sm:p-7 shadow-sm space-y-4"
             >
               <legend className="font-serif text-lg font-bold text-[#192D2A] dark:text-[#F8FAFC] px-1">
                 Delivery Address Details
@@ -408,7 +408,7 @@ const Checkout = () => {
             </fieldset>
 
             {/* Payment Method Selection */}
-            <div className="rounded-3xl border border-[#DDD5C8] dark:border-[#223832] bg-white dark:bg-[#13221E] p-6 sm:p-7 shadow-sm">
+            <div className="rounded-3xl border border-[#DDD5C8] dark:border-[#223832] bg-white dark:bg-[#13221E] p-4 sm:p-7 shadow-sm">
               <h3 className="font-serif text-lg font-bold text-[#192D2A] dark:text-[#F8FAFC] mb-4">
                 Payment Method
               </h3>

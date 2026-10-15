@@ -47,17 +47,17 @@ const Cart = () => {
   return (
     <div className="min-h-screen bg-porcelain px-4 py-10 sm:px-6 lg:py-14">
       <div className="mx-auto max-w-6xl">
-        <div className="mb-8 border-b border-sandstone pb-6 flex items-baseline justify-between dark:border-white/10">
+        <div className="mb-6 sm:mb-8 border-b border-sandstone pb-4 sm:pb-6 flex flex-col sm:flex-row sm:items-baseline justify-between gap-3 dark:border-white/10">
           <div>
             <p className="text-xs font-bold uppercase tracking-widest text-[#17745A] dark:text-[#10B981]">Checkout Preparation</p>
-            <h1 className="mt-1 font-serif text-3xl font-normal text-espresso sm:text-4xl dark:text-ivory">
+            <h1 className="mt-1 font-serif text-2xl sm:text-4xl font-normal text-espresso dark:text-ivory">
               Your Grocery Basket
             </h1>
           </div>
           <button
             type="button"
             onClick={handleClearCart}
-            className="flex items-center gap-1.5 text-xs font-semibold text-warmStone hover:text-errorRed transition"
+            className="flex items-center gap-1.5 text-xs font-semibold text-warmStone hover:text-errorRed transition self-start sm:self-auto"
           >
             <Trash2 size={13} />
             Clear Basket
@@ -65,10 +65,10 @@ const Cart = () => {
         </div>
 
         {/* 65% Items / 35% Summary Split */}
-        <div className="grid gap-8 lg:grid-cols-[1fr_360px]">
+        <div className="grid gap-6 sm:gap-8 lg:grid-cols-[1fr_360px]">
           {/* Cart Items Table */}
           <div className="rounded-2xl border border-sandstone bg-ivory shadow-subtle overflow-hidden dark:bg-[#1D151A] dark:border-white/10">
-            <div className="border-b border-sandstone bg-porcelain px-6 py-4 dark:bg-[#251D21] dark:border-white/10">
+            <div className="border-b border-sandstone bg-porcelain px-4 sm:px-6 py-3.5 sm:py-4 dark:bg-[#251D21] dark:border-white/10">
               <h2 className="font-serif text-sm font-semibold text-espresso dark:text-ivory">
                 Selected Provisions ({cart.length} items)
               </h2>
@@ -82,7 +82,7 @@ const Cart = () => {
 
           {/* Sticky Summary Rail */}
           <aside className="h-fit space-y-6">
-            <div className="rounded-2xl border border-sandstone bg-ivory p-6 shadow-subtle dark:bg-[#1D151A] dark:border-white/10">
+            <div className="rounded-2xl border border-sandstone bg-ivory p-4 sm:p-6 shadow-subtle dark:bg-[#1D151A] dark:border-white/10">
               {/* Free Delivery Meter */}
               <div className="mb-6 rounded-xl border border-sandstone/70 bg-porcelain p-4 dark:bg-[#251D21] dark:border-white/10">
                 <div className="flex items-center justify-between text-xs mb-2">
