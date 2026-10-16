@@ -308,7 +308,7 @@ const MerchantRegister = () => {
               ) : (
                 <>
                   <CheckCircle2 size={18} />
-                  <span>Register Store on TaazaDaily</span>
+                  <span>Register Store on GroceryStore</span>
                   <ArrowRight size={16} />
                 </>
               )}

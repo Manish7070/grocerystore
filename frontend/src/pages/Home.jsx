@@ -570,7 +570,7 @@ const Home = () => {
                 Most modern groceries travel through multiple holding warehouses, enduring gas-ripening and weeks of chemical preservation before reaching your shelf.
               </p>
               <p className="text-sm sm:text-base leading-relaxed" style={{ color: 'rgba(255,255,255,0.75)' }}>
-                TaazaDaily was built differently: direct from independent orchards in Himachal, organic growers in Pune and Nashik, and traditional cold-press millers. No artificial agents. No stale freezer stacks.
+                GroceryStore was built differently: direct from independent orchards in Himachal, organic growers in Pune and Nashik, and traditional cold-press millers. No artificial agents. No stale freezer stacks.
               </p>
               <div className="pt-4 grid grid-cols-2 gap-4">
                 {[{ v: '100%', l: 'Traceable Provenance', s: 'Direct farmer relationships' }, { v: 'Zero', l: 'Synthetic Preservatives', s: 'No artificial ripening gases' }].map(({ v, l, s }) => (
@@ -715,7 +715,7 @@ const Home = () => {
         <div className="mx-auto max-w-7xl">
           <div className="mb-10 text-center">
             <span className="text-[10px] font-black uppercase tracking-[0.28em] text-[#17745A] dark:text-[#55D6A0]">Our Promise</span>
-            <h2 className="mt-1 font-serif text-2xl sm:text-3xl font-bold text-[#192D2A] dark:text-white">Why TaazaDaily?</h2>
+            <h2 className="mt-1 font-serif text-2xl sm:text-3xl font-bold text-[#192D2A] dark:text-white">Why GroceryStore?</h2>
           </div>
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {deliveryBenefits.map(({ img, label, desc, ring }) => (

@@ -1,12 +1,12 @@
-# 🥬 TaazaDaily — Smart Farm-to-Fork Grocery Platform
+# 🥬 GroceryStore — Smart Farm-to-Fork Grocery Platform
 
-**TaazaDaily** is an advanced, production-grade MERN grocery commerce platform engineered with a **zero-dummy data** policy, live **MongoDB Atlas** integration, and unique industry-first features that set it apart from ordinary grocery clones.
+**GroceryStore** is an advanced, production-grade MERN grocery commerce platform engineered with a **zero-dummy data** policy, live **MongoDB Atlas** integration, and unique industry-first features that set it apart from ordinary grocery clones.
 
 ---
 
-## 🌟 What Makes TaazaDaily Different? ("Isme Kya Naya Hai?")
+## 🌟 What Makes GroceryStore Different? ("Isme Kya Naya Hai?")
 
-If someone asks: *"Why is this different from standard grocery websites like Blinkit, Zepto, or generic clones?"*, here are the five core innovations built into TaazaDaily:
+If someone asks: *"Why is this different from standard grocery websites like Blinkit, Zepto, or generic clones?"*, here are the five core innovations built into GroceryStore:
 
 ### 1. 📉 Freshness & Food Waste Reduction Radar (`/waste-center`)
 - **FEFO (First-Expired, First-Out) Inventory Engine:** Tracks individual warehouse batches with harvest dates, intake timestamps, and exact expiry countdowns.
@@ -39,7 +39,7 @@ If someone asks: *"Why is this different from standard grocery websites like Bli
 
 ## 🎨 Unique Brand Identity
 
-- **Brand:** **TaazaDaily** *(The Fresh Standard)*
+- **Brand:** **GroceryStore** *(The Fresh Standard)*
 - **Logo Lockup:** Custom SVG emblem uniting an organic produce basket, a budding green sprout, and a golden harvest droplet.
 - **Visual Design:** Premium, responsive UI with dark/light mode toggle, micro-interactions, smooth toasts, and zero placeholder assets.
 
@@ -132,4 +132,4 @@ npm run build
 
 ---
 
-© 2026 **TaazaDaily** — Engineered for Excellence. Zero Dummy Elements.
+© 2026 **GroceryStore** — Engineered for Excellence. Zero Dummy Elements.

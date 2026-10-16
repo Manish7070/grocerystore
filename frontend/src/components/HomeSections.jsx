@@ -58,7 +58,7 @@ const HomeSections = ({ products = [], onCategorySelect }) => {
               Freshness Radar & Zero-Waste Guarantee
             </h2>
             <p className="mt-3 max-w-xl text-sm font-medium leading-relaxed text-[#E7E2D9]">
-              Normal supermarkets discard expiring food. At TaazaDaily, our intelligent batch management system tracks harvest expiry dates and offers automatic smart markdown discounts—saving you money while reducing food waste to zero.
+              Normal supermarkets discard expiring food. At GroceryStore, our intelligent batch management system tracks harvest expiry dates and offers automatic smart markdown discounts—saving you money while reducing food waste to zero.
             </p>
             <div className="mt-6 flex flex-wrap gap-4">
               <Link

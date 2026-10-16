@@ -34,7 +34,7 @@ const productSchema = new mongoose.Schema({
   },
   brand: {
     type: String,
-    default: 'TaazaDaily',
+    default: 'GroceryStore',
   },
   origin: {
     type: String,

@@ -39,7 +39,7 @@ const StorePOS = () => {
   const [activeHelper, setActiveHelper] = useState({
     name: user?.name || 'Kiran (Store Staff)',
     helperCode: user?.partnerProfile?.helperCode || 'HLP-1042',
-    storeName: user?.partnerProfile?.businessName || 'TaazaDaily Walk-in Store Hub',
+    storeName: user?.partnerProfile?.businessName || 'GroceryStore Walk-in Store Hub',
   });
 
   // Walk-in Cart

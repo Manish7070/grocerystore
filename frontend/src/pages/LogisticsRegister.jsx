@@ -141,7 +141,7 @@ const LogisticsRegister = () => {
                     required
                     value={formData.businessName}
                     onChange={handleChange}
-                    placeholder="e.g. TaazaDaily Station Road Physical Store Hub"
+                    placeholder="e.g. GroceryStore Station Road Physical Store Hub"
                     className="w-full rounded-xl border border-[#DDD5C8] dark:border-[#2A443E] bg-[#FDFBF7] dark:bg-[#182925] pl-10 pr-4 py-2.5 text-sm text-[#192D2A] dark:text-white focus:border-teal-600 focus:outline-none"
                   />
                 </div>

@@ -26,7 +26,7 @@ export const NotificationProvider = ({ children }) => {
       const initial = [
         {
           id: 'notif-welcome-1',
-          title: 'Welcome to TaazaDaily Grocery Hub',
+          title: 'Welcome to GroceryStore Grocery Hub',
           message: 'Real-time farmgate produce and 10–15 min hyperlocal deliveries active.',
           time: new Date(Date.now() - 1000 * 60 * 30).toISOString(),
           read: false,
@@ -45,6 +45,23 @@ export const NotificationProvider = ({ children }) => {
       try {
         localStorage.setItem(key, JSON.stringify(stored));
       } catch {}
+    } else {
+      // Auto-migrate any existing stored notifications from TaazaDaily to GroceryStore
+      let modified = false;
+      stored = stored.map((n) => {
+        const newTitle = n.title ? n.title.replace(/TaazaDaily/gi, 'GroceryStore') : n.title;
+        const newMsg = n.message ? n.message.replace(/TaazaDaily/gi, 'GroceryStore') : n.message;
+        if (newTitle !== n.title || newMsg !== n.message) {
+          modified = true;
+          return { ...n, title: newTitle, message: newMsg };
+        }
+        return n;
+      });
+      if (modified) {
+        try {
+          localStorage.setItem(key, JSON.stringify(stored));
+        } catch {}
+      }
     }
 
     setNotifications(stored);
