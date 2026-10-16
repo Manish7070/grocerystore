@@ -17,7 +17,7 @@ const heroSlides = [
   {
     id: 0,
     badge: '100% Farm to Doorstep',
-    badgeEmoji: '🌿',
+    badgeImg: 'https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=80&q=80',
     headline: ["Nature's Finest,", "Your Kitchen's", 'Best Friend'],
     subtext: 'Harvest-fresh vegetables, artisanal dairy and organic pantry staples — dispatched within 2 hours with verified cold-chain.',
     cta: { label: 'Shop Fresh Now', to: '/shop' },
@@ -27,7 +27,7 @@ const heroSlides = [
     bgLight: 'linear-gradient(135deg, #0B2A1E 0%, #164A32 35%, #1C6040 60%, #0E3526 100%)',
     bgDark:  'linear-gradient(135deg, #040f0a 0%, #08200f 35%, #0d2b18 60%, #050f0a 100%)',
     image: 'https://images.unsplash.com/photo-1610348725531-843dff563e2c?auto=format&fit=crop&w=1400&q=90',
-    floatBadge: { icon: '🥬', label: 'Grade A+ Produce', sub: 'Evaluated Daily' },
+    floatBadge: { img: 'https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=120&q=80', label: 'Grade A+ Produce', sub: 'Evaluated Daily' },
     stats: [{ v: '40+', l: 'Partner Farms' }, { v: '2hr', l: 'Cold-Chain' }, { v: '0', l: 'Preservatives' }],
     orbColor1: 'rgba(23,116,90,0.35)',
     orbColor2: 'rgba(217,164,65,0.20)',
@@ -35,7 +35,7 @@ const heroSlides = [
   {
     id: 1,
     badge: 'Seasonal Harvest Edition',
-    badgeEmoji: '🍊',
+    badgeImg: 'https://images.unsplash.com/photo-1619566636858-adf3ef46400b?auto=format&fit=crop&w=80&q=80',
     headline: ['Orchard Ripe,', 'Delivered Before', 'Sunrise.'],
     subtext: 'Straight from Himachal orchards and Nashik vineyards. Each fruit hand-sorted at peak ripeness — never gas-ripened.',
     cta: { label: 'Explore Fruits', to: '/shop?category=Fruits' },
@@ -44,7 +44,7 @@ const heroSlides = [
     bgLight: 'linear-gradient(135deg, #2A1205 0%, #4A220A 35%, #5C2E10 60%, #321608 100%)',
     bgDark:  'linear-gradient(135deg, #100701 0%, #1e0d04 35%, #261108 60%, #130803 100%)',
     image: 'https://images.unsplash.com/photo-1619566636858-adf3ef46400b?auto=format&fit=crop&w=1400&q=90',
-    floatBadge: { icon: '🍑', label: 'Peak Harvest', sub: 'Nashik and Himachal' },
+    floatBadge: { img: 'https://images.unsplash.com/photo-1559181567-c3190ca9959b?auto=format&fit=crop&w=120&q=80', label: 'Peak Harvest', sub: 'Nashik and Himachal' },
     stats: [{ v: '60+', l: 'Fruit Varieties' }, { v: '24h', l: 'Harvest to Door' }, { v: '100%', l: 'Natural Ripening' }],
     orbColor1: 'rgba(198,107,66,0.35)',
     orbColor2: 'rgba(217,164,65,0.20)',
@@ -52,7 +52,7 @@ const heroSlides = [
   {
     id: 2,
     badge: 'Artisan Dairy Collection',
-    badgeEmoji: '🥛',
+    badgeImg: 'https://images.unsplash.com/photo-1628088062854-d1870b4553da?auto=format&fit=crop&w=80&q=80',
     headline: ['Pure. Cultured.', 'Crafted by', 'Expert Millers.'],
     subtext: 'Whole milk from grass-fed cows, traditionally churned white butter, cold-pressed virgin coconut oil and heritage ghee.',
     cta: { label: 'Shop Dairy', to: '/shop?category=Dairy' },
@@ -61,21 +61,57 @@ const heroSlides = [
     bgLight: 'linear-gradient(135deg, #051A26 0%, #0B3045 35%, #0E3D58 60%, #061C2A 100%)',
     bgDark:  'linear-gradient(135deg, #020912 0%, #060f1e 35%, #090f26 60%, #030812 100%)',
     image: 'https://images.unsplash.com/photo-1550583724-b2692b85b150?auto=format&fit=crop&w=1400&q=90',
-    floatBadge: { icon: '🧈', label: 'Grass-Fed Dairy', sub: 'Traditional Churning' },
+    floatBadge: { img: 'https://images.unsplash.com/photo-1589985270826-4b7bb135bc9d?auto=format&fit=crop&w=120&q=80', label: 'Grass-Fed Dairy', sub: 'Traditional Churning' },
     stats: [{ v: '15+', l: 'Dairy Products' }, { v: 'A2', l: 'Milk Grade' }, { v: 'Zero', l: 'Additives' }],
     orbColor1: 'rgba(14,107,138,0.35)',
     orbColor2: 'rgba(85,214,160,0.20)',
   },
 ];
 
-/* ─── CATEGORIES ────────────────────────────────────────────────────────── */
+/* ─── CATEGORIES — real product photography ──────────────────────────────── */
 const curatedCategories = [
-  { name: 'Farm Vegetables', slug: 'Vegetables', emoji: '🥦', count: '15+', color: '#16A34A', bgClass: 'bg-green-100 dark:bg-green-950' },
-  { name: 'Artisan Bakery',  slug: 'Bakery',     emoji: '🍞', count: '12+', color: '#D97706', bgClass: 'bg-amber-100 dark:bg-amber-950' },
-  { name: 'Dairy Essentials',slug: 'Dairy',      emoji: '🥛', count: '18+', color: '#0891B2', bgClass: 'bg-cyan-100 dark:bg-cyan-950' },
-  { name: 'Heirloom Grains', slug: 'Rice',       emoji: '🌾', count: '10+', color: '#A16207', bgClass: 'bg-yellow-100 dark:bg-yellow-950' },
-  { name: 'Oils and Spices', slug: 'Oils',       emoji: '🧄', count: '20+', color: '#DC2626', bgClass: 'bg-red-100 dark:bg-red-950' },
-  { name: 'Orchard Fruits',  slug: 'Fruits',     emoji: '🍎', count: '25+', color: '#E11D48', bgClass: 'bg-rose-100 dark:bg-rose-950' },
+  {
+    name: 'Farm Vegetables',
+    slug: 'Vegetables',
+    image: 'https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=400&q=80',
+    count: '15+ varieties',
+    color: '#16A34A',
+  },
+  {
+    name: 'Artisan Bakery',
+    slug: 'Bakery',
+    image: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=400&q=80',
+    count: '12+ varieties',
+    color: '#D97706',
+  },
+  {
+    name: 'Dairy Essentials',
+    slug: 'Dairy',
+    image: 'https://images.unsplash.com/photo-1628088062854-d1870b4553da?auto=format&fit=crop&w=400&q=80',
+    count: '18+ varieties',
+    color: '#0891B2',
+  },
+  {
+    name: 'Heirloom Grains',
+    slug: 'Rice',
+    image: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&w=400&q=80',
+    count: '10+ varieties',
+    color: '#A16207',
+  },
+  {
+    name: 'Oils and Spices',
+    slug: 'Oils',
+    image: 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=400&q=80',
+    count: '20+ varieties',
+    color: '#DC2626',
+  },
+  {
+    name: 'Orchard Fruits',
+    slug: 'Fruits',
+    image: 'https://images.unsplash.com/photo-1619566636858-adf3ef46400b?auto=format&fit=crop&w=400&q=80',
+    count: '25+ varieties',
+    color: '#E11D48',
+  },
 ];
 
 /* ─── RECIPE KITS ────────────────────────────────────────────────────────── */
@@ -233,9 +269,9 @@ const Home = () => {
             {/* LEFT — Text */}
             <div style={{ opacity: isTransitioning ? 0 : 1, animation: isTransitioning ? 'none' : 'heroFadeUp 0.7s cubic-bezier(0.22,1,0.36,1) both', transition: 'opacity 0.35s ease' }}>
 
-              {/* Badge */}
-              <div className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/12 px-4 py-1.5 text-xs font-bold text-white backdrop-blur-md mb-6 shadow-lg">
-                <span className="text-base leading-none">{slide.badgeEmoji}</span>
+              {/* Badge with real photo */}
+              <div className="inline-flex items-center gap-2.5 rounded-full border border-white/25 bg-white/12 px-3.5 py-1.5 text-xs font-bold text-white backdrop-blur-md mb-6 shadow-lg">
+                <img src={slide.badgeImg} alt="" className="w-5 h-5 rounded-full object-cover ring-1 ring-white/50 shadow-sm" />
                 <span>{slide.badge}</span>
               </div>
 
@@ -295,12 +331,12 @@ const Home = () => {
                 <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-transparent" />
               </div>
 
-              {/* Floating badge */}
-              <div className="absolute -bottom-5 left-2 hidden sm:flex items-center gap-3 rounded-2xl border border-white/25 bg-black/40 backdrop-blur-xl p-3.5 shadow-2xl" style={{ animation: 'floatBadge 3.2s ease-in-out infinite' }}>
-                <span className="text-2xl">{slide.floatBadge.icon}</span>
+              {/* Floating badge with real image */}
+              <div className="absolute -bottom-5 left-2 hidden sm:flex items-center gap-3 rounded-2xl border border-white/25 bg-black/45 backdrop-blur-xl p-3 shadow-2xl" style={{ animation: 'floatBadge 3.2s ease-in-out infinite' }}>
+                <img src={slide.floatBadge.img} alt="" className="w-10 h-10 rounded-xl object-cover ring-1 ring-white/40 shadow-sm shrink-0" />
                 <div>
                   <p className="text-xs font-bold text-white leading-none">{slide.floatBadge.label}</p>
-                  <p className="text-[10px] mt-0.5 font-medium" style={{ color: 'rgba(255,255,255,0.65)' }}>{slide.floatBadge.sub}</p>
+                  <p className="text-[10px] mt-0.5 font-medium" style={{ color: 'rgba(255,255,255,0.7)' }}>{slide.floatBadge.sub}</p>
                 </div>
               </div>
 
@@ -423,17 +459,29 @@ const Home = () => {
               <Link
                 key={cat.slug}
                 to={`/shop?category=${encodeURIComponent(cat.slug)}`}
-                className="group relative flex flex-col items-center gap-3 rounded-3xl border border-[#DDD5C8] bg-white p-4 shadow-sm transition-all duration-500 hover:-translate-y-2 hover:shadow-xl dark:bg-[#172c24] dark:border-[#253d30] overflow-hidden"
+                className="group relative flex flex-col items-center rounded-3xl border border-[#DDD5C8] bg-white p-3.5 shadow-sm transition-all duration-500 hover:-translate-y-2 hover:shadow-xl dark:bg-[#172c24] dark:border-[#253d30] overflow-hidden text-center"
               >
-                {/* Emoji box using Tailwind dark class — no JS isDark */}
-                <div className={`w-16 h-16 sm:w-20 sm:h-20 rounded-2xl flex items-center justify-center text-3xl sm:text-4xl transition-all duration-500 group-hover:scale-110 group-hover:rotate-6 shadow-sm ${cat.bgClass}`}>
-                  {cat.emoji}
+                {/* Real photo container with smooth zoom */}
+                <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden shadow-md mb-3 ring-2 ring-[#DDD5C8]/70 dark:ring-[#2a4035] group-hover:ring-[#17745A] dark:group-hover:ring-[#55D6A0] transition-all duration-300">
+                  <img
+                    src={cat.image}
+                    alt={cat.name}
+                    className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-115"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 </div>
-                <div className="text-center">
-                  <p className="text-xs font-black text-[#192D2A] dark:text-white leading-tight">{cat.name}</p>
-                  <p className="mt-0.5 text-[10px] text-[#625F59] dark:text-[#a8c4b8]">{cat.count} varieties</p>
+                <div className="min-w-0">
+                  <p className="text-xs font-black text-[#192D2A] dark:text-white leading-tight transition-colors group-hover:text-[#17745A] dark:group-hover:text-[#55D6A0]">
+                    {cat.name}
+                  </p>
+                  <p className="mt-1 text-[10px] font-semibold text-[#625F59] dark:text-[#a8c4b8]">
+                    {cat.count}
+                  </p>
                 </div>
-                <div className="pointer-events-none absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-all duration-500" style={{ boxShadow: `inset 0 0 0 1.5px ${cat.color}60` }} />
+                <div
+                  className="pointer-events-none absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-all duration-500"
+                  style={{ boxShadow: `inset 0 0 0 1.5px ${cat.color}60` }}
+                />
               </Link>
             ))}
           </div>
