@@ -374,30 +374,30 @@ const Home = () => {
                     </div>
 
                     {/* Headline */}
-                    <h1 className="font-serif text-3xl xs:text-4xl sm:text-5xl lg:text-[3.25rem] xl:text-[3.85rem] font-bold text-white leading-[1.12] tracking-tight drop-shadow-md">
+                    <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-[3.25rem] xl:text-[3.85rem] font-bold text-white leading-[1.12] tracking-tight drop-shadow-md">
                       {s.headline[0]}<br />
                       <span style={{ color: s.accent }}>{s.headline[1]}</span><br />
                       {s.headline[2]}
                     </h1>
 
                     {/* Subtext */}
-                    <p className="mt-4 sm:mt-6 text-xs sm:text-sm md:text-base leading-relaxed max-w-lg font-medium text-white/85">
+                    <p className="mt-3 sm:mt-5 text-xs sm:text-sm md:text-base leading-relaxed max-w-lg font-medium text-white/85">
                       {s.subtext}
                     </p>
 
-                    {/* CTAs */}
-                    <div className="mt-6 sm:mt-8 flex flex-col xs:flex-row items-stretch xs:items-center gap-2.5 sm:gap-3">
+                    {/* CTAs - Normal, sleek, proportional buttons */}
+                    <div className="mt-6 sm:mt-7 flex flex-wrap items-center gap-2.5 sm:gap-3">
                       <Link
                         to={s.cta.to}
-                        className="group inline-flex items-center justify-center gap-2 rounded-2xl px-6 sm:px-7 py-3 sm:py-3.5 text-xs sm:text-sm font-bold shadow-xl transition-all duration-300 hover:-translate-y-0.5 hover:shadow-2xl active:scale-[0.98]"
+                        className="group inline-flex items-center justify-center gap-1.5 sm:gap-2 rounded-xl px-5 py-2.5 text-xs sm:text-sm font-bold shadow-md transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg active:scale-95 w-fit"
                         style={{ background: s.accent, color: '#0B1714' }}
                       >
                         <span>{s.cta.label}</span>
-                        <ArrowRight size={16} className="transition-transform group-hover:translate-x-0.5" />
+                        <ArrowRight size={15} className="transition-transform group-hover:translate-x-0.5" />
                       </Link>
                       <Link
                         to={s.secondCta.to}
-                        className="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/30 bg-white/12 px-6 sm:px-7 py-3 sm:py-3.5 text-xs sm:text-sm font-semibold text-white backdrop-blur-md transition-all duration-300 hover:bg-white/22 hover:-translate-y-0.5 active:scale-[0.98]"
+                        className="inline-flex items-center justify-center gap-1.5 sm:gap-2 rounded-xl border border-white/30 bg-white/10 px-5 py-2.5 text-xs sm:text-sm font-semibold text-white backdrop-blur-sm transition-all duration-200 hover:bg-white/20 hover:-translate-y-0.5 active:scale-95 w-fit"
                       >
                         {s.secondCta.label}
                       </Link>
