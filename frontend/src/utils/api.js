@@ -4,7 +4,7 @@ const environment = import.meta.env || {};
 const backendOrigin = environment.VITE_BACKEND_URL?.replace(/\/$/, '') || '';
 
 const api = axios.create({
-  baseURL: environment.DEV ? '/api' : `${backendOrigin}/api`,
+  baseURL: environment.DEV ? '/api' : (backendOrigin ? `${backendOrigin}/api` : '/api'),
   timeout: 20000,
 });
 
@@ -15,6 +15,7 @@ api.interceptors.response.use((response) => response, (error) => {
   if (error.response?.status === 401 && !isLogin && currentToken && requestToken === `Bearer ${currentToken}`) {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
+    window.dispatchEvent(new Event('greenbasket:session-expired'));
     window.dispatchEvent(new Event('grocerystore:session-expired'));
   }
   return Promise.reject(error);

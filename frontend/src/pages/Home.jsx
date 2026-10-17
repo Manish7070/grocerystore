@@ -185,7 +185,6 @@ const Home = () => {
   const [loading, setLoading] = useState(true);
   const [activeCategoryFilter, setActiveCategoryFilter] = useState('All');
   const [activeSlide, setActiveSlide] = useState(0);
-  const [isTransitioning, setIsTransitioning] = useState(false);
   const autoPlayRef = useRef(null);
 
   /* Products fetch */
@@ -206,23 +205,74 @@ const Home = () => {
     })
     .slice(0, 12);
 
-  /* Slide navigation */
-  const goToSlide = useCallback((idx) => {
-    if (isTransitioning) return;
-    setIsTransitioning(true);
-    setTimeout(() => { setActiveSlide(idx); setIsTransitioning(false); }, 400);
-  }, [isTransitioning]);
+  /* Slide navigation & gestures */
+  const nextSlide = useCallback(() => {
+    setActiveSlide((prev) => (prev + 1) % heroSlides.length);
+  }, []);
 
-  const nextSlide = useCallback(() => goToSlide((activeSlide + 1) % heroSlides.length), [activeSlide, goToSlide]);
-  const prevSlide = useCallback(() => goToSlide((activeSlide - 1 + heroSlides.length) % heroSlides.length), [activeSlide, goToSlide]);
+  const prevSlide = useCallback(() => {
+    setActiveSlide((prev) => (prev - 1 + heroSlides.length) % heroSlides.length);
+  }, []);
+
+  const goToSlide = useCallback((idx) => {
+    setActiveSlide(idx);
+  }, []);
 
   useEffect(() => {
-    autoPlayRef.current = setInterval(nextSlide, 5500);
+    autoPlayRef.current = setInterval(nextSlide, 6000);
     return () => clearInterval(autoPlayRef.current);
   }, [nextSlide]);
 
-  const pauseAutoPlay = () => clearInterval(autoPlayRef.current);
-  const resumeAutoPlay = () => { autoPlayRef.current = setInterval(nextSlide, 5500); };
+  const pauseAutoPlay = () => {
+    if (autoPlayRef.current) clearInterval(autoPlayRef.current);
+  };
+  const resumeAutoPlay = () => {
+    if (autoPlayRef.current) clearInterval(autoPlayRef.current);
+    autoPlayRef.current = setInterval(nextSlide, 6000);
+  };
+
+  /* Touch / Swipe gesture handling for mobile & tablet */
+  const touchStartX = useRef(0);
+  const touchStartY = useRef(0);
+  const touchEndX = useRef(0);
+  const touchEndY = useRef(0);
+
+  const handleTouchStart = (e) => {
+    touchStartX.current = e.touches[0].clientX;
+    touchStartY.current = e.touches[0].clientY;
+    touchEndX.current = e.touches[0].clientX;
+    touchEndY.current = e.touches[0].clientY;
+    pauseAutoPlay();
+  };
+
+  const handleTouchMove = (e) => {
+    touchEndX.current = e.touches[0].clientX;
+    touchEndY.current = e.touches[0].clientY;
+  };
+
+  const handleTouchEnd = () => {
+    const diffX = touchEndX.current - touchStartX.current;
+    const diffY = touchEndY.current - touchStartY.current;
+    // Check if swipe was intentional (horizontal movement > 45px and greater than vertical movement)
+    if (Math.abs(diffX) > 45 && Math.abs(diffX) > Math.abs(diffY)) {
+      if (diffX < 0) {
+        nextSlide();
+      } else {
+        prevSlide();
+      }
+    }
+    resumeAutoPlay();
+  };
+
+  /* Keyboard arrow navigation */
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'ArrowLeft') prevSlide();
+      if (e.key === 'ArrowRight') nextSlide();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [prevSlide, nextSlide]);
 
   const slide = heroSlides[activeSlide];
 
@@ -231,148 +281,217 @@ const Home = () => {
 
       {/* ═══════════════════════════════════════════════════════════════
           HERO SLIDER
-          FIX: Two-layer background — light layer always present, dark layer
-          sits on top with opacity-0 dark:opacity-100. This way dark-mode
-          toggling is pure CSS (no JS state → no React re-render → no flash).
+          True sliding horizontal carousel with touch swipe gesture support,
+          cross-fading multi-palette background and responsive layouts
+          for mobile, tablet, and desktop screens.
       ═══════════════════════════════════════════════════════════════ */}
       <section
-        className="relative overflow-hidden"
-        style={{ minHeight: 'clamp(520px, 88vh, 820px)' }}
+        className="relative overflow-hidden select-none"
+        style={{ minHeight: 'clamp(580px, 86vh, 840px)' }}
         onMouseEnter={pauseAutoPlay}
         onMouseLeave={resumeAutoPlay}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
       >
-        {/* Light-mode background layer */}
+        {/* Light-mode background layers for each slide */}
+        {heroSlides.map((s, idx) => (
+          <div
+            key={`bg-light-${s.id}`}
+            className="absolute inset-0 transition-opacity duration-700 pointer-events-none"
+            style={{
+              background: s.bgLight,
+              opacity: activeSlide === idx ? 1 : 0,
+            }}
+          />
+        ))}
+
+        {/* Dark-mode background layers for each slide */}
+        {heroSlides.map((s, idx) => (
+          <div
+            key={`bg-dark-${s.id}`}
+            className="absolute inset-0 transition-opacity duration-700 pointer-events-none opacity-0 dark:opacity-100"
+            style={{
+              background: s.bgDark,
+              opacity: activeSlide === idx ? 1 : 0,
+            }}
+          />
+        ))}
+
+        {/* Ambient glow orbs */}
         <div
-          className="absolute inset-0"
-          style={{ background: slide.bgLight, transition: 'background 0.85s ease' }}
+          className="pointer-events-none absolute -top-32 -left-32 h-[450px] w-[450px] sm:h-[500px] sm:w-[500px] rounded-full blur-[120px] opacity-50 transition-all duration-700"
+          style={{ background: slide.orbColor1 }}
         />
-        {/* Dark-mode background layer — CSS class flips opacity, zero JS flash */}
         <div
-          className="absolute inset-0 opacity-0 dark:opacity-100"
-          style={{ background: slide.bgDark, transition: 'background 0.85s ease, opacity 0.3s ease' }}
+          className="pointer-events-none absolute bottom-0 right-0 h-[350px] w-[350px] sm:h-[400px] sm:w-[400px] rounded-full blur-[100px] opacity-40 transition-all duration-700"
+          style={{ background: slide.orbColor2 }}
         />
 
-        {/* Ambient orbs */}
-        <div className="pointer-events-none absolute -top-32 -left-32 h-[500px] w-[500px] rounded-full blur-[120px] opacity-50 transition-all duration-1000" style={{ background: slide.orbColor1 }} />
-        <div className="pointer-events-none absolute bottom-0 right-0 h-[400px] w-[400px] rounded-full blur-[100px] opacity-40 transition-all duration-1000" style={{ background: slide.orbColor2 }} />
-
-        {/* Dot-grid texture */}
+        {/* Subtle dot-grid texture */}
         <div
           className="pointer-events-none absolute inset-0 opacity-[0.06]"
           style={{ backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.6) 1px, transparent 1px)', backgroundSize: '36px 36px' }}
         />
 
-        {/* Slide content */}
-        <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex items-center" style={{ minHeight: 'clamp(520px, 88vh, 820px)' }}>
-          <div className="grid w-full items-center gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16 py-16 lg:py-20">
+        {/* Side Arrow Navigation (Desktop & Tablet) */}
+        <button
+          onClick={prevSlide}
+          aria-label="Previous slide"
+          className="hidden md:flex absolute left-4 lg:left-8 top-1/2 -translate-y-1/2 z-20 h-11 w-11 items-center justify-center rounded-full border border-white/25 bg-black/35 text-white backdrop-blur-md transition hover:bg-white/20 hover:scale-105 active:scale-95 shadow-lg"
+        >
+          <ChevronLeft size={22} />
+        </button>
+        <button
+          onClick={nextSlide}
+          aria-label="Next slide"
+          className="hidden md:flex absolute right-4 lg:right-8 top-1/2 -translate-y-1/2 z-20 h-11 w-11 items-center justify-center rounded-full border border-white/25 bg-black/35 text-white backdrop-blur-md transition hover:bg-white/20 hover:scale-105 active:scale-95 shadow-lg"
+        >
+          <ChevronRight size={22} />
+        </button>
 
-            {/* LEFT — Text */}
-            <div style={{ opacity: isTransitioning ? 0 : 1, animation: isTransitioning ? 'none' : 'heroFadeUp 0.7s cubic-bezier(0.22,1,0.36,1) both', transition: 'opacity 0.35s ease' }}>
+        {/* Horizontal sliding track */}
+        <div
+          className="flex w-full transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]"
+          style={{ transform: `translateX(-${activeSlide * 100}%)` }}
+        >
+          {heroSlides.map((s, idx) => (
+            <div
+              key={s.id}
+              className="w-full shrink-0 flex-none px-4 sm:px-6 lg:px-8 flex items-center justify-center"
+              style={{ minHeight: 'clamp(580px, 86vh, 840px)' }}
+              aria-hidden={activeSlide !== idx}
+            >
+              <div className="mx-auto max-w-7xl w-full">
+                <div className="grid w-full items-center gap-8 md:gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16 pt-8 pb-24 sm:pt-14 sm:pb-20 lg:py-20">
 
-              {/* Badge with real photo */}
-              <div className="inline-flex items-center gap-2.5 rounded-full border border-white/25 bg-white/12 px-3.5 py-1.5 text-xs font-bold text-white backdrop-blur-md mb-6 shadow-lg">
-                <img src={slide.badgeImg} alt="" className="w-5 h-5 rounded-full object-cover ring-1 ring-white/50 shadow-sm" />
-                <span>{slide.badge}</span>
-              </div>
+                  {/* LEFT — Text */}
+                  <div>
+                    {/* Badge */}
+                    <div className="inline-flex items-center gap-2 sm:gap-2.5 rounded-full border border-white/25 bg-white/15 px-3 sm:px-3.5 py-1 sm:py-1.5 text-[11px] sm:text-xs font-bold text-white backdrop-blur-md mb-4 sm:mb-6 shadow-lg">
+                      <img src={s.badgeImg} alt="" className="w-4 h-4 sm:w-5 sm:h-5 rounded-full object-cover ring-1 ring-white/50 shadow-sm" />
+                      <span>{s.badge}</span>
+                    </div>
 
-              {/* Headline — always white, accent color for middle line */}
-              <h1 className="font-serif text-4xl sm:text-5xl lg:text-[3.5rem] xl:text-[4rem] font-bold text-white leading-[1.1] tracking-tight drop-shadow-md">
-                {slide.headline[0]}<br />
-                <span style={{ color: slide.accent }}>{slide.headline[1]}</span><br />
-                {slide.headline[2]}
-              </h1>
+                    {/* Headline */}
+                    <h1 className="font-serif text-3xl xs:text-4xl sm:text-5xl lg:text-[3.25rem] xl:text-[3.85rem] font-bold text-white leading-[1.12] tracking-tight drop-shadow-md">
+                      {s.headline[0]}<br />
+                      <span style={{ color: s.accent }}>{s.headline[1]}</span><br />
+                      {s.headline[2]}
+                    </h1>
 
-              {/* Subtext — explicit white with high opacity */}
-              <p className="mt-6 text-sm sm:text-base leading-relaxed max-w-lg font-medium" style={{ color: 'rgba(255,255,255,0.82)' }}>
-                {slide.subtext}
-              </p>
+                    {/* Subtext */}
+                    <p className="mt-4 sm:mt-6 text-xs sm:text-sm md:text-base leading-relaxed max-w-lg font-medium text-white/85">
+                      {s.subtext}
+                    </p>
 
-              {/* CTAs */}
-              <div className="mt-8 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-                <Link
-                  to={slide.cta.to}
-                  className="group inline-flex items-center justify-center gap-2 rounded-2xl px-7 py-3.5 text-sm font-bold shadow-xl transition-all duration-300 hover:-translate-y-0.5 hover:shadow-2xl active:scale-[0.98]"
-                  style={{ background: slide.accent, color: '#0B1714' }}
-                >
-                  {slide.cta.label}
-                  <ArrowRight size={16} className="transition-transform group-hover:translate-x-0.5" />
-                </Link>
-                <Link
-                  to={slide.secondCta.to}
-                  className="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/30 bg-white/12 px-7 py-3.5 text-sm font-semibold text-white backdrop-blur-md transition-all duration-300 hover:bg-white/22 hover:-translate-y-0.5 active:scale-[0.98]"
-                >
-                  {slide.secondCta.label}
-                </Link>
-              </div>
+                    {/* CTAs */}
+                    <div className="mt-6 sm:mt-8 flex flex-col xs:flex-row items-stretch xs:items-center gap-2.5 sm:gap-3">
+                      <Link
+                        to={s.cta.to}
+                        className="group inline-flex items-center justify-center gap-2 rounded-2xl px-6 sm:px-7 py-3 sm:py-3.5 text-xs sm:text-sm font-bold shadow-xl transition-all duration-300 hover:-translate-y-0.5 hover:shadow-2xl active:scale-[0.98]"
+                        style={{ background: s.accent, color: '#0B1714' }}
+                      >
+                        <span>{s.cta.label}</span>
+                        <ArrowRight size={16} className="transition-transform group-hover:translate-x-0.5" />
+                      </Link>
+                      <Link
+                        to={s.secondCta.to}
+                        className="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/30 bg-white/12 px-6 sm:px-7 py-3 sm:py-3.5 text-xs sm:text-sm font-semibold text-white backdrop-blur-md transition-all duration-300 hover:bg-white/22 hover:-translate-y-0.5 active:scale-[0.98]"
+                      >
+                        {s.secondCta.label}
+                      </Link>
+                    </div>
 
-              {/* Stats */}
-              <div className="mt-12 flex items-center gap-8 border-t border-white/20 pt-8">
-                {slide.stats.map((s) => (
-                  <div key={s.l}>
-                    <p className="font-serif text-2xl sm:text-3xl font-bold text-white drop-shadow">{s.v}</p>
-                    <p className="mt-0.5 text-xs font-semibold" style={{ color: 'rgba(255,255,255,0.62)' }}>{s.l}</p>
+                    {/* Stats */}
+                    <div className="mt-7 sm:mt-10 flex items-center gap-6 sm:gap-8 border-t border-white/20 pt-5 sm:pt-7">
+                      {s.stats.map((stat) => (
+                        <div key={stat.l}>
+                          <p className="font-serif text-xl sm:text-2xl md:text-3xl font-bold text-white drop-shadow">{stat.v}</p>
+                          <p className="mt-0.5 text-[10px] sm:text-xs font-semibold text-white/70">{stat.l}</p>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                ))}
-              </div>
-            </div>
 
-            {/* RIGHT — Image */}
-            <div className="relative flex items-center justify-center">
-              <div
-                className="relative w-full max-w-lg mx-auto overflow-hidden rounded-3xl border border-white/20 shadow-[0_40px_80px_rgba(0,0,0,0.5)]"
-                style={{ opacity: isTransitioning ? 0 : 1, animation: isTransitioning ? 'none' : 'heroImageIn 0.85s cubic-bezier(0.22,1,0.36,1) both 0.12s', transition: 'opacity 0.35s ease' }}
-              >
-                <img
-                  key={slide.id}
-                  src={slide.image}
-                  alt={slide.headline.join(' ')}
-                  className="aspect-[4/3] w-full object-cover transition-transform duration-700 hover:scale-105"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-transparent" />
-              </div>
+                  {/* RIGHT — Image & Badges */}
+                  <div className="relative flex items-center justify-center w-full max-w-sm sm:max-w-md lg:max-w-lg mx-auto">
+                    <div className="relative w-full overflow-hidden rounded-2xl sm:rounded-3xl border border-white/20 shadow-[0_30px_70px_rgba(0,0,0,0.5)]">
+                      <img
+                        src={s.image}
+                        alt={s.headline.join(' ')}
+                        className="aspect-[16/10] sm:aspect-[4/3] w-full object-cover transition-transform duration-700 hover:scale-105"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+                    </div>
 
-              {/* Floating badge with real image */}
-              <div className="absolute -bottom-5 left-2 hidden sm:flex items-center gap-3 rounded-2xl border border-white/25 bg-black/45 backdrop-blur-xl p-3 shadow-2xl" style={{ animation: 'floatBadge 3.2s ease-in-out infinite' }}>
-                <img src={slide.floatBadge.img} alt="" className="w-10 h-10 rounded-xl object-cover ring-1 ring-white/40 shadow-sm shrink-0" />
-                <div>
-                  <p className="text-xs font-bold text-white leading-none">{slide.floatBadge.label}</p>
-                  <p className="text-[10px] mt-0.5 font-medium" style={{ color: 'rgba(255,255,255,0.7)' }}>{slide.floatBadge.sub}</p>
+                    {/* Floating badge */}
+                    <div className="absolute -bottom-3 sm:-bottom-5 left-2 sm:left-4 flex items-center gap-2.5 sm:gap-3 rounded-xl sm:rounded-2xl border border-white/25 bg-black/55 backdrop-blur-xl p-2 sm:p-3 shadow-2xl">
+                      <img src={s.floatBadge.img} alt="" className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl object-cover ring-1 ring-white/40 shadow-sm shrink-0" />
+                      <div>
+                        <p className="text-[11px] sm:text-xs font-bold text-white leading-tight">{s.floatBadge.label}</p>
+                        <p className="text-[9px] sm:text-[10px] mt-0.5 font-medium text-white/75">{s.floatBadge.sub}</p>
+                      </div>
+                    </div>
+
+                    {/* Live Stock Badge */}
+                    <div className="absolute -top-2.5 sm:-top-3 -right-2 sm:-right-3 flex items-center gap-1.5 sm:gap-2 rounded-full border border-white/25 bg-black/50 backdrop-blur-xl px-2.5 sm:px-3 py-1 sm:py-1.5 shadow-xl">
+                      <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+                      <span className="text-[10px] sm:text-[11px] font-bold text-white">Live Stock</span>
+                    </div>
+                  </div>
                 </div>
               </div>
-
-              {/* Live indicator */}
-              <div className="absolute -top-3 -right-3 hidden sm:flex items-center gap-2 rounded-full border border-white/25 bg-black/40 backdrop-blur-xl px-3 py-2 shadow-xl">
-                <span className="h-2 w-2 rounded-full bg-green-400 animate-pulse" />
-                <span className="text-[10px] font-bold text-white">Live Stock</span>
-              </div>
             </div>
-          </div>
+          ))}
         </div>
 
-        {/* Slider nav */}
-        <div className="absolute bottom-6 left-0 right-0 z-20 flex items-center justify-center gap-4">
-          <button onClick={prevSlide} aria-label="Previous slide" className="flex h-9 w-9 items-center justify-center rounded-full border border-white/30 bg-black/30 text-white backdrop-blur-md transition hover:bg-white/20 active:scale-95">
+        {/* Bottom Navigation controls */}
+        <div className="absolute bottom-5 sm:bottom-6 left-0 right-0 z-20 flex items-center justify-center gap-3 sm:gap-4 px-4">
+          <button
+            onClick={prevSlide}
+            aria-label="Previous slide"
+            className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-full border border-white/30 bg-black/40 text-white backdrop-blur-md transition hover:bg-white/25 active:scale-90 shadow-md"
+          >
             <ChevronLeft size={18} />
           </button>
-          <div className="flex items-center gap-2">
+
+          {/* Pagination Indicators */}
+          <div className="flex items-center gap-1.5 sm:gap-2 bg-black/35 backdrop-blur-md px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-full border border-white/20 shadow-md">
             {heroSlides.map((_, i) => (
               <button
                 key={i}
                 onClick={() => goToSlide(i)}
                 aria-label={`Slide ${i + 1}`}
                 className="rounded-full transition-all duration-300"
-                style={{ width: i === activeSlide ? '28px' : '8px', height: '8px', background: i === activeSlide ? slide.accent : 'rgba(255,255,255,0.38)' }}
+                style={{
+                  width: i === activeSlide ? '28px' : '8px',
+                  height: '8px',
+                  background: i === activeSlide ? slide.accent : 'rgba(255,255,255,0.4)',
+                }}
               />
             ))}
           </div>
-          <button onClick={nextSlide} aria-label="Next slide" className="flex h-9 w-9 items-center justify-center rounded-full border border-white/30 bg-black/30 text-white backdrop-blur-md transition hover:bg-white/20 active:scale-95">
+
+          <button
+            onClick={nextSlide}
+            aria-label="Next slide"
+            className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-full border border-white/30 bg-black/40 text-white backdrop-blur-md transition hover:bg-white/25 active:scale-90 shadow-md"
+          >
             <ChevronRight size={18} />
           </button>
         </div>
 
         {/* Progress bar */}
-        <div className="absolute bottom-0 left-0 h-0.5 w-full bg-white/15">
-          <div key={activeSlide} className="h-full rounded-full" style={{ background: slide.accent, animation: 'progressBar 5.5s linear forwards' }} />
+        <div className="absolute bottom-0 left-0 h-1 w-full bg-white/15">
+          <div
+            key={activeSlide}
+            className="h-full rounded-full transition-all"
+            style={{
+              background: slide.accent,
+              animation: 'progressBar 6s linear forwards',
+            }}
+          />
         </div>
       </section>
 
