@@ -108,17 +108,17 @@ const Navbar = () => {
       ? location.pathname === path && !location.search
       : location.pathname === path;
 
-    return `relative whitespace-nowrap px-3.5 py-2 text-[14px] font-semibold tracking-[-0.01em] transition-all duration-200 ${
+    return `relative whitespace-nowrap px-2.5 xl:px-3.5 py-2 text-xs xl:text-[14px] font-semibold tracking-[-0.01em] transition-all duration-200 ${
       isActive
-        ? 'text-[#17745A] font-bold after:absolute after:bottom-0 after:left-3.5 after:right-3.5 after:h-[2.5px] after:bg-[#17745A] after:rounded-full dark:text-[#55D6A0] dark:after:bg-[#55D6A0]'
+        ? 'text-[#17745A] font-bold after:absolute after:bottom-0 after:left-2.5 xl:after:left-3.5 after:right-2.5 xl:after:right-3.5 after:h-[2.5px] after:bg-[#17745A] after:rounded-full dark:text-[#55D6A0] dark:after:bg-[#55D6A0]'
         : 'text-[#192D2A] hover:text-[#17745A] dark:text-[#B6C7BD] dark:hover:text-[#F3F0E6]'
     }`;
   };
 
   return (
     <header className="sticky top-0 z-50 bg-[#FDFBF7]/95 dark:bg-[#0B1714]/95 border-b border-[#DDD5C8]/80 dark:border-[#30483C] shadow-[0_2px_12px_rgba(25,45,42,0.04)] backdrop-blur-md transition-colors">
-      <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8">
-        <div className="flex h-20 items-center justify-between gap-3 lg:gap-6">
+      <div className="mx-auto max-w-[1440px] px-3 sm:px-6 lg:px-8">
+        <div className="flex h-20 items-center justify-between gap-2 md:gap-3 lg:gap-5">
           
           {/* LEFT: Clean Typography Brand Wordmark */}
           <div className="flex shrink-0 items-center">
@@ -126,37 +126,41 @@ const Navbar = () => {
           </div>
 
           {/* CENTER: Main Navigation Links strictly single-line */}
-          <nav className="hidden lg:flex items-center gap-1 xl:gap-2 whitespace-nowrap shrink-0" aria-label="Main navigation">
+          <nav className="hidden lg:flex items-center gap-0.5 xl:gap-2 whitespace-nowrap shrink-0" aria-label="Main navigation">
             <Link to="/" onClick={closeMenus} className={getNavLinkClass('/', true)}>
               Home
             </Link>
             <Link to="/shop" onClick={closeMenus} className={getNavLinkClass('/shop', true)}>
-              Shop Catalog
+              <span className="hidden xl:inline">Shop Catalog</span>
+              <span className="xl:hidden">Shop</span>
             </Link>
             <Link to="/fresh-market" onClick={closeMenus} className={getNavLinkClass('/fresh-market')}>
-              Fresh Market
+              <span className="hidden xl:inline">Fresh Market</span>
+              <span className="xl:hidden">Fresh</span>
             </Link>
             <Link to="/bundles" onClick={closeMenus} className={getNavLinkClass('/bundles')}>
-              Recipe Kits
+              <span className="hidden xl:inline">Recipe Kits</span>
+              <span className="xl:hidden">Kits</span>
             </Link>
             <Link to="/smart-savings" onClick={closeMenus} className={getNavLinkClass('/smart-savings')}>
-              Smart Savings
+              <span className="hidden xl:inline">Smart Savings</span>
+              <span className="xl:hidden">Deals</span>
             </Link>
           </nav>
 
           {/* RIGHT: Search, Wishlist, Cart (Icon only, no price), Profile, Theme, Mobile toggle */}
-          <div className="flex items-center gap-1.5 sm:gap-2.5">
+          <div className="flex shrink-0 items-center gap-1.5 sm:gap-2 lg:gap-2.5">
             
             {/* Search Input */}
-            <div ref={searchRef} className="relative hidden md:block w-36 lg:w-56 xl:w-64 transition-all">
+            <div ref={searchRef} className="relative hidden md:block w-32 lg:w-44 xl:w-60 transition-all">
               <form
                 onSubmit={(e) => {
                   e.preventDefault();
                   submitSearch();
                 }}
-                className={`flex items-center gap-2 rounded-xl border bg-white dark:bg-[#1A2624] px-3 py-2 transition-all duration-200 ${
+                className={`flex items-center gap-2 rounded-xl border bg-white dark:bg-[#1A2624] px-2.5 xl:px-3 py-2 transition-all duration-200 ${
                   searchFocused
-                    ? 'border-[#C66B42] ring-2 ring-[#C66B42]/20 md:w-48 lg:w-72 dark:border-[#D9A441]'
+                    ? 'border-[#C66B42] ring-2 ring-[#C66B42]/20 md:w-44 lg:w-56 xl:w-72 dark:border-[#D9A441]'
                     : 'border-[#DDD5C8] hover:border-[#C66B42]/60 dark:border-white/10'
                 }`}
               >
@@ -183,32 +187,38 @@ const Navbar = () => {
 
               {/* Quick Search Dropdown */}
               {searchFocused && (
-                <div className="absolute right-0 top-full mt-2 w-80 max-w-[calc(100vw-2rem)] overflow-hidden rounded-2xl border border-[#DDD5C8] bg-white p-4 shadow-xl z-50 dark:bg-[#192624] dark:border-white/10">
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-[#625F59] mb-2 dark:text-[#F8F3EA]/60">
-                    Curated Market Aisles
-                  </p>
-                  <div className="flex flex-wrap gap-1.5 mb-3">
-                    {popularSearches.map((item) => (
-                      <button
-                        key={item}
-                        type="button"
-                        onClick={() => {
-                          setNavSearch(item);
-                          submitSearch(item);
-                        }}
-                        className="rounded-lg border border-[#DDD5C8] bg-[#F1E8D8]/50 px-2.5 py-1 text-[11px] font-medium text-[#192D2A] transition hover:border-[#C66B42] hover:bg-[#C66B42] hover:text-white dark:bg-[#121E1C] dark:text-[#F8F3EA] dark:border-white/10"
-                      >
-                        {item}
-                      </button>
-                    ))}
+                <>
+                  <div
+                    className="fixed inset-0 z-40 bg-black/40 backdrop-blur-xs sm:hidden"
+                    onClick={() => setSearchFocused(false)}
+                  />
+                  <div className="fixed inset-x-3 top-20 z-50 sm:absolute sm:inset-x-auto sm:right-0 sm:top-full sm:mt-2 sm:w-80 overflow-hidden rounded-2xl border border-[#DDD5C8] bg-white p-4 shadow-xl dark:bg-[#192624] dark:border-white/10 animate-in fade-in zoom-in-95 duration-150">
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-[#625F59] mb-2 dark:text-[#F8F3EA]/60">
+                      Curated Market Aisles
+                    </p>
+                    <div className="flex flex-wrap gap-1.5 mb-3">
+                      {popularSearches.map((item) => (
+                        <button
+                          key={item}
+                          type="button"
+                          onClick={() => {
+                            setNavSearch(item);
+                            submitSearch(item);
+                          }}
+                          className="rounded-lg border border-[#DDD5C8] bg-[#F1E8D8]/50 px-2.5 py-1 text-[11px] font-medium text-[#192D2A] transition hover:border-[#C66B42] hover:bg-[#C66B42] hover:text-white dark:bg-[#121E1C] dark:text-[#F8F3EA] dark:border-white/10"
+                        >
+                          {item}
+                        </button>
+                      ))}
+                    </div>
+                    <div className="border-t border-[#DDD5C8] pt-2.5 flex items-center justify-between text-[11px] text-[#625F59] dark:border-white/10 dark:text-[#F8F3EA]/60">
+                      <span>Press <kbd className="font-mono bg-[#F1E8D8] px-1 py-0.5 rounded text-[10px] text-[#192D2A] dark:bg-[#121E1C] dark:text-[#F8F3EA]">Enter</kbd> to search</span>
+                      <Link to="/shop" onClick={closeMenus} className="font-bold text-[#C66B42] hover:underline dark:text-[#D9A441]">
+                        All Aisles &rarr;
+                      </Link>
+                    </div>
                   </div>
-                  <div className="border-t border-[#DDD5C8] pt-2.5 flex items-center justify-between text-[11px] text-[#625F59] dark:border-white/10 dark:text-[#F8F3EA]/60">
-                    <span>Press <kbd className="font-mono bg-[#F1E8D8] px-1 py-0.5 rounded text-[10px] text-[#192D2A] dark:bg-[#121E1C] dark:text-[#F8F3EA]">Enter</kbd> to search</span>
-                    <Link to="/shop" onClick={closeMenus} className="font-bold text-[#C66B42] hover:underline dark:text-[#D9A441]">
-                      All Aisles &rarr;
-                    </Link>
-                  </div>
-                </div>
+                </>
               )}
             </div>
 
@@ -223,15 +233,15 @@ const Navbar = () => {
             </button>
 
             {/* In-App Activity Notification Center - Desktop header */}
-            <div className="hidden sm:block">
+            <div className="hidden xl:block">
               <NotificationCenter />
             </div>
 
-            {/* Wishlist Link - Desktop header, accessible via mobile drawer for smaller screens */}
+            {/* Wishlist Link - Desktop header */}
             <Link
               to="/watchlist"
               onClick={closeMenus}
-              className="relative hidden sm:flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-xl border border-[#DDD5C8] bg-white text-[#192D2A] transition hover:border-[#C66B42] hover:text-[#C66B42] dark:border-white/10 dark:bg-[#1A2624] dark:text-[#F8F3EA]"
+              className="relative hidden xl:flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-xl border border-[#DDD5C8] bg-white text-[#192D2A] transition hover:border-[#C66B42] hover:text-[#C66B42] dark:border-white/10 dark:bg-[#1A2624] dark:text-[#F8F3EA]"
               aria-label="Wishlist"
             >
               <Heart size={15} />
@@ -260,70 +270,77 @@ const Navbar = () => {
 
               {/* Cart Drawer Dropdown */}
               {cartOpen && (
-                <div className="absolute right-0 mt-3 w-[min(calc(100vw-1.5rem),390px)] overflow-hidden rounded-2xl border border-[#DDD5C8] bg-white shadow-2xl z-50 dark:bg-[#192624] dark:border-white/10">
-                  <div className="flex items-center justify-between border-b border-[#DDD5C8] bg-[#F1E8D8]/50 px-4 py-3 dark:bg-[#121E1C] dark:border-white/10">
-                    <div>
-                      <p className="font-serif text-sm font-semibold text-[#192D2A] dark:text-[#F8F3EA]">Your Market Basket</p>
-                      <p className="text-[11px] font-medium text-[#625F59] dark:text-[#F8F3EA]/60">{totalItems} item{totalItems === 1 ? '' : 's'} crated</p>
-                    </div>
-                    <button type="button" onClick={() => setCartOpen(false)} className="rounded-full p-1 text-[#625F59] hover:text-[#192D2A] dark:text-[#F8F3EA]/60">
-                      <X size={15} />
-                    </button>
-                  </div>
-
-                  <div className="max-h-72 overflow-y-auto p-3 space-y-2">
-                    {cart.length === 0 ? (
-                      <div className="py-8 text-center">
-                        <ShoppingBag size={34} className="mx-auto mb-2 text-[#DDD5C8]" />
-                        <p className="font-serif text-sm font-medium text-[#192D2A] dark:text-[#F8F3EA]">Your basket is waiting</p>
-                        <p className="text-xs text-[#625F59] mt-1 dark:text-[#F8F3EA]/60">Discover fresh produce and culinary recipe kits.</p>
+                <>
+                  {/* Backdrop for mobile */}
+                  <div
+                    className="fixed inset-0 z-40 bg-black/40 backdrop-blur-xs sm:hidden"
+                    onClick={() => setCartOpen(false)}
+                  />
+                  <div className="fixed inset-x-3 top-20 z-50 sm:absolute sm:inset-x-auto sm:right-0 sm:top-full sm:mt-3 sm:w-[390px] overflow-hidden rounded-2xl border border-[#DDD5C8] bg-white shadow-2xl dark:bg-[#192624] dark:border-white/10 animate-in fade-in zoom-in-95 duration-150">
+                    <div className="flex items-center justify-between border-b border-[#DDD5C8] bg-[#F1E8D8]/50 px-4 py-3 dark:bg-[#121E1C] dark:border-white/10">
+                      <div>
+                        <p className="font-serif text-sm font-semibold text-[#192D2A] dark:text-[#F8F3EA]">Your Market Basket</p>
+                        <p className="text-[11px] font-medium text-[#625F59] dark:text-[#F8F3EA]/60">{totalItems} item{totalItems === 1 ? '' : 's'} crated</p>
                       </div>
-                    ) : (
-                      cart.map((item) => (
-                        <div key={item._id} className="flex items-center gap-3 rounded-xl border border-[#DDD5C8]/60 bg-[#F1E8D8]/30 p-2.5 dark:bg-[#121E1C]/60 dark:border-white/5">
-                          <ProductArtwork product={item} className="h-12 w-12 shrink-0 rounded-lg object-cover" />
-                          <div className="min-w-0 flex-1">
-                            <p className="truncate text-xs font-bold text-[#192D2A] dark:text-[#F8F3EA]">{item.name}</p>
-                            <p className="text-[11px] font-medium text-[#625F59] dark:text-[#F8F3EA]/60">Qty {item.quantity} &bull; ₹{item.price}</p>
-                          </div>
-                          <button
-                            type="button"
-                            onClick={() => removeItem(item._id)}
-                            className="rounded-lg p-1 text-[#625F59] hover:text-red-600 transition"
-                            aria-label={`Remove ${item.name}`}
-                          >
-                            <Trash2 size={14} />
-                          </button>
+                      <button type="button" onClick={() => setCartOpen(false)} className="rounded-full p-1 text-[#625F59] hover:text-[#192D2A] dark:text-[#F8F3EA]/60" aria-label="Close basket">
+                        <X size={15} />
+                      </button>
+                    </div>
+
+                    <div className="max-h-[60vh] sm:max-h-72 overflow-y-auto p-3 space-y-2">
+                      {cart.length === 0 ? (
+                        <div className="py-8 text-center">
+                          <ShoppingBag size={34} className="mx-auto mb-2 text-[#DDD5C8]" />
+                          <p className="font-serif text-sm font-medium text-[#192D2A] dark:text-[#F8F3EA]">Your basket is waiting</p>
+                          <p className="text-xs text-[#625F59] mt-1 dark:text-[#F8F3EA]/60">Discover fresh produce and culinary recipe kits.</p>
                         </div>
-                      ))
+                      ) : (
+                        cart.map((item) => (
+                          <div key={item._id} className="flex items-center gap-3 rounded-xl border border-[#DDD5C8]/60 bg-[#F1E8D8]/30 p-2.5 dark:bg-[#121E1C]/60 dark:border-white/5">
+                            <ProductArtwork product={item} className="h-12 w-12 shrink-0 rounded-lg object-cover" />
+                            <div className="min-w-0 flex-1">
+                              <p className="truncate text-xs font-bold text-[#192D2A] dark:text-[#F8F3EA]">{item.name}</p>
+                              <p className="text-[11px] font-medium text-[#625F59] dark:text-[#F8F3EA]/60">Qty {item.quantity} &bull; ₹{item.price}</p>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => removeItem(item._id)}
+                              className="rounded-lg p-1 text-[#625F59] hover:text-red-600 transition"
+                              aria-label={`Remove ${item.name}`}
+                            >
+                              <Trash2 size={14} />
+                            </button>
+                          </div>
+                        ))
+                      )}
+                    </div>
+
+                    {cart.length > 0 && (
+                      <div className="border-t border-[#DDD5C8] p-4 bg-[#F1E8D8]/30 dark:bg-[#121E1C] dark:border-white/10 space-y-3">
+                        <div className="flex items-baseline justify-between">
+                          <span className="font-serif text-sm font-bold text-[#192D2A] dark:text-[#F8F3EA]">Subtotal</span>
+                          <span className="font-serif text-lg font-bold text-[#C66B42] dark:text-[#D9A441]">₹{total.toFixed(0)}</span>
+                        </div>
+                        <div className="grid grid-cols-2 gap-2">
+                          <Link
+                            to="/cart"
+                            onClick={() => setCartOpen(false)}
+                            className="flex items-center justify-center rounded-xl border border-[#DDD5C8] bg-white py-2 text-xs font-bold text-[#192D2A] hover:bg-[#F1E8D8] transition dark:bg-[#192624] dark:text-[#F8F3EA] dark:border-white/10"
+                          >
+                            View Basket
+                          </Link>
+                          <Link
+                            to="/checkout"
+                            onClick={() => setCartOpen(false)}
+                            className="flex items-center justify-center rounded-xl bg-[#192D2A] py-2 text-xs font-bold text-white hover:bg-[#253D39] transition dark:bg-[#C66B42]"
+                          >
+                            Checkout
+                          </Link>
+                        </div>
+                      </div>
                     )}
                   </div>
-
-                  {cart.length > 0 && (
-                    <div className="border-t border-[#DDD5C8] p-4 bg-[#F1E8D8]/30 dark:bg-[#121E1C] dark:border-white/10 space-y-3">
-                      <div className="flex items-baseline justify-between">
-                        <span className="font-serif text-sm font-bold text-[#192D2A] dark:text-[#F8F3EA]">Subtotal</span>
-                        <span className="font-serif text-lg font-bold text-[#C66B42] dark:text-[#D9A441]">₹{total.toFixed(0)}</span>
-                      </div>
-                      <div className="grid grid-cols-2 gap-2">
-                        <Link
-                          to="/cart"
-                          onClick={() => setCartOpen(false)}
-                          className="flex items-center justify-center rounded-xl border border-[#DDD5C8] bg-white py-2 text-xs font-bold text-[#192D2A] hover:bg-[#F1E8D8] transition dark:bg-[#192624] dark:text-[#F8F3EA] dark:border-white/10"
-                        >
-                          View Basket
-                        </Link>
-                        <Link
-                          to="/checkout"
-                          onClick={() => setCartOpen(false)}
-                          className="flex items-center justify-center rounded-xl bg-[#192D2A] py-2 text-xs font-bold text-white hover:bg-[#253D39] transition dark:bg-[#C66B42]"
-                        >
-                          Checkout
-                        </Link>
-                      </div>
-                    </div>
-                  )}
-                </div>
+                </>
               )}
             </div>
 
@@ -339,25 +356,31 @@ const Navbar = () => {
                     <span className="flex h-5.5 w-5.5 sm:h-6 sm:w-6 items-center justify-center rounded-full bg-[#192D2A] text-[9px] sm:text-[10px] font-bold text-white dark:bg-[#C66B42]">
                       {user.name?.charAt(0).toUpperCase() || 'U'}
                     </span>
-                    <span className="hidden md:inline font-sans">{user.name?.split(' ')[0]}</span>
+                    <span className="hidden xl:inline font-sans">{user.name?.split(' ')[0]}</span>
                   </button>
 
                   {profileOpen && (
-                    <div className="absolute right-0 mt-2 w-60 max-w-[calc(100vw-1.5rem)] overflow-hidden rounded-2xl border border-[#DDD5C8] bg-white p-2 shadow-xl z-50 dark:bg-[#13221E] dark:border-[#223832]">
-                      <div className="border-b border-[#DDD5C8]/60 p-2.5 dark:border-[#223832]">
-                        <p className="text-xs font-bold text-[#192D2A] dark:text-[#F8FAFC]">{user.name}</p>
-                        <p className="truncate text-[11px] text-[#625F59] dark:text-[#A7B3AF]">{user.email}</p>
-                      </div>
+                    <>
+                      {/* Backdrop for mobile */}
+                      <div
+                        className="fixed inset-0 z-40 bg-black/40 backdrop-blur-xs sm:hidden"
+                        onClick={() => setProfileOpen(false)}
+                      />
+                      <div className="fixed inset-x-3 top-20 z-50 sm:absolute sm:inset-x-auto sm:right-0 sm:top-full sm:mt-2 sm:w-60 overflow-hidden rounded-2xl border border-[#DDD5C8] bg-white p-2 shadow-xl dark:bg-[#13221E] dark:border-[#223832] animate-in fade-in zoom-in-95 duration-150">
+                        <div className="border-b border-[#DDD5C8]/60 p-2.5 dark:border-[#223832]">
+                          <p className="text-xs font-bold text-[#192D2A] dark:text-[#F8FAFC]">{user.name}</p>
+                          <p className="truncate text-[11px] text-[#625F59] dark:text-[#A7B3AF]">{user.email}</p>
+                        </div>
 
-                      <div className="py-1">
-                        <Link
-                          to="/profile"
-                          onClick={closeMenus}
-                          className="flex items-center gap-2 rounded-lg px-2.5 py-2 text-xs font-bold text-[#17745A] dark:text-[#10B981] hover:bg-[#F1E8D8]/50 dark:hover:bg-white/5 transition"
-                        >
-                          <User size={14} />
-                          <span>My Profile & Addresses</span>
-                        </Link>
+                        <div className="py-1">
+                          <Link
+                            to="/profile"
+                            onClick={closeMenus}
+                            className="flex items-center gap-2 rounded-lg px-2.5 py-2 text-xs font-bold text-[#17745A] dark:text-[#10B981] hover:bg-[#F1E8D8]/50 dark:hover:bg-white/5 transition"
+                          >
+                            <User size={14} />
+                            <span>My Profile & Addresses</span>
+                          </Link>
 
                         {(user.isAdmin || user.role === 'admin') && (
                           <Link
@@ -454,7 +477,8 @@ const Navbar = () => {
                         </button>
                       </div>
                     </div>
-                  )}
+                  </>
+                )}
                 </div>
               ) : (
                 <div className="hidden sm:flex items-center gap-2">
