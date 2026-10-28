@@ -334,7 +334,7 @@ const Checkout = () => {
                 ].map((slot) => (
                   <label
                     key={slot}
-                    className={`flex items-center gap-3 rounded-2xl border p-3 sm:p-3.5 cursor-pointer font-medium transition ${
+                    className={`flex items-start sm:items-center gap-3 rounded-2xl border p-3 sm:p-3.5 cursor-pointer font-medium transition ${
                       deliverySlot === slot
                         ? 'border-[#17745A] bg-[#17745A]/5 text-[#192D2A] font-bold dark:border-[#10B981] dark:bg-[#10B981]/10 dark:text-[#F8FAFC]'
                         : 'border-[#DDD5C8] text-[#625F59] hover:bg-[#FDFBF7] dark:border-[#2A443E] dark:text-[#A7B3AF] dark:hover:bg-[#162723]'
@@ -346,9 +346,9 @@ const Checkout = () => {
                       value={slot}
                       checked={deliverySlot === slot}
                       onChange={() => setDeliverySlot(slot)}
-                      className="accent-[#17745A] h-4 w-4 shrink-0"
+                      className="accent-[#17745A] h-4 w-4 shrink-0 mt-0.5 sm:mt-0"
                     />
-                    <span className="text-xs break-words">{slot}</span>
+                    <span className="text-xs break-words min-w-0 flex-1 leading-snug">{slot}</span>
                   </label>
                 ))}
               </div>

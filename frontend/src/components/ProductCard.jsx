@@ -47,9 +47,9 @@ const ProductCard = ({ product }) => {
           </Link>
 
           {/* Badges Overlay - Small, clean & attractive (no cluttered generic stacked tags) */}
-          <div className="absolute left-2.5 top-2.5 flex flex-wrap gap-1.5 pointer-events-none">
+          <div className="absolute left-2 top-2 sm:left-2.5 sm:top-2.5 flex flex-wrap gap-1 pointer-events-none">
             {product.discount > 0 && (
-              <span className="rounded-md bg-amber-500/95 dark:bg-[#E6BC70] dark:text-[#0B1714] backdrop-blur-md px-2 py-0.5 text-[10px] font-black shadow-sm uppercase tracking-wider">
+              <span className="rounded-md bg-amber-500/95 dark:bg-[#E6BC70] dark:text-[#0B1714] backdrop-blur-md px-1.5 sm:px-2 py-0.5 text-[9px] sm:text-[10px] font-black shadow-sm uppercase tracking-wider">
                 {product.discount}% OFF
               </span>
             )}
@@ -59,14 +59,14 @@ const ProductCard = ({ product }) => {
           <button
             type="button"
             onClick={handleWatchlist}
-            className={`absolute right-2.5 top-2.5 rounded-full p-2 shadow-sm backdrop-blur-md transition-all hover:scale-110 active:scale-95 ${
+            className={`absolute right-2 top-2 sm:right-2.5 sm:top-2.5 rounded-full p-1.5 sm:p-2 shadow-sm backdrop-blur-md transition-all hover:scale-110 active:scale-95 ${
               saved
                 ? 'bg-rose-500 text-white'
                 : 'bg-white/85 text-[#736F69] hover:text-rose-500 dark:bg-[#0B1714]/85 dark:text-[#CBD5E1] dark:hover:text-rose-400 dark:border dark:border-[#30483C]'
             }`}
             aria-label={saved ? 'Remove from wishlist' : 'Add to wishlist'}
           >
-            <Heart size={15} fill={saved ? 'currentColor' : 'none'} />
+            <Heart size={14} className="sm:w-[15px] sm:h-[15px]" fill={saved ? 'currentColor' : 'none'} />
           </button>
         </div>
 

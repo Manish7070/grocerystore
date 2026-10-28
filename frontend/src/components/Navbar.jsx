@@ -148,7 +148,7 @@ const Navbar = () => {
           <div className="flex items-center gap-1.5 sm:gap-2.5">
             
             {/* Search Input */}
-            <div ref={searchRef} className="relative hidden md:block w-44 lg:w-56 xl:w-64 transition-all">
+            <div ref={searchRef} className="relative hidden md:block w-36 lg:w-56 xl:w-64 transition-all">
               <form
                 onSubmit={(e) => {
                   e.preventDefault();
@@ -156,7 +156,7 @@ const Navbar = () => {
                 }}
                 className={`flex items-center gap-2 rounded-xl border bg-white dark:bg-[#1A2624] px-3 py-2 transition-all duration-200 ${
                   searchFocused
-                    ? 'border-[#C66B42] ring-2 ring-[#C66B42]/20 w-64 lg:w-72 dark:border-[#D9A441]'
+                    ? 'border-[#C66B42] ring-2 ring-[#C66B42]/20 md:w-48 lg:w-72 dark:border-[#D9A441]'
                     : 'border-[#DDD5C8] hover:border-[#C66B42]/60 dark:border-white/10'
                 }`}
               >
@@ -183,7 +183,7 @@ const Navbar = () => {
 
               {/* Quick Search Dropdown */}
               {searchFocused && (
-                <div className="absolute right-0 top-full mt-2 w-80 overflow-hidden rounded-2xl border border-[#DDD5C8] bg-white p-4 shadow-xl z-50 dark:bg-[#192624] dark:border-white/10">
+                <div className="absolute right-0 top-full mt-2 w-80 max-w-[calc(100vw-2rem)] overflow-hidden rounded-2xl border border-[#DDD5C8] bg-white p-4 shadow-xl z-50 dark:bg-[#192624] dark:border-white/10">
                   <p className="text-[10px] font-bold uppercase tracking-widest text-[#625F59] mb-2 dark:text-[#F8F3EA]/60">
                     Curated Market Aisles
                   </p>
@@ -260,7 +260,7 @@ const Navbar = () => {
 
               {/* Cart Drawer Dropdown */}
               {cartOpen && (
-                <div className="absolute right-[-24px] sm:right-0 mt-3 w-[min(calc(100vw-24px),390px)] overflow-hidden rounded-2xl border border-[#DDD5C8] bg-white shadow-2xl z-50 dark:bg-[#192624] dark:border-white/10">
+                <div className="absolute right-0 mt-3 w-[min(calc(100vw-1.5rem),390px)] overflow-hidden rounded-2xl border border-[#DDD5C8] bg-white shadow-2xl z-50 dark:bg-[#192624] dark:border-white/10">
                   <div className="flex items-center justify-between border-b border-[#DDD5C8] bg-[#F1E8D8]/50 px-4 py-3 dark:bg-[#121E1C] dark:border-white/10">
                     <div>
                       <p className="font-serif text-sm font-semibold text-[#192D2A] dark:text-[#F8F3EA]">Your Market Basket</p>
@@ -343,7 +343,7 @@ const Navbar = () => {
                   </button>
 
                   {profileOpen && (
-                    <div className="absolute right-[-10px] sm:right-0 mt-2 w-60 overflow-hidden rounded-2xl border border-[#DDD5C8] bg-white p-2 shadow-xl z-50 dark:bg-[#13221E] dark:border-[#223832]">
+                    <div className="absolute right-0 mt-2 w-60 max-w-[calc(100vw-1.5rem)] overflow-hidden rounded-2xl border border-[#DDD5C8] bg-white p-2 shadow-xl z-50 dark:bg-[#13221E] dark:border-[#223832]">
                       <div className="border-b border-[#DDD5C8]/60 p-2.5 dark:border-[#223832]">
                         <p className="text-xs font-bold text-[#192D2A] dark:text-[#F8FAFC]">{user.name}</p>
                         <p className="truncate text-[11px] text-[#625F59] dark:text-[#A7B3AF]">{user.email}</p>

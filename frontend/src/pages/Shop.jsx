@@ -313,7 +313,7 @@ const Shop = () => {
               };
 
               return (
-                <div className="mt-12 flex items-center justify-center gap-1.5 sm:gap-2 border-t border-[#DDD5C8]/80 pt-8 dark:border-white/10">
+                <div className="mt-12 flex flex-wrap items-center justify-center gap-1 sm:gap-2 border-t border-[#DDD5C8]/80 pt-8 dark:border-white/10 max-w-full px-1">
                   <button
                     type="button"
                     onClick={() => {
@@ -321,10 +321,10 @@ const Shop = () => {
                       window.scrollTo({ top: 0, behavior: 'smooth' });
                     }}
                     disabled={currentPage === 1}
-                    className="flex h-9 w-9 items-center justify-center rounded-xl border border-[#DDD5C8] bg-white text-[#192D2A] disabled:opacity-30 hover:bg-[#F7F4EE] transition dark:bg-[#162522] dark:border-white/10 dark:text-white"
+                    className="flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-xl border border-[#DDD5C8] bg-white text-[#192D2A] disabled:opacity-30 hover:bg-[#F7F4EE] transition dark:bg-[#162522] dark:border-white/10 dark:text-white"
                     aria-label="Previous page"
                   >
-                    <ChevronLeft size={16} />
+                    <ChevronLeft size={15} />
                   </button>
 
                   {getPageNumbers().map((item, idx) => {
@@ -332,7 +332,7 @@ const Shop = () => {
                       return (
                         <span
                           key={`dots-${idx}`}
-                          className="flex h-9 w-8 items-center justify-center text-xs font-bold text-[#625F59] dark:text-gray-400 select-none"
+                          className="flex h-8 w-6 sm:h-9 sm:w-8 items-center justify-center text-xs font-bold text-[#625F59] dark:text-gray-400 select-none"
                         >
                           &hellip;
                         </span>
@@ -346,7 +346,7 @@ const Shop = () => {
                           setCurrentPage(item);
                           window.scrollTo({ top: 0, behavior: 'smooth' });
                         }}
-                        className={`h-9 min-w-[36px] rounded-xl px-2.5 text-xs font-bold transition ${
+                        className={`h-8 min-w-[32px] sm:h-9 sm:min-w-[36px] rounded-xl px-2 sm:px-2.5 text-xs font-bold transition ${
                           currentPage === item
                             ? 'bg-[#17745A] text-white shadow-sm ring-1 ring-[#17745A]'
                             : 'border border-[#DDD5C8] bg-white text-[#55524E] hover:bg-[#F7F4EE] hover:text-[#192D2A] dark:bg-[#162522] dark:border-white/10 dark:text-white dark:hover:bg-white/10'
@@ -364,10 +364,10 @@ const Shop = () => {
                       window.scrollTo({ top: 0, behavior: 'smooth' });
                     }}
                     disabled={currentPage === totalPages}
-                    className="flex h-9 w-9 items-center justify-center rounded-xl border border-[#DDD5C8] bg-white text-[#192D2A] disabled:opacity-30 hover:bg-[#F7F4EE] transition dark:bg-[#162522] dark:border-white/10 dark:text-white"
+                    className="flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-xl border border-[#DDD5C8] bg-white text-[#192D2A] disabled:opacity-30 hover:bg-[#F7F4EE] transition dark:bg-[#162522] dark:border-white/10 dark:text-white"
                     aria-label="Next page"
                   >
-                    <ChevronRight size={16} />
+                    <ChevronRight size={15} />
                   </button>
                 </div>
               );

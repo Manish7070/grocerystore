@@ -215,23 +215,25 @@ const ProductDetail = () => {
                   <ShoppingCart size={15} />
                   Add to Basket
                 </button>
-                <button
-                  type="button"
-                  onClick={handleBuyNow}
-                  className="flex items-center justify-center rounded-xl border border-espresso bg-espresso px-6 py-3.5 text-xs font-bold uppercase tracking-wider text-ivory hover:bg-[#3E3632] transition dark:border-ivory dark:bg-ivory dark:text-espresso"
-                >
-                  Buy Now
-                </button>
-                <button
-                  type="button"
-                  onClick={() => toggleWatchlist(product)}
-                  className={`flex h-12 w-12 items-center justify-center rounded-xl border border-sandstone bg-ivory transition ${
-                    saved ? 'text-errorRed' : 'text-warmStone hover:text-errorRed'
-                  } dark:bg-[#251D21] dark:border-white/10`}
-                  aria-label="Save to kitchen wishlist"
-                >
-                  <Heart size={18} fill={saved ? 'currentColor' : 'none'} />
-                </button>
+                <div className="flex gap-2.5 sm:contents">
+                  <button
+                    type="button"
+                    onClick={handleBuyNow}
+                    className="flex flex-1 sm:flex-initial items-center justify-center rounded-xl border border-espresso bg-espresso px-6 py-3.5 text-xs font-bold uppercase tracking-wider text-ivory hover:bg-[#3E3632] transition dark:border-ivory dark:bg-ivory dark:text-espresso"
+                  >
+                    Buy Now
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => toggleWatchlist(product)}
+                    className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-sandstone bg-ivory transition ${
+                      saved ? 'text-errorRed' : 'text-warmStone hover:text-errorRed'
+                    } dark:bg-[#251D21] dark:border-white/10`}
+                    aria-label="Save to kitchen wishlist"
+                  >
+                    <Heart size={18} fill={saved ? 'currentColor' : 'none'} />
+                  </button>
+                </div>
               </div>
             </div>
 

@@ -374,7 +374,7 @@ const Home = () => {
                     </div>
 
                     {/* Headline */}
-                    <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-[3.25rem] xl:text-[3.85rem] font-bold text-white leading-[1.12] tracking-tight drop-shadow-md">
+                    <h1 className="font-serif text-2xl min-[400px]:text-3xl sm:text-4xl md:text-5xl lg:text-[3.25rem] xl:text-[3.85rem] font-bold text-white leading-[1.15] sm:leading-[1.12] tracking-tight drop-shadow-md">
                       {s.headline[0]}<br />
                       <span style={{ color: s.accent }}>{s.headline[1]}</span><br />
                       {s.headline[2]}
@@ -404,7 +404,7 @@ const Home = () => {
                     </div>
 
                     {/* Stats */}
-                    <div className="mt-7 sm:mt-10 flex items-center gap-6 sm:gap-8 border-t border-white/20 pt-5 sm:pt-7">
+                    <div className="mt-6 sm:mt-10 flex flex-wrap items-center gap-4 sm:gap-8 border-t border-white/20 pt-4 sm:pt-7">
                       {s.stats.map((stat) => (
                         <div key={stat.l}>
                           <p className="font-serif text-xl sm:text-2xl md:text-3xl font-bold text-white drop-shadow">{stat.v}</p>
@@ -501,17 +501,17 @@ const Home = () => {
       ═══════════════════════════════════════════════════════════════ */}
       <section className="relative z-10 -mt-5 px-4 sm:px-6 pb-0">
         <div className="mx-auto max-w-7xl">
-          <div className="grid grid-cols-2 gap-3 lg:grid-cols-4 lg:gap-4">
+          <div className="grid grid-cols-2 gap-2.5 sm:gap-3 lg:grid-cols-4 lg:gap-4">
             {trustPillars.map(({ img, label, sub, accent }) => (
-              <div key={label} className="group flex items-center gap-3 rounded-2xl border border-[#DDD5C8] bg-white p-4 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl dark:bg-[#1a2e24] dark:border-[#2a4035]">
+              <div key={label} className="group flex items-center gap-2.5 sm:gap-3 rounded-2xl border border-[#DDD5C8] bg-white p-3 sm:p-4 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl dark:bg-[#1a2e24] dark:border-[#2a4035]">
                 {/* Real photo in circle */}
-                <span className="relative flex h-11 w-11 shrink-0 overflow-hidden rounded-xl shadow-md ring-2 transition-transform duration-300 group-hover:scale-110" style={{ ringColor: accent }}>
+                <span className="relative flex h-9 w-9 sm:h-11 sm:w-11 shrink-0 overflow-hidden rounded-xl shadow-md ring-2 transition-transform duration-300 group-hover:scale-110" style={{ ringColor: accent }}>
                   <img src={img} alt={label} className="h-full w-full object-cover" />
                   <span className="absolute inset-0 rounded-xl" style={{ boxShadow: `inset 0 0 0 2px ${accent}60` }} />
                 </span>
                 <div className="min-w-0">
-                  <p className="text-xs font-black leading-tight text-[#192D2A] dark:text-white">{label}</p>
-                  <p className="mt-0.5 text-[10px] font-semibold leading-tight text-[#625F59] dark:text-[#a8c4b8]">{sub}</p>
+                  <p className="text-[11px] sm:text-xs font-black leading-tight text-[#192D2A] dark:text-white truncate sm:whitespace-normal">{label}</p>
+                  <p className="mt-0.5 text-[9px] sm:text-[10px] font-semibold leading-tight text-[#625F59] dark:text-[#a8c4b8] truncate sm:whitespace-normal">{sub}</p>
                 </div>
               </div>
             ))}
@@ -618,12 +618,12 @@ const Home = () => {
               <span className="text-[10px] font-black uppercase tracking-widest text-[#17745A] dark:text-[#55D6A0]">The Edit</span>
               <h2 className="mt-1 font-serif text-3xl font-bold text-[#192D2A] dark:text-white">This Week's Market Provisions</h2>
             </div>
-            <div className="flex flex-wrap gap-2">
+            <div className="flex overflow-x-auto no-scrollbar gap-1.5 sm:gap-2 pb-1 sm:pb-0 sm:flex-wrap max-w-full">
               {['All', 'Vegetables', 'Fruits', 'Dairy', 'Spices', 'Pulses', 'Rice', 'Bakery', 'Snacks'].map((cat) => (
                 <button
                   key={cat}
                   onClick={() => setActiveCategoryFilter(cat)}
-                  className={`rounded-xl px-3.5 py-1.5 text-xs font-semibold transition-all duration-200 ${
+                  className={`rounded-xl px-3 sm:px-3.5 py-1.5 text-xs font-semibold whitespace-nowrap transition-all duration-200 shrink-0 ${
                     activeCategoryFilter === cat
                       ? 'bg-[#17745A] text-white shadow-sm scale-105 dark:bg-[#55D6A0] dark:text-[#0B1714] font-bold'
                       : 'border border-[#DDD5C8] bg-white text-[#55524E] hover:border-[#17745A] hover:text-[#17745A] dark:bg-[#172c24] dark:text-[#c8ddd6] dark:border-[#2a4035] dark:hover:border-[#55D6A0]/60'
