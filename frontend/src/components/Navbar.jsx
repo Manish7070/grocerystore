@@ -108,17 +108,17 @@ const Navbar = () => {
       ? location.pathname === path && !location.search
       : location.pathname === path;
 
-    return `relative whitespace-nowrap px-2.5 xl:px-3.5 py-2 text-xs xl:text-[14px] font-semibold tracking-[-0.01em] transition-all duration-200 ${
+    return `relative whitespace-nowrap px-2 xl:px-2.5 2xl:px-3.5 py-1.5 2xl:py-2 text-xs 2xl:text-[14px] font-semibold tracking-[-0.01em] transition-all duration-200 ${
       isActive
-        ? 'text-[#17745A] font-bold after:absolute after:bottom-0 after:left-2.5 xl:after:left-3.5 after:right-2.5 xl:after:right-3.5 after:h-[2.5px] after:bg-[#17745A] after:rounded-full dark:text-[#55D6A0] dark:after:bg-[#55D6A0]'
+        ? 'text-[#17745A] font-bold after:absolute after:bottom-0 after:left-2 xl:after:left-2.5 2xl:after:left-3.5 after:right-2 xl:after:right-2.5 2xl:after:right-3.5 after:h-[2.5px] after:bg-[#17745A] after:rounded-full dark:text-[#55D6A0] dark:after:bg-[#55D6A0]'
         : 'text-[#192D2A] hover:text-[#17745A] dark:text-[#B6C7BD] dark:hover:text-[#F3F0E6]'
     }`;
   };
 
   return (
     <header className="sticky top-0 z-50 bg-[#FDFBF7]/95 dark:bg-[#0B1714]/95 border-b border-[#DDD5C8]/80 dark:border-[#30483C] shadow-[0_2px_12px_rgba(25,45,42,0.04)] backdrop-blur-md transition-colors">
-      <div className="mx-auto max-w-[1440px] px-3 sm:px-6 lg:px-8">
-        <div className="flex h-20 items-center justify-between gap-2 md:gap-3 lg:gap-5">
+      <div className="mx-auto max-w-[1440px] px-3 sm:px-4 lg:px-6 xl:px-8">
+        <div className="flex h-16 sm:h-20 items-center justify-between gap-1.5 sm:gap-2 lg:gap-3 xl:gap-4">
           
           {/* LEFT: Clean Typography Brand Wordmark */}
           <div className="flex shrink-0 items-center">
@@ -126,33 +126,33 @@ const Navbar = () => {
           </div>
 
           {/* CENTER: Main Navigation Links strictly single-line */}
-          <nav className="hidden lg:flex items-center gap-0.5 xl:gap-2 whitespace-nowrap shrink-0" aria-label="Main navigation">
+          <nav className="hidden lg:flex items-center gap-0.5 xl:gap-1 2xl:gap-2 whitespace-nowrap shrink-0" aria-label="Main navigation">
             <Link to="/" onClick={closeMenus} className={getNavLinkClass('/', true)}>
               Home
             </Link>
             <Link to="/shop" onClick={closeMenus} className={getNavLinkClass('/shop', true)}>
-              <span className="hidden xl:inline">Shop Catalog</span>
-              <span className="xl:hidden">Shop</span>
+              <span className="hidden 2xl:inline">Shop Catalog</span>
+              <span className="2xl:hidden">Shop</span>
             </Link>
             <Link to="/fresh-market" onClick={closeMenus} className={getNavLinkClass('/fresh-market')}>
-              <span className="hidden xl:inline">Fresh Market</span>
-              <span className="xl:hidden">Fresh</span>
+              <span className="hidden 2xl:inline">Fresh Market</span>
+              <span className="2xl:hidden">Fresh</span>
             </Link>
             <Link to="/bundles" onClick={closeMenus} className={getNavLinkClass('/bundles')}>
-              <span className="hidden xl:inline">Recipe Kits</span>
-              <span className="xl:hidden">Kits</span>
+              <span className="hidden 2xl:inline">Recipe Kits</span>
+              <span className="2xl:hidden">Kits</span>
             </Link>
             <Link to="/smart-savings" onClick={closeMenus} className={getNavLinkClass('/smart-savings')}>
-              <span className="hidden xl:inline">Smart Savings</span>
-              <span className="xl:hidden">Deals</span>
+              <span className="hidden 2xl:inline">Smart Savings</span>
+              <span className="2xl:hidden">Deals</span>
             </Link>
           </nav>
 
           {/* RIGHT: Search, Wishlist, Cart (Icon only, no price), Profile, Theme, Mobile toggle */}
-          <div className="flex shrink-0 items-center gap-1.5 sm:gap-2 lg:gap-2.5">
+          <div className="flex shrink-0 items-center gap-1.5 sm:gap-2 lg:gap-2 xl:gap-2.5">
             
             {/* Search Input */}
-            <div ref={searchRef} className="relative hidden md:block w-32 lg:w-44 xl:w-60 transition-all">
+            <div ref={searchRef} className="relative hidden md:block w-28 lg:w-36 xl:w-44 2xl:w-60 transition-all">
               <form
                 onSubmit={(e) => {
                   e.preventDefault();
@@ -160,7 +160,7 @@ const Navbar = () => {
                 }}
                 className={`flex items-center gap-2 rounded-xl border bg-white dark:bg-[#1A2624] px-2.5 xl:px-3 py-2 transition-all duration-200 ${
                   searchFocused
-                    ? 'border-[#C66B42] ring-2 ring-[#C66B42]/20 md:w-44 lg:w-56 xl:w-72 dark:border-[#D9A441]'
+                    ? 'border-[#C66B42] ring-2 ring-[#C66B42]/20 md:w-36 lg:w-48 xl:w-60 2xl:w-72 dark:border-[#D9A441]'
                     : 'border-[#DDD5C8] hover:border-[#C66B42]/60 dark:border-white/10'
                 }`}
               >
@@ -226,43 +226,43 @@ const Navbar = () => {
             <button
               type="button"
               onClick={toggleTheme}
-              className="hidden sm:flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-xl border border-[#DDD5C8] bg-white text-[#192D2A] transition hover:border-[#17745A] hover:text-[#17745A] dark:border-[#223832] dark:bg-[#13221E] dark:text-[#F8FAFC]"
+              className="hidden sm:flex h-9 w-9 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-xl border border-[#DDD5C8] bg-white text-[#192D2A] transition hover:border-[#17745A] hover:text-[#17745A] dark:border-[#223832] dark:bg-[#13221E] dark:text-[#F8FAFC]"
               aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
             >
               {theme === 'dark' ? <Sun size={15} /> : <Moon size={15} />}
             </button>
 
-            {/* In-App Activity Notification Center - Desktop header */}
-            <div className="hidden xl:block">
+            {/* In-App Activity Notification Center - Large desktop header */}
+            <div className="hidden 2xl:block shrink-0">
               <NotificationCenter />
             </div>
 
-            {/* Wishlist Link - Desktop header */}
+            {/* Wishlist Link - Large desktop header */}
             <Link
               to="/watchlist"
               onClick={closeMenus}
-              className="relative hidden xl:flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-xl border border-[#DDD5C8] bg-white text-[#192D2A] transition hover:border-[#C66B42] hover:text-[#C66B42] dark:border-white/10 dark:bg-[#1A2624] dark:text-[#F8F3EA]"
+              className="relative hidden 2xl:flex h-9 w-9 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-xl border border-[#DDD5C8] bg-white text-[#192D2A] transition hover:border-[#C66B42] hover:text-[#C66B42] dark:border-white/10 dark:bg-[#1A2624] dark:text-[#F8F3EA]"
               aria-label="Wishlist"
             >
               <Heart size={15} />
               {watchlist.length > 0 && (
-                <span className="absolute -top-1 -right-1 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-[#C66B42] px-1 text-[9px] font-bold text-white">
+                <span className="absolute -top-1 -right-1 flex h-4 min-w-[16px] shrink-0 items-center justify-center rounded-full bg-[#C66B42] px-1 text-[9px] font-bold text-white">
                   {watchlist.length}
                 </span>
               )}
             </Link>
 
             {/* Cart Trigger Button — Clean Icon + Item-Count Badge */}
-            <div ref={cartRef} className="relative">
+            <div ref={cartRef} className="relative shrink-0">
               <button
                 type="button"
                 onClick={() => setCartOpen((prev) => !prev)}
-                className="relative flex h-9 w-9 sm:h-10 sm:w-auto sm:px-3 items-center justify-center gap-1.5 rounded-xl border border-[#192D2A] bg-[#192D2A] text-white transition hover:bg-[#253D39] active:scale-95 shadow-sm dark:bg-[#C66B42] dark:border-[#C66B42] dark:hover:bg-[#B05932]"
+                className="relative flex h-9 w-9 sm:h-10 sm:w-10 2xl:w-auto 2xl:px-3 shrink-0 items-center justify-center gap-1.5 rounded-xl border border-[#192D2A] bg-[#192D2A] text-white transition hover:bg-[#253D39] active:scale-95 shadow-sm dark:bg-[#C66B42] dark:border-[#C66B42] dark:hover:bg-[#B05932]"
                 aria-label={`Shopping basket with ${totalItems} items`}
               >
-                <ShoppingCart size={15} />
+                <ShoppingCart size={15} className="shrink-0" />
                 {totalItems > 0 && (
-                  <span className="flex h-4.5 min-w-[18px] sm:h-5 sm:min-w-[20px] items-center justify-center rounded-full bg-[#C66B42] dark:bg-white text-white dark:text-[#192D2A] px-1 sm:px-1.5 text-[10px] sm:text-[11px] font-bold">
+                  <span className="flex h-4.5 min-w-[18px] sm:h-5 sm:min-w-[20px] shrink-0 items-center justify-center rounded-full bg-[#C66B42] dark:bg-white text-white dark:text-[#192D2A] px-1 sm:px-1.5 text-[10px] sm:text-[11px] font-bold">
                     {totalItems}
                   </span>
                 )}
@@ -345,18 +345,18 @@ const Navbar = () => {
             </div>
 
             {/* User Profile Dropdown */}
-            <div ref={profileRef} className="relative">
+            <div ref={profileRef} className="relative shrink-0">
               {user ? (
-                <div>
+                <div className="shrink-0">
                   <button
                     type="button"
                     onClick={() => setProfileOpen((prev) => !prev)}
-                    className="flex h-9 sm:h-10 items-center gap-1.5 sm:gap-2 rounded-xl border border-[#DDD5C8] bg-white px-2 sm:px-3 text-xs font-bold text-[#192D2A] hover:border-[#C66B42] transition dark:bg-[#1A2624] dark:border-white/10 dark:text-[#F8F3EA]"
+                    className="flex h-9 sm:h-10 shrink-0 items-center gap-1.5 sm:gap-2 rounded-xl border border-[#DDD5C8] bg-white px-2 sm:px-2.5 2xl:px-3 text-xs font-bold text-[#192D2A] hover:border-[#C66B42] transition dark:bg-[#1A2624] dark:border-white/10 dark:text-[#F8F3EA]"
                   >
-                    <span className="flex h-5.5 w-5.5 sm:h-6 sm:w-6 items-center justify-center rounded-full bg-[#192D2A] text-[9px] sm:text-[10px] font-bold text-white dark:bg-[#C66B42]">
+                    <span className="flex h-6 w-6 min-w-[24px] shrink-0 items-center justify-center rounded-full bg-[#192D2A] text-[10px] font-bold text-white dark:bg-[#C66B42]">
                       {user.name?.charAt(0).toUpperCase() || 'U'}
                     </span>
-                    <span className="hidden xl:inline font-sans">{user.name?.split(' ')[0]}</span>
+                    <span className="hidden 2xl:inline font-sans">{user.name?.split(' ')[0]}</span>
                   </button>
 
                   {profileOpen && (
@@ -380,6 +380,22 @@ const Navbar = () => {
                           >
                             <User size={14} />
                             <span>My Profile & Addresses</span>
+                          </Link>
+
+                          <Link
+                            to="/watchlist"
+                            onClick={closeMenus}
+                            className="flex items-center justify-between rounded-lg px-2.5 py-2 text-xs font-medium text-[#192D2A] hover:bg-[#F1E8D8]/50 dark:hover:bg-white/5 transition dark:text-[#F8FAFC]"
+                          >
+                            <span className="flex items-center gap-2">
+                              <Heart size={14} className="text-[#C66B42]" />
+                              <span>My Wishlist</span>
+                            </span>
+                            {watchlist.length > 0 && (
+                              <span className="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-[#C66B42]/10 text-[#C66B42] dark:bg-[#C66B42]/20 dark:text-[#E6BC70]">
+                                {watchlist.length}
+                              </span>
+                            )}
                           </Link>
 
                         {(user.isAdmin || user.role === 'admin') && (
@@ -481,13 +497,13 @@ const Navbar = () => {
                 )}
                 </div>
               ) : (
-                <div className="hidden sm:flex items-center gap-2">
+                <div className="hidden sm:flex items-center gap-2 shrink-0">
                   <Link
                     to="/signin"
                     onClick={closeMenus}
-                    className="btn-motion inline-flex h-9 sm:h-10 items-center justify-center gap-1.5 rounded-xl bg-[#17745A] px-2.5 sm:px-4 text-xs font-bold text-white shadow-sm hover:bg-[#135E49] active:scale-95 transition-all duration-300 dark:bg-[#55D6A0] dark:text-[#0B1714] dark:hover:bg-[#42C48E] dark:hover:shadow-[0_4px_16px_rgba(85,214,160,0.3)]"
+                    className="btn-motion inline-flex h-9 sm:h-10 shrink-0 items-center justify-center gap-1.5 rounded-xl bg-[#17745A] px-2.5 sm:px-4 text-xs font-bold text-white shadow-sm hover:bg-[#135E49] active:scale-95 transition-all duration-300 dark:bg-[#55D6A0] dark:text-[#0B1714] dark:hover:bg-[#42C48E] dark:hover:shadow-[0_4px_16px_rgba(85,214,160,0.3)]"
                   >
-                    <LogIn size={14} />
+                    <LogIn size={14} className="shrink-0" />
                     <span>Sign In</span>
                   </Link>
                 </div>
@@ -533,15 +549,19 @@ const Navbar = () => {
               </Link>
             )}
 
-            {/* Mobile In-Drawer Theme Switcher */}
-            <button
-              type="button"
-              onClick={toggleTheme}
-              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-[#DDD5C8] bg-white text-[#192D2A] transition hover:border-[#17745A] dark:border-[#30483C] dark:bg-[#172C24] dark:text-[#F8FAFC]"
-              aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
-            >
-              {theme === 'dark' ? <Sun size={15} /> : <Moon size={15} />}
-            </button>
+            <div className="flex items-center gap-2 shrink-0">
+              <NotificationCenter />
+
+              {/* Mobile In-Drawer Theme Switcher */}
+              <button
+                type="button"
+                onClick={toggleTheme}
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-[#DDD5C8] bg-white text-[#192D2A] transition hover:border-[#17745A] dark:border-[#30483C] dark:bg-[#172C24] dark:text-[#F8FAFC]"
+                aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+              >
+                {theme === 'dark' ? <Sun size={15} /> : <Moon size={15} />}
+              </button>
+            </div>
           </div>
           {/* Mobile Search Bar inside Drawer */}
           <form
