@@ -252,18 +252,18 @@ const Navbar = () => {
               )}
             </Link>
 
-            {/* Cart Trigger Button — Clean Icon + Item-Count Badge */}
+            {/* Cart Trigger Button — Centered Icon with Floating Corner Badge */}
             <div ref={cartRef} className="relative shrink-0">
               <button
                 type="button"
                 onClick={() => setCartOpen((prev) => !prev)}
-                className="relative flex h-9 w-9 sm:h-10 sm:w-10 2xl:w-auto 2xl:px-3 shrink-0 items-center justify-center gap-1.5 rounded-xl border border-[#192D2A] bg-[#192D2A] text-white transition hover:bg-[#253D39] active:scale-95 shadow-sm dark:bg-[#C66B42] dark:border-[#C66B42] dark:hover:bg-[#B05932]"
+                className="relative flex h-9 w-9 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-xl border border-[#192D2A] bg-[#192D2A] text-white transition hover:bg-[#253D39] active:scale-95 shadow-sm dark:bg-[#C66B42] dark:border-[#C66B42] dark:hover:bg-[#B05932]"
                 aria-label={`Shopping basket with ${totalItems} items`}
               >
-                <ShoppingCart size={15} className="shrink-0" />
+                <ShoppingCart size={17} className="shrink-0" />
                 {totalItems > 0 && (
-                  <span className="flex h-4.5 min-w-[18px] sm:h-5 sm:min-w-[20px] shrink-0 items-center justify-center rounded-full bg-[#C66B42] dark:bg-white text-white dark:text-[#192D2A] px-1 sm:px-1.5 text-[10px] sm:text-[11px] font-bold">
-                    {totalItems}
+                  <span className="absolute -top-1.5 -right-1.5 flex h-5 min-w-[20px] shrink-0 items-center justify-center rounded-full bg-[#C66B42] dark:bg-white text-white dark:text-[#192D2A] px-1 text-[10px] sm:text-[11px] font-bold shadow-md border-2 border-[#FDFBF7] dark:border-[#0B1714]">
+                    {totalItems > 99 ? '99+' : totalItems}
                   </span>
                 )}
               </button>
@@ -351,12 +351,13 @@ const Navbar = () => {
                   <button
                     type="button"
                     onClick={() => setProfileOpen((prev) => !prev)}
-                    className="flex h-9 sm:h-10 shrink-0 items-center gap-1.5 sm:gap-2 rounded-xl border border-[#DDD5C8] bg-white px-2 sm:px-2.5 2xl:px-3 text-xs font-bold text-[#192D2A] hover:border-[#C66B42] transition dark:bg-[#1A2624] dark:border-white/10 dark:text-[#F8F3EA]"
+                    className="flex h-9 w-9 sm:h-10 sm:w-10 2xl:w-auto 2xl:px-3 shrink-0 items-center justify-center 2xl:justify-start gap-2 rounded-xl border border-[#DDD5C8] bg-white text-xs font-bold text-[#192D2A] hover:border-[#C66B42] transition dark:bg-[#1A2624] dark:border-white/10 dark:text-[#F8F3EA]"
+                    aria-label="User profile menu"
                   >
-                    <span className="flex h-6 w-6 min-w-[24px] shrink-0 items-center justify-center rounded-full bg-[#192D2A] text-[10px] font-bold text-white dark:bg-[#C66B42]">
+                    <span className="flex h-6 w-6 sm:h-7 sm:w-7 min-w-[24px] sm:min-w-[28px] shrink-0 items-center justify-center rounded-full bg-[#17745A] text-[10px] sm:text-xs font-bold text-white dark:bg-[#55D6A0] dark:text-[#0B1714]">
                       {user.name?.charAt(0).toUpperCase() || 'U'}
                     </span>
-                    <span className="hidden 2xl:inline font-sans">{user.name?.split(' ')[0]}</span>
+                    <span className="hidden 2xl:inline font-sans truncate max-w-[100px]">{user.name?.split(' ')[0]}</span>
                   </button>
 
                   {profileOpen && (
