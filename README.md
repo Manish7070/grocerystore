@@ -1,135 +1,244 @@
-# 🥬 GroceryStore — Smart Farm-to-Fork Grocery Platform
+# GroceryStore – Smart Grocery Shopping Platform
 
-**GroceryStore** is an advanced, production-grade MERN grocery commerce platform engineered with a **zero-dummy data** policy, live **MongoDB Atlas** integration, and unique industry-first features that set it apart from ordinary grocery clones.
+GroceryStore is a MERN stack-based grocery shopping platform designed to make online grocery shopping and inventory management easier. The application allows customers to browse products, purchase groceries, select delivery slots, and track their orders.
 
----
+Along with the shopping experience, the platform also includes inventory management, batch-wise expiry tracking, recipe-based grocery bundles, and delivery verification. The main goal is to build a system that handles both customer-side shopping and the day-to-day operations of a grocery store.
 
-## 🌟 What Makes GroceryStore Different? ("Isme Kya Naya Hai?")
+## 1. Main Features
 
-If someone asks: *"Why is this different from standard grocery websites like Blinkit, Zepto, or generic clones?"*, here are the five core innovations built into GroceryStore:
+### 1.1 Inventory and Food Waste Management
 
-### 1. 📉 Freshness & Food Waste Reduction Radar (`/waste-center`)
-- **FEFO (First-Expired, First-Out) Inventory Engine:** Tracks individual warehouse batches with harvest dates, intake timestamps, and exact expiry countdowns.
-- **Dynamic Automated Markdowns:** Inventory managers can apply 10%–50% flash markdowns on near-expiry batches to rescue fresh produce from going to waste.
-- **Zero-Waste Audit Ledger:** Built-in write-off logging (`WasteLog`) with reason tracking (spoilage, damaged packaging, quality failure) calculating exact financial waste prevention metrics.
+The platform includes a separate section for managing grocery stock and reducing food waste.
 
-### 2. 🍲 1-Click Recipe Cook Kits (`/bundles`)
-- Rather than searching for 8 individual ingredients to cook a dish, customers can click once to add proportional, authentic recipe kits directly to their cart:
-  - **Authentic Palak Paneer Kit** (Spinach, Fresh Paneer, Desi Ghee, Ginger-Garlic paste, Spices).
-  - **Hyderabadi Dum Biryani Kit** (Basmati Rice, Whole Spices, Ghee, Mint & Saffron).
-  - **Morning Energy Green Smoothie Kit** (Bananas, Spinach, Chia Seeds, Almond Milk).
-- Includes step-by-step chef instructions, cook time, and serving sizes.
+- **Batch-wise inventory tracking:** Products can be managed in separate batches with harvest dates, stock quantities, and expiry dates.
+- **FEFO inventory system:** The system follows First-Expired, First-Out to prioritize products that are closer to their expiry date.
+- **Discount management:** Inventory managers can apply discounts of 10%–50% to products that need to be sold before expiry.
+- **Waste records:** Damaged, spoiled, and expired products can be recorded with reasons and financial details.
+- **Waste reports:** Store administrators can review inventory losses and the amount saved through markdowns.
 
-### 3. 🚜 Farm Provenance & Real-Time Freshness Score
-- Every farm item features an **Origin Provenance Card** (e.g. *Nashik Valley Farm*, *Himachal Orchards*).
-- **Harvest-to-Door Transparency:** Shows exact harvest date and a calculated **Freshness Score (e.g., 98% Grade A+)**.
-- Built-in **PIN Code Delivery Serviceability Checker** and recommended storage instructions on every product detail page.
+### 1.2 Recipe-Based Grocery Bundles
 
-### 4. 🔐 Doorstep Security OTP Handover
-- Every placed order automatically generates a unique 4-digit **Delivery Verification PIN (OTP)** displayed only in the customer's secure tracking screen (`/track/TD-2026-XXXX`).
-- Delivery partners cannot mark an order as "Delivered" in the Delivery Terminal (`/delivery`) without entering and verifying this customer OTP, eliminating false delivery claims.
+Customers can purchase multiple ingredients together through ready-made recipe bundles instead of adding every item individually.
 
-### 5. 👥 Multi-Role Ecosystem & Live Dashboards
-- **Customer Storefront:** Full catalog search, category filters, price range sliders, organic badges, customer reviews, dynamic ₹499 free delivery progress bar, and slot selector.
-- **Store Administrator Hub (`/admin`):** Real-time MongoDB metrics (total revenue, active orders, low-stock alerts, customer database, and status pipeline).
-- **Freshness Inventory Manager (`/waste-center`):** Batch queue, expiry radar, markdown triggers, and spoilage ledger.
-- **Delivery Partner Terminal (`/delivery`):** Dispatched orders queue, customer address cards, navigation links, and OTP verification prompt.
+Available bundles include:
 
----
+- **Palak Paneer Kit:** Spinach, paneer, ghee, ginger-garlic paste, and spices.
+- **Hyderabadi Dum Biryani Kit:** Basmati rice, whole spices, ghee, mint, and saffron.
+- **Green Smoothie Kit:** Banana, spinach, chia seeds, and almond milk.
 
-## 🎨 Unique Brand Identity
+Each bundle includes ingredient details, cooking instructions, preparation time, and serving information. Customers can add the complete bundle to their cart in one click.
 
-- **Brand:** **GroceryStore** *(The Fresh Standard)*
-- **Logo Lockup:** Custom SVG emblem uniting an organic produce basket, a budding green sprout, and a golden harvest droplet.
-- **Visual Design:** Premium, responsive UI with dark/light mode toggle, micro-interactions, smooth toasts, and zero placeholder assets.
+### 1.3 Farm Details and Product Freshness
 
----
+Product pages provide additional information about where the grocery items come from and how fresh they are.
 
-## 🛠️ Tech Stack & Database Architecture
+- Farm and supplier information.
+- Harvest date and product details.
+- Freshness score based on available product data.
+- Storage instructions for different grocery items.
+- PIN code-based delivery availability checking.
 
-- **Frontend:** React 18, Vite, React Router DOM, Lucide Icons, Vanilla CSS design tokens.
-- **Backend:** Node.js, Express.js (REST API architecture with modular routers).
-- **Database:** **MongoDB Atlas (Live Cloud Cluster)** using Mongoose ODM.
-- **Authentication:** Stateless JWT with `Bearer` authorization and role-based permissions (`customer`, `admin`, `inventory_manager`, `delivery`).
-- **Payment Verification:** Razorpay HMAC-SHA256 signature verification + Cash on Delivery (COD) with server-side price recalculation.
+This feature helps customers understand more about the products they are purchasing.
 
-### MongoDB Schemas:
-1. `User`: Role-based profiles, saved addresses, wishlist, order history.
-2. `Product`: 240 catalog items, MRP, selling price, farm provenance, harvest date, freshness score, storage tips.
-3. `Order`: Unique `orderNumber` (`TD-2026-XXXX`), delivery slot, 4-digit OTP, coupon discount, live status timeline.
-4. `InventoryBatch`: Batch tracking, harvest dates, expiry dates, markdown rates, stock quantities.
-5. `Coupon`: Live discount coupon engine (`TAAZA20`, `WELCOME50`, `SAVER100`).
-6. `WasteLog`: Waste mitigation ledger recording write-offs, reasons, and prevented losses.
-7. `Review`: Verified buyer ratings and customer feedback.
+### 1.4 Order Tracking and Delivery Verification
 
----
+The application includes an order tracking system with OTP-based delivery verification.
 
-## 🚀 Quick Start Guide
+- Every order receives a unique order number, such as `TD-2026-XXXX`.
+- Customers can view their order status and delivery progress.
+- A four-digit delivery OTP is generated for order verification.
+- Delivery partners must enter the correct OTP before completing an order.
+- The system validates the OTP on the backend to prevent unauthorized delivery completion.
 
-### Prerequisites
-- Node.js 18+ and npm installed.
-- Internet connection (for live MongoDB Atlas connection).
+### 1.5 Role-Based Dashboards
 
-### 1. Backend Setup
-```powershell
+The platform supports different user roles, with separate functionality for each.
+
+**Customer**
+- Browse and search grocery products.
+- Filter products by category, price, and availability.
+- Manage cart and wishlist.
+- Apply discount coupons.
+- Select delivery slots.
+- Place orders and track deliveries.
+- Submit product reviews.
+
+**Administrator**
+- View sales and order information.
+- Manage customers and products.
+- Monitor low-stock products.
+- Update order statuses.
+- Access store performance information.
+
+**Inventory Manager**
+- Manage product batches.
+- Monitor expiry dates.
+- Apply discounts to near-expiry stock.
+- Record damaged and wasted inventory.
+- Review waste management reports.
+
+**Delivery Partner**
+- View assigned deliveries.
+- Access customer delivery addresses.
+- Open navigation links.
+- Verify delivery using the customer's OTP.
+
+## 2. Project Design and User Interface
+
+The application uses a clean and responsive design that works across desktop, tablet, and mobile devices.
+
+Some of the UI features include:
+
+- Custom GroceryStore logo and branding.
+- Dark and light theme support.
+- Responsive product cards and navigation.
+- Product search and category filters.
+- Interactive cart and checkout pages.
+- Toast notifications for user actions.
+- Smooth transitions and micro-interactions.
+- Consistent styling across all dashboards.
+
+**Brand Name:** GroceryStore  
+**Tagline:** The Fresh Standard
+
+## 3. Technology Stack
+
+| Part | Technologies |
+|---|---|
+| Frontend | React 18, Vite, JavaScript |
+| Routing | React Router DOM |
+| Styling | Vanilla CSS, CSS Variables |
+| Icons | Lucide React |
+| Backend | Node.js, Express.js |
+| Database | MongoDB Atlas |
+| ODM | Mongoose |
+| Authentication | JWT, bcrypt |
+| Payments | Razorpay, Cash on Delivery |
+| API | REST API |
+
+### Authentication and Security
+
+The application uses JWT-based authentication and role-based access control.
+
+- Passwords are hashed using bcrypt.
+- Protected API routes require valid authentication.
+- Different roles have access to their respective operations.
+- Payment signatures are verified on the backend using Razorpay HMAC-SHA256.
+- Order totals are recalculated on the server to avoid trusting prices sent by the frontend.
+
+## 4. Database Structure
+
+The application uses MongoDB Atlas with Mongoose models.
+
+The main collections include:
+
+| Model | Purpose |
+|---|---|
+| User | User accounts, roles, addresses, and profile information |
+| Product | Grocery details, pricing, farm information, and freshness data |
+| Order | Order number, items, payment details, delivery slot, and status |
+| InventoryBatch | Batch quantities, harvest dates, expiry dates, and discounts |
+| Coupon | Coupon codes, discount values, and usage conditions |
+| WasteLog | Records of damaged, spoiled, and expired inventory |
+| Review | Customer ratings and product feedback |
+
+The product catalog is designed to support around 240 grocery products.
+
+## 5. Installation and Setup
+
+### Requirements
+
+- Node.js 18 or later
+- npm
+- MongoDB Atlas account
+- Git
+
+### Backend Setup
+
+Open a terminal and run:
+
+```bash
 cd backend
 npm install
 npm run dev
 ```
-> The API server will start on `http://localhost:5000` and automatically connect to the live MongoDB Atlas cluster.
 
-### 2. Frontend Setup
-Open a second terminal:
-```powershell
+The backend API runs at:
+
+`http://localhost:5000`
+
+Configure the MongoDB connection string and other required environment variables in the backend `.env` file.
+
+### Frontend Setup
+
+Open another terminal:
+
+```bash
 cd frontend
 npm install
 npm run dev
 ```
-> The storefront will run on `http://localhost:5173` with automatic API proxying.
 
----
+The frontend development server runs at:
 
-## 🧪 Verification & Testing
+`http://localhost:5173`
 
-Run all unit tests and live MongoDB smoke tests:
+Configure the API base URL or Vite proxy according to the backend setup.
 
-```powershell
-# 1. Backend Unit Tests (21 automated tests)
+## 6. Testing and Build
+
+The project includes backend tests, database integration checks, and frontend production build verification.
+
+Run backend tests:
+
+```bash
 cd backend
 npm test
+```
 
-# 2. Live MongoDB Atlas Integration Smoke Test
+Run MongoDB integration tests:
+
+```bash
 npm run test:local
+```
 
-# 3. Frontend Production Build
-cd ../frontend
+Create the frontend production build:
+
+```bash
+cd frontend
 npm run build
 ```
 
----
+## 7. Application Routes
 
-## 📋 Key Routes & Exploration Guide
+| Route | Description |
+|---|---|
+| `/` | Customer homepage |
+| `/shop` | Grocery product listing |
+| `/bundles` | Recipe-based grocery bundles |
+| `/product/:id` | Product details and farm information |
+| `/cart` | Shopping cart |
+| `/checkout` | Address, delivery slot, and payment |
+| `/track` | Order tracking and delivery OTP |
+| `/waste-center` | Inventory and expiry management |
+| `/admin` | Administrator dashboard |
+| `/delivery` | Delivery partner dashboard |
 
-| Route | Role / Purpose | Key Highlights |
+## 8. Available Coupons
+
+| Coupon | Discount | Minimum Order |
 |---|---|---|
-| `/` | Customer Home | Hero banner, categories, recipe kits showcase, waste reduction banner |
-| `/shop` | Customer Catalog | Live search, price slider, in-stock & organic filters, pagination |
-| `/bundles` | 1-Click Cook Kits | Palak Paneer, Dum Biryani, Smoothie with 1-click bundle add |
-| `/product/:id` | Product Details | Farm source, Freshness score, PIN checker, customer reviews |
-| `/cart` | Shopping Cart | ₹499 Free Delivery progress bar, instant quantity updates |
-| `/checkout` | Checkout | Delivery slot picker, Promo code (`WELCOME50`), COD / Razorpay |
-| `/track` | Live Tracking | Enter `TD-2026-XXXX` to see the 5-step timeline and secure OTP |
-| `/waste-center` | Inventory Manager | Batch expiry radar, markdown triggers, food waste reduction log |
-| `/admin` | Store Admin | Live revenue metrics, low-stock warnings, order advancement |
-| `/delivery` | Delivery Partner | Assigned deliveries, customer address cards, OTP verification |
+| WELCOME50 | ₹50 off | ₹299 |
+| TAAZA20 | 20% off, up to ₹150 | ₹499 |
+| SAVER100 | ₹100 off | ₹999 |
+
+## 9. Project Objective
+
+The objective of GroceryStore is to develop more than a basic online grocery shopping website. It combines grocery ordering with inventory tracking, expiry management, recipe bundles, product sourcing information, and secure delivery verification.
+
+The project focuses on practical problems faced by grocery stores, such as managing perishable stock, reducing product wastage, handling orders, and maintaining transparency between customers and store operations.
 
 ---
 
-## 👥 Demo Test Coupons
-- `WELCOME50` — ₹50 off on orders above ₹299
-- `TAAZA20` — 20% discount up to ₹150 on orders above ₹499
-- `SAVER100` — ₹100 flat discount on orders above ₹999
-
----
-
-© 2026 **GroceryStore** — Engineered for Excellence. Zero Dummy Elements.
+**GroceryStore – The Fresh Standard**  
+A grocery shopping and management platform built using the MERN stack.
